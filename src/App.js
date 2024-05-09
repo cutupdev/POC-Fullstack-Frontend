@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import SignIn from './components/SignIn/SignIn'
 import SignUp from './components/SignUp/SignUp'
+import ResetPassword from './components/ResetPassword/ResetPassword'
 import './App.css'
 
 const App = () => {
@@ -16,7 +17,8 @@ const App = () => {
     <div id='top' className={`${themeName} app`}>
         <Routes>
             <Route exact path='/' element={<SignIn/>}/>
-            <Route exact path='/signup' element={<SignUp/>}/>
+            <Route exact path='/sign-up' element={<SignUp/>}/>
+            <Route exact path='/reset-password' element={<ResetPassword/>}/>
         </Routes>
     </div>
   )
