@@ -149,9 +149,9 @@ export default function SignIn() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password.value || password.value.length < 8) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
+      setPasswordErrorMessage('Password must be at least 8 characters long.');
       isValid = false;
     } else {
       setPasswordError(false);
@@ -165,7 +165,7 @@ export default function SignIn() {
     <ThemeProvider theme={showCustomTheme ? SignInTheme : defaultTheme}>
       <CssBaseline />
       <SignInContainer direction="column" justifyContent="space-between">
-        <Stack
+        {/* <Stack
           direction="row"
           justifyContent="space-between"
           sx={{
@@ -182,7 +182,7 @@ export default function SignIn() {
             Back
           </Button>
           <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-        </Stack>
+        </Stack> */}
         <Stack
           justifyContent="center"
           sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
@@ -246,7 +246,7 @@ export default function SignIn() {
                   error={passwordError}
                   helperText={passwordErrorMessage}
                   name="password"
-                  placeholder="••••••"
+                  placeholder="••••••••"
                   type="password"
                   id="password"
                   autoComplete="current-password"
@@ -278,7 +278,7 @@ export default function SignIn() {
                 Don&apos;t have an account? Sign up
               </Link>
             </Box>
-            <Divider>or</Divider>
+            {/* <Divider>or</Divider>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Button
                 type="submit"
@@ -300,14 +300,14 @@ export default function SignIn() {
               >
                 Sign in with Facebook
               </Button>
-            </Box>
+            </Box> */}
           </Card>
         </Stack>
       </SignInContainer>
-      <ToggleCustomTheme
+      {/* <ToggleCustomTheme
         showCustomTheme={showCustomTheme}
         toggleCustomTheme={toggleCustomTheme}
-      />
+      /> */}
     </ThemeProvider>
   );
 }

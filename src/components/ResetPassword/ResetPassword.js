@@ -18,11 +18,10 @@ import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 import getSignUpTheme from './getSignUpTheme';
 import ToggleColorMode from './ToggleColorMode';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import { SitemarkIcon } from './CustomIcons';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -102,45 +101,45 @@ export default function SignUp() {
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const defaultTheme = createTheme({ palette: { mode } });
   const SignUpTheme = createTheme(getSignUpTheme(mode));
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [newPasswordError, setNewPasswordError] = React.useState(false);
+  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
+  const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
+    const newPassword = document.getElementById('new-password');
+    const confirmPassword = document.getElementById('confirm-password');
     const name = document.getElementById('name');
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+    if (!newPassword.value || newPassword.value.length < 8) {
+      setNewPasswordError(true);
+      setNewPasswordErrorMessage('Password must be at least 8 characters long.');
       isValid = false;
     } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
+      setNewPasswordError(false);
+      setNewPasswordErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
+    if (!confirmPassword.value || confirmPassword.value.length < 8) {
+      setConfirmPasswordError(true);
+      setConfirmPasswordErrorMessage('Password must be at least 8 characters long.');
       isValid = false;
     } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
+      setConfirmPasswordError(false);
+      setConfirmPasswordErrorMessage('');
     }
 
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
-      isValid = false;
+    if (newPassword.value === confirmPassword.value) {
+      setConfirmPasswordError(false);
+      setConfirmPasswordErrorMessage('');
     } else {
-      setNameError(false);
-      setNameErrorMessage('');
+      setConfirmPasswordError(true);
+      setConfirmPasswordErrorMessage('Password not match!');
+      isValid = false;
     }
 
     return isValid;
@@ -170,24 +169,6 @@ export default function SignUp() {
       <CssBaseline />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Stack
-          direction="row"
-          justifyContent="space-between"
-          sx={{
-            position: { xs: 'static', sm: 'fixed' },
-            width: '100%',
-            p: { xs: 2, sm: 4 },
-          }}
-        >
-          <Button
-            startIcon={<ArrowBackRoundedIcon />}
-            component="a"
-            href="/material-ui/getting-started/templates/"
-          >
-            Back
-          </Button>
-          <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-        </Stack>
-        <Stack
           justifyContent="center"
           sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
         >
@@ -198,7 +179,7 @@ export default function SignUp() {
               variant="h4"
               sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
             >
-              Sign up
+              Reset Password
             </Typography>
             <Box
               component="form"
@@ -206,102 +187,49 @@ export default function SignUp() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                <FormLabel htmlFor="name">Full name</FormLabel>
-                <TextField
-                  autoComplete="name"
-                  name="name"
-                  required
-                  fullWidth
-                  id="name"
-                  placeholder="Jon Snow"
-                  error={nameError}
-                  helperText={nameErrorMessage}
-                  color={nameError ? 'error' : 'primary'}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
+                <FormLabel htmlFor="new-password">New Password</FormLabel>
                 <TextField
                   required
                   fullWidth
-                  id="email"
-                  placeholder="your@email.com"
-                  name="email"
-                  autoComplete="email"
-                  variant="outlined"
-                  error={emailError}
-                  helperText={emailErrorMessage}
-                  color={passwordError ? 'error' : 'primary'}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="password">Password</FormLabel>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  placeholder="••••••"
+                  name="new-password"
+                  placeholder="••••••••"
                   type="password"
-                  id="password"
+                  id="new-password"
                   autoComplete="new-password"
                   variant="outlined"
-                  error={passwordError}
-                  helperText={passwordErrorMessage}
-                  color={passwordError ? 'error' : 'primary'}
+                  error={newPasswordError}
+                  helperText={newPasswordErrorMessage}
+                  color={newPasswordError ? 'error' : 'primary'}
                 />
               </FormControl>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive updates via email."
-              />
+              <FormControl>
+                <FormLabel htmlFor="confirm-password">Confirm Password</FormLabel>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirm-password"
+                  placeholder="••••••••"
+                  type="password"
+                  id="confirm-password"
+                  autoComplete="new-password"
+                  variant="outlined"
+                  error={confirmPasswordError}
+                  helperText={confirmPasswordErrorMessage}
+                  color={confirmPasswordError ? 'error' : 'primary'}
+                />
+              </FormControl>
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 onClick={validateInputs}
               >
-                Sign up
-              </Button>
-              <Link
-                href="/material-ui/getting-started/templates/sign-in/"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
-                Already have an account? Sign in
-              </Link>
-            </Box>
-            <Divider>
-              <Typography color="text.secondary">or</Typography>
-            </Divider>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                onClick={() => alert('Sign up with Google')}
-                startIcon={<GoogleIcon />}
-              >
-                Sign up with Google
-              </Button>
-              <Button
-                type="submit"
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                onClick={() => alert('Sign up with Facebook')}
-                startIcon={<FacebookIcon />}
-              >
-                Sign up with Facebook
+                Reset
               </Button>
             </Box>
           </Card>
         </Stack>
       </SignUpContainer>
-      <ToggleCustomTheme
-        showCustomTheme={showCustomTheme}
-        toggleCustomTheme={toggleCustomTheme}
-      />
     </ThemeProvider>
   );
 }

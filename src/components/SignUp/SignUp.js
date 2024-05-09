@@ -125,9 +125,9 @@ export default function SignUp() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password.value || password.value.length < 8) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
+      setPasswordErrorMessage('Password must be at least 8 characters long.');
       isValid = false;
     } else {
       setPasswordError(false);
@@ -169,7 +169,7 @@ export default function SignUp() {
     <ThemeProvider theme={showCustomTheme ? SignUpTheme : defaultTheme}>
       <CssBaseline />
       <SignUpContainer direction="column" justifyContent="space-between">
-        <Stack
+        {/* <Stack
           direction="row"
           justifyContent="space-between"
           sx={{
@@ -186,7 +186,7 @@ export default function SignUp() {
             Back
           </Button>
           <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-        </Stack>
+        </Stack> */}
         <Stack
           justifyContent="center"
           sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
@@ -206,7 +206,7 @@ export default function SignUp() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                <FormLabel htmlFor="name">Full name</FormLabel>
+                <FormLabel htmlFor="name">Username</FormLabel>
                 <TextField
                   autoComplete="name"
                   name="name"
@@ -240,7 +240,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="password"
-                  placeholder="••••••"
+                  placeholder="••••••••"
                   type="password"
                   id="password"
                   autoComplete="new-password"
@@ -252,7 +252,7 @@ export default function SignUp() {
               </FormControl>
               <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive updates via email."
+                label="I will be active user."
               />
               <Button
                 type="submit"
@@ -263,14 +263,14 @@ export default function SignUp() {
                 Sign up
               </Button>
               <Link
-                href="/material-ui/getting-started/templates/sign-in/"
+                href="/"
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >
                 Already have an account? Sign in
               </Link>
             </Box>
-            <Divider>
+            {/* <Divider>
               <Typography color="text.secondary">or</Typography>
             </Divider>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -294,14 +294,14 @@ export default function SignUp() {
               >
                 Sign up with Facebook
               </Button>
-            </Box>
+            </Box> */}
           </Card>
         </Stack>
       </SignUpContainer>
-      <ToggleCustomTheme
+      {/* <ToggleCustomTheme
         showCustomTheme={showCustomTheme}
         toggleCustomTheme={toggleCustomTheme}
-      />
+      /> */}
     </ThemeProvider>
   );
 }
