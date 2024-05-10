@@ -10,6 +10,7 @@ import SignUp from './components/SignUp/SignUp'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import LangdingPage from './components/LandingPage/LandingPage'
 import './App.css'
+import './global.css'
 
 const App = () => {
   const [{ themeName }] = useContext(ThemeContext)
