@@ -19,11 +19,17 @@ import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
 
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
 
 import ForgotPassword from './ForgotPassword';
 import getSignInTheme from './getSignInTheme';
 import ToggleColorMode from './ToggleColorMode';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import { display, flexbox } from '@mui/system';
+import { commonStyles } from '../../style';
+
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -99,15 +105,23 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn() {
+  const classes = commonStyles();
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const defaultTheme = createTheme({ palette: { mode } });
   const SignInTheme = createTheme(getSignInTheme(mode));
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  const [password, setPassword] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('Password must be longer than 8 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
   const [open, setOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [type, setType] = React.useState('password');
+
+  React.useEffect(() => {
+    setPassword("");
+  }, [])
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -117,6 +131,15 @@ export default function SignIn() {
     setShowCustomTheme((prev) => !prev);
   };
 
+  const pwdChange = (event) => {
+    let pwd = document.getElementById('password');
+    if (pwd.value != password || pwd.value != "") {
+      setPassword(event.target.value);
+    }
+    setPassword(event.target.value);
+    console.log(password)
+  }
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -124,6 +147,16 @@ export default function SignIn() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleVisibility = () => {
+    if (type === 'password') {
+      setVisible(true);
+      setType('text')
+    } else {
+      setVisible(false)
+      setType('password')
+    }
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -140,7 +173,7 @@ export default function SignIn() {
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email.value || !isEmail(email.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -149,13 +182,25 @@ export default function SignIn() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 8) {
+    if (!password.value || password.value.length < 8 || !hasUpperCase(password.value) || !hasLowerCase(password.value) || !hasNumeric(password.value) || !hasSpecialCharacter(password.value)) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 8 characters long.');
+      if (!password.value || password.value.length < 8) {
+        setPasswordErrorMessage('Password must be at least 8 characters long.');
+      } else if (!hasUpperCase(password.value)) {
+        setPasswordErrorMessage('Password must include one uppercase at least.');
+      } else if (!hasLowerCase(password.value)) {
+        setPasswordErrorMessage('Password must include one lowercase at least.');
+      } else if (!hasNumeric(password.value)) {
+        setPasswordErrorMessage('Password must include one numeric at least.');
+      } else if (!hasSpecialCharacter(password.value)) {
+        setPasswordErrorMessage('Password must include one special character at least.');
+      } else {
+        setPasswordErrorMessage('Password format is not correct. Try again.');
+      }
       isValid = false;
     } else {
       setPasswordError(false);
-      setPasswordErrorMessage('');
+      setPasswordErrorMessage('Enough Possible');
     }
 
     return isValid;
@@ -165,24 +210,6 @@ export default function SignIn() {
     <ThemeProvider theme={showCustomTheme ? SignInTheme : defaultTheme}>
       <CssBaseline />
       <SignInContainer direction="column" justifyContent="space-between">
-        {/* <Stack
-          direction="row"
-          justifyContent="space-between"
-          sx={{
-            position: { xs: 'static', sm: 'fixed' },
-            width: '100%',
-            p: { xs: 2, sm: 4 },
-          }}
-        >
-          <Button
-            startIcon={<ArrowBackRoundedIcon />}
-            component="a"
-            href="/material-ui/getting-started/templates/"
-          >
-            Back
-          </Button>
-          <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-        </Stack> */}
         <Stack
           justifyContent="center"
           sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
@@ -242,20 +269,27 @@ export default function SignIn() {
                     Forgot your password?
                   </Link>
                 </Box>
-                <TextField
-                  error={passwordError}
-                  helperText={passwordErrorMessage}
-                  name="password"
-                  placeholder="••••••••"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  autoFocus
-                  required
-                  fullWidth
-                  variant="outlined"
-                  color={passwordError ? 'error' : 'primary'}
-                />
+                <div className={classes.passwordBox}>
+                  <TextField
+                    error={passwordError}
+                    helperText={passwordErrorMessage}
+                    name="password"
+                    placeholder="••••••••"
+                    type={type}
+                    id="password"
+                    autoComplete="current-password"
+                    required
+                    fullWidth
+                    value={password}
+                    onChange={pwdChange}
+                    variant="outlined"
+                    color={passwordError ? 'error' : 'primary'}
+                  />
+                  <span className={classes.visibilityBox}>
+                    {visible ? <VisibilityIcon className={classes.visibility1} onClick={handleVisibility} /> : <VisibilityOffIcon className={classes.visibility2} onClick={handleVisibility} />}
+                  </span>
+                </div>
+
               </FormControl>
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
@@ -278,36 +312,9 @@ export default function SignIn() {
                 Don&apos;t have an account? Sign up
               </Link>
             </Box>
-            {/* <Divider>or</Divider>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                onClick={() => alert('Sign in with Google')}
-                startIcon={<GoogleIcon />}
-              >
-                Sign in with Google
-              </Button>
-              <Button
-                type="submit"
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                onClick={() => alert('Sign in with Facebook')}
-                startIcon={<FacebookIcon />}
-              >
-                Sign in with Facebook
-              </Button>
-            </Box> */}
           </Card>
         </Stack>
       </SignInContainer>
-      {/* <ToggleCustomTheme
-        showCustomTheme={showCustomTheme}
-        toggleCustomTheme={toggleCustomTheme}
-      /> */}
     </ThemeProvider>
   );
 }

@@ -16,12 +16,16 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
 
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 
 import getSignUpTheme from './getSignUpTheme';
 import ToggleColorMode from './ToggleColorMode';
 import { SitemarkIcon } from './CustomIcons';
+import { commonStyles } from '../../style';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -97,16 +101,21 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
+  const classes = commonStyles();
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const defaultTheme = createTheme({ palette: { mode } });
   const SignUpTheme = createTheme(getSignUpTheme(mode));
   const [newPasswordError, setNewPasswordError] = React.useState(false);
-  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState('');
+  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState('Password must be longer than 8 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
   const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [newVisible, setNewVisible] = React.useState(false);
+  const [newType, setNewType] = React.useState('password');
+  const [confirmVisible, setConfirmVisible] = React.useState(false);
+  const [confirmType, setConfirmType] = React.useState('password');
 
   const validateInputs = () => {
     const newPassword = document.getElementById('new-password');
@@ -115,22 +124,46 @@ export default function SignUp() {
 
     let isValid = true;
 
-    if (!newPassword.value || newPassword.value.length < 8) {
+    if (!newPassword.value || newPassword.value.length < 8 || !hasUpperCase(newPassword.value) || !hasLowerCase(newPassword.value) || !hasNumeric(newPassword.value) || !hasSpecialCharacter(newPassword.value)) {
       setNewPasswordError(true);
-      setNewPasswordErrorMessage('Password must be at least 8 characters long.');
+      if (!newPassword.value || newPassword.value.length < 8) {
+        setNewPasswordErrorMessage('Password must be at least 8 characters long.');
+      } else if (!hasUpperCase(newPassword.value)) {
+        setNewPasswordErrorMessage('Password must include one uppercase at least.');
+      } else if (!hasLowerCase(newPassword.value)) {
+        setNewPasswordErrorMessage('Password must include one lowercase at least.');
+      } else if (!hasNumeric(newPassword.value)) {
+        setNewPasswordErrorMessage('Password must include one numeric at least.');
+      } else if (!hasSpecialCharacter(newPassword.value)) {
+        setNewPasswordErrorMessage('Password must include one special character at least.');
+      } else {
+        setNewPasswordErrorMessage('Password format is not correct. Try again.');
+      }
       isValid = false;
     } else {
       setNewPasswordError(false);
-      setNewPasswordErrorMessage('');
+      setNewPasswordErrorMessage('Enough Possible');
     }
 
-    if (!confirmPassword.value || confirmPassword.value.length < 8) {
+    if (!confirmPassword.value || confirmPassword.value.length < 8 || !hasUpperCase(confirmPassword.value) || !hasLowerCase(confirmPassword.value) || !hasNumeric(confirmPassword.value) || !hasSpecialCharacter(confirmPassword.value)) {
       setConfirmPasswordError(true);
-      setConfirmPasswordErrorMessage('Password must be at least 8 characters long.');
+      if (!confirmPassword.value || confirmPassword.value.length < 8) {
+        setConfirmPasswordErrorMessage('Password must be at least 8 characters long.');
+      } else if (!hasUpperCase(confirmPassword.value)) {
+        setConfirmPasswordErrorMessage('Password must include one uppercase at least.');
+      } else if (!hasLowerCase(confirmPassword.value)) {
+        setConfirmPasswordErrorMessage('Password must include one lowercase at least.');
+      } else if (!hasNumeric(confirmPassword.value)) {
+        setConfirmPasswordErrorMessage('Password must include one numeric at least.');
+      } else if (!hasSpecialCharacter(confirmPassword.value)) {
+        setConfirmPasswordErrorMessage('Password must include one special character at least.');
+      } else {
+        setConfirmPasswordErrorMessage('Password format is not correct. Try again.');
+      }
       isValid = false;
     } else {
       setConfirmPasswordError(false);
-      setConfirmPasswordErrorMessage('');
+      setConfirmPasswordErrorMessage('Enough Possible');
     }
 
     if (newPassword.value === confirmPassword.value) {
@@ -152,6 +185,26 @@ export default function SignUp() {
   const toggleCustomTheme = () => {
     setShowCustomTheme((prev) => !prev);
   };
+
+  const handleNewVisibility = () => {
+    if (newType === 'password') {
+      setNewVisible(true);
+      setNewType('text')
+    } else {
+      setNewVisible(false)
+      setNewType('password')
+    }
+  }
+
+  const handleConfirmVisibility = () => {
+    if (confirmType === 'password') {
+      setConfirmVisible(true);
+      setConfirmType('text')
+    } else {
+      setConfirmVisible(false)
+      setConfirmType('password')
+    }
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -188,35 +241,45 @@ export default function SignUp() {
             >
               <FormControl>
                 <FormLabel htmlFor="new-password">New Password</FormLabel>
-                <TextField
-                  required
-                  fullWidth
-                  name="new-password"
-                  placeholder="••••••••"
-                  type="password"
-                  id="new-password"
-                  autoComplete="new-password"
-                  variant="outlined"
-                  error={newPasswordError}
-                  helperText={newPasswordErrorMessage}
-                  color={newPasswordError ? 'error' : 'primary'}
-                />
+                <div className={classes.passwordBox}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="new-password"
+                    placeholder="••••••••"
+                    type={newType}
+                    id="new-password"
+                    autoComplete="new-password"
+                    variant="outlined"
+                    error={newPasswordError}
+                    helperText={newPasswordErrorMessage}
+                    color={newPasswordError ? 'error' : 'primary'}
+                  />
+                  <span className={classes.visibilityBox}>
+                    {newVisible ? <VisibilityIcon className={classes.visibility1} onClick={handleNewVisibility} /> : <VisibilityOffIcon className={classes.visibility2} onClick={handleNewVisibility} />}
+                  </span>
+                </div>
               </FormControl>
               <FormControl>
                 <FormLabel htmlFor="confirm-password">Confirm Password</FormLabel>
-                <TextField
-                  required
-                  fullWidth
-                  name="confirm-password"
-                  placeholder="••••••••"
-                  type="password"
-                  id="confirm-password"
-                  autoComplete="new-password"
-                  variant="outlined"
-                  error={confirmPasswordError}
-                  helperText={confirmPasswordErrorMessage}
-                  color={confirmPasswordError ? 'error' : 'primary'}
-                />
+                <div className={classes.passwordBox}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="confirm-password"
+                    placeholder="••••••••"
+                    type={confirmType}
+                    id="confirm-password"
+                    autoComplete="new-password"
+                    variant="outlined"
+                    error={confirmPasswordError}
+                    helperText={confirmPasswordErrorMessage}
+                    color={confirmPasswordError ? 'error' : 'primary'}
+                  />
+                  <span className={classes.visibilityBox}>
+                    {confirmVisible ? <VisibilityIcon className={classes.visibility1} onClick={handleConfirmVisibility} /> : <VisibilityOffIcon className={classes.visibility2} onClick={handleConfirmVisibility} />}
+                  </span>
+                </div>
               </FormControl>
               <Button
                 type="submit"

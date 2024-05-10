@@ -14,15 +14,19 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
 
 import getSignUpTheme from './getSignUpTheme';
 import ToggleColorMode from './ToggleColorMode';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import { commonStyles } from '../../style';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -98,6 +102,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
+  const classes = commonStyles();
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const defaultTheme = createTheme({ palette: { mode } });
@@ -105,18 +110,19 @@ export default function SignUp() {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('Password must be longer than 8 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [visible, setVisible] = React.useState(false);
+  const [type, setType] = React.useState('password');
 
   const validateInputs = () => {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
-    const name = document.getElementById('name');
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email.value || !isEmail(email.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -125,22 +131,26 @@ export default function SignUp() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 8) {
+    if (!password.value || password.value.length < 8 || !hasUpperCase(password.value) || !hasLowerCase(password.value) || !hasNumeric(password.value) || !hasSpecialCharacter(password.value)) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 8 characters long.');
+      if (!password.value || password.value.length < 8) {
+        setPasswordErrorMessage('Password must be at least 8 characters long.');
+      } else if (!hasUpperCase(password.value)) {
+        setPasswordErrorMessage('Password must include one uppercase at least.');
+      } else if (!hasLowerCase(password.value)) {
+        setPasswordErrorMessage('Password must include one lowercase at least.');
+      } else if (!hasNumeric(password.value)) {
+        setPasswordErrorMessage('Password must include one numeric at least.');
+      } else if (!hasSpecialCharacter(password.value)) {
+        setPasswordErrorMessage('Password must include one special character at least.');
+      } else {
+        setPasswordErrorMessage('Password format is not correct. Try again.');
+      }
+
       isValid = false;
     } else {
       setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage('');
+      setPasswordErrorMessage('Enough Possible');
     }
 
     return isValid;
@@ -153,6 +163,16 @@ export default function SignUp() {
   const toggleCustomTheme = () => {
     setShowCustomTheme((prev) => !prev);
   };
+
+  const handleVisibility = () => {
+    if (type === 'password') {
+      setVisible(true);
+      setType('text')
+    } else {
+      setVisible(false)
+      setType('password')
+    }
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -169,24 +189,6 @@ export default function SignUp() {
     <ThemeProvider theme={showCustomTheme ? SignUpTheme : defaultTheme}>
       <CssBaseline />
       <SignUpContainer direction="column" justifyContent="space-between">
-        {/* <Stack
-          direction="row"
-          justifyContent="space-between"
-          sx={{
-            position: { xs: 'static', sm: 'fixed' },
-            width: '100%',
-            p: { xs: 2, sm: 4 },
-          }}
-        >
-          <Button
-            startIcon={<ArrowBackRoundedIcon />}
-            component="a"
-            href="/material-ui/getting-started/templates/"
-          >
-            Back
-          </Button>
-          <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-        </Stack> */}
         <Stack
           justifyContent="center"
           sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
@@ -206,7 +208,7 @@ export default function SignUp() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                <FormLabel htmlFor="name">Username</FormLabel>
+                <FormLabel htmlFor="name">Full name</FormLabel>
                 <TextField
                   autoComplete="name"
                   name="name"
@@ -234,26 +236,29 @@ export default function SignUp() {
                   color={passwordError ? 'error' : 'primary'}
                 />
               </FormControl>
+
               <FormControl>
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  placeholder="••••••••"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  variant="outlined"
-                  error={passwordError}
-                  helperText={passwordErrorMessage}
-                  color={passwordError ? 'error' : 'primary'}
-                />
+                <div className={classes.passwordBox}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    placeholder="••••••••"
+                    type={type}
+                    id="password"
+                    autoComplete="new-password"
+                    variant="outlined"
+                    error={passwordError}
+                    helperText={passwordErrorMessage}
+                    color={passwordError ? 'error' : 'primary'}
+                  />
+                  <span className={classes.visibilityBox}>
+                    {visible ? <VisibilityIcon className={classes.visibility1} onClick={handleVisibility} /> : <VisibilityOffIcon className={classes.visibility2} onClick={handleVisibility} />}
+                  </span>
+                </div>
               </FormControl>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I will be active user."
-              />
+
               <Button
                 type="submit"
                 fullWidth
@@ -270,38 +275,9 @@ export default function SignUp() {
                 Already have an account? Sign in
               </Link>
             </Box>
-            {/* <Divider>
-              <Typography color="text.secondary">or</Typography>
-            </Divider>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                onClick={() => alert('Sign up with Google')}
-                startIcon={<GoogleIcon />}
-              >
-                Sign up with Google
-              </Button>
-              <Button
-                type="submit"
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                onClick={() => alert('Sign up with Facebook')}
-                startIcon={<FacebookIcon />}
-              >
-                Sign up with Facebook
-              </Button>
-            </Box> */}
           </Card>
         </Stack>
       </SignUpContainer>
-      {/* <ToggleCustomTheme
-        showCustomTheme={showCustomTheme}
-        toggleCustomTheme={toggleCustomTheme}
-      /> */}
     </ThemeProvider>
   );
 }
