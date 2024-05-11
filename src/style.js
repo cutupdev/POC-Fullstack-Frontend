@@ -29,7 +29,7 @@ export const commonStyles = makeStyles({
     },
     globalFont: {
         fontSize: '14px !important',
-        // fontFamily: 'serif !important',
+        fontFamily: 'roboto !important',
         fontStyle: 'normal !important',
         fontWeight: 'normal !important',
     },

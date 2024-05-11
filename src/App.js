@@ -9,6 +9,7 @@ import SignIn from './components/SignIn/SignIn'
 import SignUp from './components/SignUp/SignUp'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import LangdingPage from './components/LandingPage/LandingPage'
+import Admin from './components/LandingPage/Admin';
 import './App.css'
 import './global.css'
 
@@ -22,6 +23,7 @@ const App = () => {
             <Route exact path='/sign-up' element={<SignUp/>}/>
             <Route exact path='/reset-password' element={<ResetPassword/>}/>
             <Route exact path='/dashboard' element={<LangdingPage/>}/>
+            <Route exact path='/admin' element={<Admin/>}/>
         </Routes>
     </div>
   )

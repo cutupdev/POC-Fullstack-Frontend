@@ -14,17 +14,26 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ToggleColorMode from './ToggleColorMode';
 import AccountMenu from './AccountMenu'
-import { commonStyles } from '../../../style';
+import { useLocation } from 'react-router-dom';
 
 import Sitemark from './SitemarkIcon';
 
 function AppAppBar({ mode, toggleColorMode }) {
-  const classes = commonStyles();
   const [open, setOpen] = React.useState(false);
+  // const [location, setLocation] = React.useState("")
+  const location = useLocation().pathname;
+  let path = ""
+  if(location == '/admin/' || location == '/admin') {
+    path = "Dashboard";
+  } else {
+    path = "Admin";
+  }
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
+  
+  // const location = useLocation()
 
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
@@ -77,6 +86,7 @@ function AppAppBar({ mode, toggleColorMode }) {
             sx={{
               flexGrow: 1,
               display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center',
               px: 0,
             }}
@@ -84,22 +94,14 @@ function AppAppBar({ mode, toggleColorMode }) {
             <Sitemark />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button
+                href={path == "Admin" ? '/admin' : '/dashboard'}
                 variant="text"
-                color="info"
-                className={classes.globalFont}
-                size="small"
-                onClick={() => scrollToSection('features')}
-              >
-                Dashboard
-              </Button>
-              <Button
-                variant="text"
-                className={classes.globalFont}
+                className='global-font'
                 color="info"
                 size="small"
                 onClick={() => scrollToSection('testimonials')}
               >
-                Category
+                {path}
               </Button>
             </Box>
           </Box>

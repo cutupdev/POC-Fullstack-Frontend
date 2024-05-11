@@ -4,7 +4,6 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { commonStyles } from '../../../style';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -34,7 +33,6 @@ function getStyles(name, personName, theme) {
 }
 
 export default function CategoryButton() {
-    const classes = commonStyles();
     const theme = useTheme();
     const [personName, setPersonName] = React.useState([]);
 
@@ -59,7 +57,7 @@ export default function CategoryButton() {
                     input={<OutlinedInput />}
                     renderValue={(selected) => {
                         if (selected.length === 0) {
-                            return <div className={classes.globalFont}>All</div>;
+                            return <div className='global-font'>All</div>;
                         }
 
                         return selected.join(', ');
@@ -68,12 +66,12 @@ export default function CategoryButton() {
                     inputProps={{ 'aria-label': 'Without label' }}
                 >
                     <MenuItem disabled value="">
-                        <div className={classes.globalFont}>All</div>
+                        <div className='global-font'>All</div>
                     </MenuItem>
                     {names.map((name) => (
                         <MenuItem
                             key={name}
-                            className={classes.globalFont}
+                            className='global-font'
                             value={name}
                             style={getStyles(name, personName, theme)}
                         >

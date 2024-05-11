@@ -25,7 +25,6 @@ import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import getSignUpTheme from './getSignUpTheme';
 import ToggleColorMode from './ToggleColorMode';
 import { SitemarkIcon } from './CustomIcons';
-import { commonStyles } from '../../style';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -101,13 +100,12 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-  const classes = commonStyles();
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const defaultTheme = createTheme({ palette: { mode } });
   const SignUpTheme = createTheme(getSignUpTheme(mode));
   const [newPasswordError, setNewPasswordError] = React.useState(false);
-  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState('Password must be longer than 8 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
+  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState('Password must be longer than 12 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
   const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
@@ -124,10 +122,10 @@ export default function SignUp() {
 
     let isValid = true;
 
-    if (!newPassword.value || newPassword.value.length < 8 || !hasUpperCase(newPassword.value) || !hasLowerCase(newPassword.value) || !hasNumeric(newPassword.value) || !hasSpecialCharacter(newPassword.value)) {
+    if (!newPassword.value || newPassword.value.length < 12 || !hasUpperCase(newPassword.value) || !hasLowerCase(newPassword.value) || !hasNumeric(newPassword.value) || !hasSpecialCharacter(newPassword.value)) {
       setNewPasswordError(true);
-      if (!newPassword.value || newPassword.value.length < 8) {
-        setNewPasswordErrorMessage('Password must be at least 8 characters long.');
+      if (!newPassword.value || newPassword.value.length < 12) {
+        setNewPasswordErrorMessage('Password must be at least 12 characters long.');
       } else if (!hasUpperCase(newPassword.value)) {
         setNewPasswordErrorMessage('Password must include one uppercase at least.');
       } else if (!hasLowerCase(newPassword.value)) {
@@ -145,10 +143,10 @@ export default function SignUp() {
       setNewPasswordErrorMessage('Enough Possible');
     }
 
-    if (!confirmPassword.value || confirmPassword.value.length < 8 || !hasUpperCase(confirmPassword.value) || !hasLowerCase(confirmPassword.value) || !hasNumeric(confirmPassword.value) || !hasSpecialCharacter(confirmPassword.value)) {
+    if (!confirmPassword.value || confirmPassword.value.length < 12 || !hasUpperCase(confirmPassword.value) || !hasLowerCase(confirmPassword.value) || !hasNumeric(confirmPassword.value) || !hasSpecialCharacter(confirmPassword.value)) {
       setConfirmPasswordError(true);
-      if (!confirmPassword.value || confirmPassword.value.length < 8) {
-        setConfirmPasswordErrorMessage('Password must be at least 8 characters long.');
+      if (!confirmPassword.value || confirmPassword.value.length < 12) {
+        setConfirmPasswordErrorMessage('Password must be at least 12 characters long.');
       } else if (!hasUpperCase(confirmPassword.value)) {
         setConfirmPasswordErrorMessage('Password must include one uppercase at least.');
       } else if (!hasLowerCase(confirmPassword.value)) {
@@ -241,7 +239,7 @@ export default function SignUp() {
             >
               <FormControl>
                 <FormLabel htmlFor="new-password">New Password</FormLabel>
-                <div className={classes.passwordBox}>
+                <div className='password-box'>
                   <TextField
                     required
                     fullWidth
@@ -255,14 +253,14 @@ export default function SignUp() {
                     helperText={newPasswordErrorMessage}
                     color={newPasswordError ? 'error' : 'primary'}
                   />
-                  <span className={classes.visibilityBox}>
-                    {newVisible ? <VisibilityIcon className={classes.visibility1} onClick={handleNewVisibility} /> : <VisibilityOffIcon className={classes.visibility2} onClick={handleNewVisibility} />}
+                  <span className='visibility-box'>
+                    {newVisible ? <VisibilityIcon className='visibility1' onClick={handleNewVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleNewVisibility} />}
                   </span>
                 </div>
               </FormControl>
               <FormControl>
                 <FormLabel htmlFor="confirm-password">Confirm Password</FormLabel>
-                <div className={classes.passwordBox}>
+                <div className='password-box'>
                   <TextField
                     required
                     fullWidth
@@ -276,8 +274,8 @@ export default function SignUp() {
                     helperText={confirmPasswordErrorMessage}
                     color={confirmPasswordError ? 'error' : 'primary'}
                   />
-                  <span className={classes.visibilityBox}>
-                    {confirmVisible ? <VisibilityIcon className={classes.visibility1} onClick={handleConfirmVisibility} /> : <VisibilityOffIcon className={classes.visibility2} onClick={handleConfirmVisibility} />}
+                  <span className='visibility-box'>
+                    {confirmVisible ? <VisibilityIcon className='visibility1' onClick={handleConfirmVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleConfirmVisibility} />}
                   </span>
                 </div>
               </FormControl>

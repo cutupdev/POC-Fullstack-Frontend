@@ -1,10 +1,5 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes
-} from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -58,7 +53,7 @@ ToggleCustomTheme.propTypes = {
   toggleCustomTheme: PropTypes.func.isRequired,
 };
 
-export default function LandingPage() {
+export default function Admin() {
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
