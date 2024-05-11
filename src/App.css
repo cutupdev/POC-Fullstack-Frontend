@@ -1,12 +1,16 @@
 .app {
-  font-family: 'Montserrat';
+  font-family: 'roboto';
   line-height: 1.5;
   color: var(--clr-fg);
   background-color: var(--clr-bg);
 }
 
 body {
-  font-family: 'Montserrat';
+  font-family: 'roboto';
+}
+
+.roboto-font {
+  font-family: 'roboto' !important;
 }
 
 .light {
@@ -147,6 +151,135 @@ main {
 
 .btn--icon:active {
   transform: translateY(-5px);
+}
+
+.metaview-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100% !important;
+}
+
+.metaview-box {
+  width: 200px !important;
+  max-width: 200px !important;
+  min-width: 200px !important;
+  background-color: #aaaaaa !important;
+  border-radius: 10px;
+}
+
+.metaview-head {
+  display: flex;
+  justify-content: flex-end;
+  border-radius: 10px;
+}
+
+.metaview-close {
+  cursor: pointer;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.menu-item {
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+}
+
+.global-font {
+  font-size: 14px !important;
+  font-family: roboto !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+}
+
+.assist-root {
+  width: 100% !important;
+  margin-bottom: 30px
+}
+
+.full-width {
+  width: 100% !important;
+}
+
+.func-box {
+  display: flex !important;
+  justify-content: space-between;
+  width: 100% !important;
+  align-items: center
+}
+
+.category-root {
+  margin: 0px !important
+}
+
+.upload-box {
+  border: 1px solid #CAD2E0 !important;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 5px;
+  background: #F3F4F9;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.upload-letter {
+  display: flex; 
+  justify-content: center;
+  font-size: 14px !important;
+  font-family: roboto !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+}
+
+.upload-no-select {
+  font-weight: 200;
+  font-size: 12px !important;
+  font-family: roboto !important;
+  font-style: normal !important;
+}
+
+.password-box {
+  display: flex;
+}
+
+.visibility1 {
+  z-index: 9;
+  background: #F1F3F8;
+}
+
+.visibility2 {
+  z-index: 9;
+  background: #F1F3F8;
+}
+
+.visibility-box {
+  position: absolute;
+  margin-top: 8px;
+  right: 10px !important;
+  height: 10px;
+  background-color: white !important
+}
+
+.cursor-icon {
+  cursor: pointer;
+  background: transparent !important;
+  font-size: 16px !important;
+  margin-left: 5px !important
+}
+
+.tooltip {
+  cursor: pointer;
+}
+
+.pwdinput {
+  background-color: white !important;
+}
+
+.pagination {
+  width: 100% !important;
+  font-size: 14px !important;
+  font-weight: normal !important;
+  font-family: roboto !important;
+  font-style: normal !important;
 }
 
 @media (max-width: 600px) {

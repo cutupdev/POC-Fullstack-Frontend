@@ -21,7 +21,14 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import ClearIcon from '@mui/icons-material/Clear';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { commonStyles } from '../../../style';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -30,6 +37,15 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
+    },
+}));
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
     },
 }));
 
@@ -44,7 +60,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function TablePaginationActions(props) {
-    const classes = commonStyles();
     const theme = useTheme();
     const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -110,40 +125,39 @@ function createData(name, creator, date, type, size, category, classification, c
 }
 
 const rows = [
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
 ];
 
 export default function CustomizedTables() {
-    const classes = commonStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
@@ -177,20 +191,20 @@ export default function CustomizedTables() {
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     return (
-        <div className={classes.metaviewContent}>
+        <div className='metaview-content'>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 815 }} aria-label="customized table">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell align="left" className={classes.globalFont} style={{ minWidth: 80 }}>Name</StyledTableCell>
-                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 80 }}>Creator</StyledTableCell>
-                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 120 }}>Creation Date</StyledTableCell>
-                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 100 }}>File Type</StyledTableCell>
-                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 80 }}>File Size</StyledTableCell>
-                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 70 }}>Category</StyledTableCell>
-                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 150 }}>Classification Status</StyledTableCell>
-                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 125 }}>Confident Score</StyledTableCell>
-                            <StyledTableCell align="right" className={classes.globalFont} style={{ minWidth: 10 }}></StyledTableCell>
+                            <StyledTableCell align="left" className='global-font' style={{ minWidth: 80 }}>Name</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 80 }}>Creator</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 120 }}>Creation Date</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 100 }}>File Type</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 80 }}>File Size</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 70 }}>Category</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 150 }}>Classification Status</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 125 }}>Confident Score</StyledTableCell>
+                            <StyledTableCell align="right" className='global-font' style={{ minWidth: 10 }}></StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -199,38 +213,38 @@ export default function CustomizedTables() {
                             : rows
                         ).map((row) => (
                             <StyledTableRow key={row.name} onDoubleClick={onPreview}>
-                                <Tooltip className={classes.tooltip} title={'This is tooltip for metadata'}>
-                                    <StyledTableCell align="left" style={{ minWidth: 80 }} className={classes.globalFont}>
+                                <Tooltip className='tooltip' title={'This is tooltip for metadata'}>
+                                    <StyledTableCell align="left" style={{ minWidth: 80 }} className='global-font'>
                                         {row.name}
                                     </StyledTableCell>
                                 </Tooltip>
-                                <StyledTableCell align="center" style={{ minWidth: 80 }} className={classes.globalFont}>
+                                <StyledTableCell align="center" style={{ minWidth: 80 }} className='global-font'>
                                     {row.creator}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 120 }} className={classes.globalFont}>
+                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font'>
                                     {row.date}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 100 }} className={classes.globalFont}>
+                                <StyledTableCell align="center" style={{ minWidth: 100 }} className='global-font'>
                                     {row.type}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 80 }} className={classes.globalFont}>
+                                <StyledTableCell align="center" style={{ minWidth: 80 }} className='global-font'>
                                     {row.size}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 70 }} className={classes.globalFont}>
+                                <StyledTableCell align="center" style={{ minWidth: 70 }} className='global-font'>
                                     {row.category}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 150 }} className={classes.globalFont}>
+                                <StyledTableCell align="center" style={{ minWidth: 150 }} className='global-font'>
                                     {row.classification}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 125 }} className={classes.globalFont}>
+                                <StyledTableCell align="center" style={{ minWidth: 125 }} className='global-font'>
                                     {row.confident}
                                 </StyledTableCell>
-                                <StyledTableCell align="right"  style={{ minWidth: 10 }} >
-                                    <Tooltip className={classes.tooltip} title={'Metadata details'}>
-                                        <RemoveRedEyeIcon  onClick={onMataViewOn} className={classes.cursorIcon} />
+                                <StyledTableCell align="right" style={{ minWidth: 10 }} >
+                                    <Tooltip className='tooltip' title={'Metadata details'}>
+                                        <RemoveRedEyeIcon onClick={onMataViewOn} className='cursor-icon' />
                                     </Tooltip>
-                                    <Tooltip className={classes.tooltip} title={'Remove document'}>
-                                        <DeleteForeverIcon className={classes.cursorIcon} />
+                                    <Tooltip className='tooltip' title={'Remove document'}>
+                                        <DeleteForeverIcon className='cursor-icon' />
                                     </Tooltip>
                                 </StyledTableCell>
                             </StyledTableRow>
@@ -244,8 +258,8 @@ export default function CustomizedTables() {
                     <TableFooter>
                         <TableRow>
                             <TablePagination
-                                className={classes.pagination}
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                className='pagination'
+                                rowsPerPageOptions={[10, 50, 100, { label: 'All', value: -1 }]}
                                 count={rows.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
@@ -264,14 +278,56 @@ export default function CustomizedTables() {
                         </TableRow>
                     </TableFooter>
                 </Table>
+                <BootstrapDialog
+                    onClose={offPreview}
+                    aria-labelledby="customized-dialog-title"
+                    open={previewStatus}
+                >
+                    <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+                        Microsoft
+                    </DialogTitle>
+                    {/* <IconButton
+                        aria-label="close"
+                        onClick={offPreview}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton> */}
+                    <DialogContent dividers>
+                        <Typography gutterBottom>
+                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
+                            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
+                            consectetur ac, vestibulum at eros.
+                        </Typography>
+                        <Typography gutterBottom>
+                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+                            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
+                        </Typography>
+                        <Typography gutterBottom>
+                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus
+                            magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec
+                            ullamcorper nulla non metus auctor fringilla.
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button autoFocus onClick={offPreview}>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </BootstrapDialog>
             </TableContainer>
-            {metaviewStatus ? <div className={classes.metaviewBox}>
-                <div onClick={onMataviewOff} className={classes.metaviewHead}>
-                    <ClearIcon className={classes.metaviewClose} />
+            {metaviewStatus ? <div className='metaview-box'>
+                <div onClick={onMataviewOff} className='metaview-head'>
+                    <ClearIcon className='metaview-close' />
                 </div>
-            </div> 
-                : 
-            <div></div>}
+            </div>
+                :
+                <div></div>}
         </div>
     );
 }

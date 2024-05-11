@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import CategoryButton from './CategoryButton';
 import Upload from './Upload';
-import { commonStyles } from '../../../style';
+import { useLocation } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 
 import { visuallyHidden } from '@mui/utils';
@@ -18,7 +18,7 @@ import CustomizedTables from './Table'
 
 
 export default function Hero() {
-  const classes = commonStyles();
+  console.log(useLocation().pathname)
 
   return (
     <Box
@@ -42,13 +42,13 @@ export default function Hero() {
       >
         <Stack
           spacing={2}
-          className={classes.assistRoot}
+          className='assist-root'
           alignItems="center"
           useFlexGap
           sx={{ width: { xs: '100%', sm: '70%' } }}
         >
           <Stack
-            className={classes.funcBox}
+            className='func-box'
             direction={{ xs: 'column', sm: 'row' }}
             spacing={1}
             useFlexGap
@@ -57,7 +57,7 @@ export default function Hero() {
             <TextField
               id="email-hero"
               hiddenLabel
-              className={classes.globalFont}
+              className='global-font'
               size="small"
               variant="outlined"
               aria-label="Enter your email address"
@@ -69,7 +69,7 @@ export default function Hero() {
             />
             <CategoryButton />
             <Upload />
-            <Button variant="contained" color="primary" className={classes.globalFont}>
+            <Button variant="contained" color="primary" className='global-font'>
               Upload
             </Button>
           </Stack>

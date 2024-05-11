@@ -26,7 +26,6 @@ import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } 
 import getSignUpTheme from './getSignUpTheme';
 import ToggleColorMode from './ToggleColorMode';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import { commonStyles } from '../../style';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -102,7 +101,6 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-  const classes = commonStyles();
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const defaultTheme = createTheme({ palette: { mode } });
@@ -110,7 +108,7 @@ export default function SignUp() {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('Password must be longer than 8 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('Password must be longer than 12 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [visible, setVisible] = React.useState(false);
@@ -131,10 +129,10 @@ export default function SignUp() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 8 || !hasUpperCase(password.value) || !hasLowerCase(password.value) || !hasNumeric(password.value) || !hasSpecialCharacter(password.value)) {
+    if (!password.value || password.value.length < 12 || !hasUpperCase(password.value) || !hasLowerCase(password.value) || !hasNumeric(password.value) || !hasSpecialCharacter(password.value)) {
       setPasswordError(true);
-      if (!password.value || password.value.length < 8) {
-        setPasswordErrorMessage('Password must be at least 8 characters long.');
+      if (!password.value || password.value.length < 12) {
+        setPasswordErrorMessage('Password must be at least 12 characters long.');
       } else if (!hasUpperCase(password.value)) {
         setPasswordErrorMessage('Password must include one uppercase at least.');
       } else if (!hasLowerCase(password.value)) {
@@ -239,7 +237,7 @@ export default function SignUp() {
 
               <FormControl>
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <div className={classes.passwordBox}>
+                <div className='password-box'>
                   <TextField
                     required
                     fullWidth
@@ -253,8 +251,8 @@ export default function SignUp() {
                     helperText={passwordErrorMessage}
                     color={passwordError ? 'error' : 'primary'}
                   />
-                  <span className={classes.visibilityBox}>
-                    {visible ? <VisibilityIcon className={classes.visibility1} onClick={handleVisibility} /> : <VisibilityOffIcon className={classes.visibility2} onClick={handleVisibility} />}
+                  <span className='visibility-box'>
+                    {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
                   </span>
                 </div>
               </FormControl>

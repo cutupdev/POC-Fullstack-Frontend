@@ -11,18 +11,48 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { commonStyles } from '../../../style';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
+import TextField from '@mui/material/TextField';
+import CloseIcon from '@mui/icons-material/Close';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
 
 export default function AccountMenu() {
-  const classes = commonStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [profileModal, setProfileModal] = React.useState(false);
+  const [fullname, setFullname] = React.useState("Microgift");
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+    setProfileModal(true);
+    setFullname('Microgift');
     setAnchorEl(null);
   };
+  const modalClose = () => {
+    setProfileModal(false);
+  }
+  const profileSubmit = () => {
+    console.log("submit")
+    setProfileModal(false);
+  }
+  const handleChange = (event) => {
+    setFullname(event.target.value);
+  }
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -74,16 +104,55 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose} className={classes.menuItem}>
+        <MenuItem onClick={handleClose} className='menu-item'>
           <Avatar /> Profile
         </MenuItem>
-        <MenuItem onClick={handleClose} className={classes.menuItem}>
+        <MenuItem onClick={handleClose} className='menu-item'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
+      <Dialog
+        open={profileModal}
+        onClose={modalClose}
+        // PaperProps={{
+        //   component: 'form',
+        //   onSubmit: (event) => {
+        //     event.preventDefault();
+        //     const formData = new FormData(event.currentTarget);
+        //     const formJson = Object.fromEntries(formData.entries());
+        //     const email = formJson.email;
+        //     console.log(email);
+        //     handleClose();
+        //   },
+        // }}
+      >
+        <DialogTitle>Full Name Edit</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To edit your full name, just modify your full name here.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            value={fullname}
+            onChange={handleChange}
+            margin="dense"
+            id="name"
+            name="fullname"
+            label="Full name"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={modalClose}>Cancel</Button>
+          <Button onClick={profileSubmit}>Save</Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }
