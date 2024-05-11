@@ -17,6 +17,11 @@ import TableRow from '@mui/material/TableRow';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import Paper from '@mui/material/Paper';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import ClearIcon from '@mui/icons-material/Clear';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { commonStyles } from '../../../style';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -39,6 +44,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function TablePaginationActions(props) {
+    const classes = commonStyles();
     const theme = useTheme();
     const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -99,31 +105,49 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
+function createData(name, creator, date, type, size, category, classification, confident) {
+    return { name, creator, date, type, size, category, classification, confident };
 }
 
 const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "89%"),
 ];
 
 export default function CustomizedTables() {
+    const classes = commonStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [metaviewStatus, setMetaviewStatus] = React.useState(false);
+    const [previewStatus, setPreviewStatus] = React.useState(false);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -134,85 +158,120 @@ export default function CustomizedTables() {
         setPage(0);
     };
 
+    const onMataViewOn = (event) => {
+        setMetaviewStatus(true);
+    }
+
+    const onMataviewOff = (event) => {
+        setMetaviewStatus(false);
+    }
+
+    const onPreview = (event) => {
+        setPreviewStatus(true);
+    }
+
+    const offPreview = (event) => {
+        setPreviewStatus(false);
+    }
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                <TableHead>
-                    <TableRow>
-                        <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-                        <StyledTableCell align="right">Calories</StyledTableCell>
-                        <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-                        <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-                        <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
-                    </TableRow>
-                </TableHead>
-                {/* <TableBody>
-                    {rows.map((row) => (
-                        <StyledTableRow key={row.name}>
-                            <StyledTableCell component="th" scope="row">
-                                {row.name}
-                            </StyledTableCell>
-                            <StyledTableCell align="right">{row.calories}</StyledTableCell>
-                            <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                            <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                            <StyledTableCell align="right">{row.protein}</StyledTableCell>
-                        </StyledTableRow>
-                    ))}
-                </TableBody> */}
-                <TableBody>
-                    {(rowsPerPage > 0
-                        ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        : rows
-                    ).map((row) => (
-                        <StyledTableRow key={row.name}>
-                            <StyledTableCell component="th" scope="row">
-                                {row.name}
-                            </StyledTableCell>
-                            <StyledTableCell component="th" scope="row">
-                                {row.calories}
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: 160 }} align="right">
-                                {row.fat}
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: 160 }} align="right">
-                                {row.carbs}
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: 160 }} align="right">
-                                {row.protein}
-                            </StyledTableCell>
-                        </StyledTableRow>
-                    ))}
-                    {emptyRows > 0 && (
-                        <TableRow style={{ height: 53 * emptyRows }}>
-                            <TableCell colSpan={6} />
+        <div className={classes.metaviewContent}>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 815 }} aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell align="left" className={classes.globalFont} style={{ minWidth: 80 }}>Name</StyledTableCell>
+                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 80 }}>Creator</StyledTableCell>
+                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 120 }}>Creation Date</StyledTableCell>
+                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 100 }}>File Type</StyledTableCell>
+                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 80 }}>File Size</StyledTableCell>
+                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 70 }}>Category</StyledTableCell>
+                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 150 }}>Classification Status</StyledTableCell>
+                            <StyledTableCell align="center" className={classes.globalFont} style={{ minWidth: 125 }}>Confident Score</StyledTableCell>
+                            <StyledTableCell align="right" className={classes.globalFont} style={{ minWidth: 10 }}></StyledTableCell>
                         </TableRow>
-                    )}
-                </TableBody>
-                <TableFooter>
-                    <TableRow>
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                            colSpan={3}
-                            count={rows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            slotProps={{
-                                select: {
-                                    inputProps: {
-                                        'aria-label': 'rows per page',
+                    </TableHead>
+                    <TableBody>
+                        {(rowsPerPage > 0
+                            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : rows
+                        ).map((row) => (
+                            <StyledTableRow key={row.name} onDoubleClick={onPreview}>
+                                <Tooltip className={classes.tooltip} title={'This is tooltip for metadata'}>
+                                    <StyledTableCell align="left" style={{ minWidth: 80 }} className={classes.globalFont}>
+                                        {row.name}
+                                    </StyledTableCell>
+                                </Tooltip>
+                                <StyledTableCell align="center" style={{ minWidth: 80 }} className={classes.globalFont}>
+                                    {row.creator}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 120 }} className={classes.globalFont}>
+                                    {row.date}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 100 }} className={classes.globalFont}>
+                                    {row.type}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 80 }} className={classes.globalFont}>
+                                    {row.size}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 70 }} className={classes.globalFont}>
+                                    {row.category}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 150 }} className={classes.globalFont}>
+                                    {row.classification}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 125 }} className={classes.globalFont}>
+                                    {row.confident}
+                                </StyledTableCell>
+                                <StyledTableCell align="right"  style={{ minWidth: 10 }} >
+                                    <Tooltip className={classes.tooltip} title={'Metadata details'}>
+                                        <RemoveRedEyeIcon  onClick={onMataViewOn} className={classes.cursorIcon} />
+                                    </Tooltip>
+                                    <Tooltip className={classes.tooltip} title={'Remove document'}>
+                                        <DeleteForeverIcon className={classes.cursorIcon} />
+                                    </Tooltip>
+                                </StyledTableCell>
+                            </StyledTableRow>
+                        ))}
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 53 * emptyRows }}>
+                                <TableCell colSpan={6} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                className={classes.pagination}
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                count={rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                slotProps={{
+                                    select: {
+                                        inputProps: {
+                                            'aria-label': 'rows per page',
+                                        },
+                                        native: true,
                                     },
-                                    native: true,
-                                },
-                            }}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActions}
-                        />
-                    </TableRow>
-                </TableFooter>
-            </Table>
-        </TableContainer>
+                                }}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </TableContainer>
+            {metaviewStatus ? <div className={classes.metaviewBox}>
+                <div onClick={onMataviewOff} className={classes.metaviewHead}>
+                    <ClearIcon className={classes.metaviewClose} />
+                </div>
+            </div> 
+                : 
+            <div></div>}
+        </div>
     );
 }

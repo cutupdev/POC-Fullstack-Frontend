@@ -8,6 +8,7 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { commonStyles } from '../../../style';
 
 import { visuallyHidden } from '@mui/utils';
 
@@ -18,10 +19,11 @@ import TwitterIcon from '@mui/icons-material/X';
 import SitemarkIcon from './SitemarkIcon';
 
 function Copyright() {
+  const classes = commonStyles();
   return (
-    <Typography variant="body2" color="text.secondary" mt={1}>
+    <Typography variant="body2" color="text.secondary" mt={1} className={classes.globalFont}>
       {'Copyright © '}
-      <Link href="/">POC&nbsp;</Link>
+      <Link href="/"  className={classes.globalFont}>POC&nbsp;</Link>
       {new Date().getFullYear()}
     </Typography>
   );

@@ -25,18 +25,15 @@ export default function Hero() {
       id="hero"
       sx={(theme) => ({
         width: '100%',
-        backgroundImage:
-          theme.palette.mode === 'light'
-            ? 'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 90%), transparent)'
-            : 'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 16%), transparent)',
+        backgroundColor: '#ffffff',
         backgroundRepeat: 'no-repeat',
       })}
     >
       <Container
-        
         sx={{
           display: 'flex',
           width: '100% !important',
+          background: '#ffffff',
           flexDirection: 'column',
           alignItems: 'center',
           pt: { xs: 14, sm: 20 },
@@ -60,10 +57,11 @@ export default function Hero() {
             <TextField
               id="email-hero"
               hiddenLabel
+              className={classes.globalFont}
               size="small"
               variant="outlined"
               aria-label="Enter your email address"
-              placeholder="Your email address"
+              placeholder="Search"
               inputProps={{
                 autoComplete: 'off',
                 'aria-label': 'Enter your email address',
@@ -71,8 +69,8 @@ export default function Hero() {
             />
             <CategoryButton />
             <Upload />
-            <Button variant="contained" color="primary">
-              Start now
+            <Button variant="contained" color="primary" className={classes.globalFont}>
+              Upload
             </Button>
           </Stack>
           

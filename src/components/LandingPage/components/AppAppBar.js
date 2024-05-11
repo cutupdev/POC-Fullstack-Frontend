@@ -14,10 +14,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ToggleColorMode from './ToggleColorMode';
 import AccountMenu from './AccountMenu'
+import { commonStyles } from '../../../style';
 
 import Sitemark from './SitemarkIcon';
 
 function AppAppBar({ mode, toggleColorMode }) {
+  const classes = commonStyles();
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen) => () => {
@@ -84,18 +86,20 @@ function AppAppBar({ mode, toggleColorMode }) {
               <Button
                 variant="text"
                 color="info"
+                className={classes.globalFont}
                 size="small"
                 onClick={() => scrollToSection('features')}
               >
-                Features
+                Dashboard
               </Button>
               <Button
                 variant="text"
+                className={classes.globalFont}
                 color="info"
                 size="small"
                 onClick={() => scrollToSection('testimonials')}
               >
-                Testimonials
+                Category
               </Button>
             </Box>
           </Box>
@@ -106,9 +110,6 @@ function AppAppBar({ mode, toggleColorMode }) {
               alignItems: 'center',
             }}
           >
-            {/* <Button color="primary" variant="contained" size="small">
-              Sign up
-            </Button> */}
             <AccountMenu />
           </Box>
         </Toolbar>
