@@ -13,7 +13,7 @@ body {
   font-family: 'roboto' !important;
 }
 
-.roboto-font > span {
+.roboto-font>span {
   font-family: 'roboto' !important;
 }
 
@@ -157,6 +157,33 @@ main {
   transform: translateY(-5px);
 }
 
+.reset-btn {
+  border-radius: 0px !important;
+  font-size: 18px !important;
+  height: 45px !important;
+}
+
+.search-box {
+  width: 450px !important;
+  height: 45px;
+}
+
+.search-box-admin {
+  width: 600px !important;
+  height: 45px;
+}
+
+.category-box {
+  width: 250px !important;
+  height: 45px !important;
+}
+
+.doc-upload-btn {
+  width: 150px !important;
+  height: 45px !important;
+  font-size: 16px !important;
+}
+
 .metaview-content {
   display: flex;
   justify-content: space-between;
@@ -193,6 +220,21 @@ main {
   font-family: roboto !important;
   font-style: normal !important;
   font-weight: normal !important;
+}
+
+.modal-title {
+  font-size: 24px !important;
+  font-family: roboto !important;
+}
+
+.modal-text {
+  font-size: 14px !important;
+  font-family: roboto !important;
+}
+
+.modal-btn {
+  font-family: roboto !important;
+  font-size: 16px !important;
 }
 
 .teal {
@@ -266,7 +308,7 @@ main {
 }
 
 .upload-letter {
-  display: flex; 
+  display: flex;
   justify-content: center;
   font-size: 14px !important;
   font-family: roboto !important;

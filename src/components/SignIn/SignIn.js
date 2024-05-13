@@ -325,7 +325,7 @@ export default function SignIn() {
                       style: { 
                         fontSize: 24, 
                         borderRadius: 0, 
-                        fontFamily: 'roboto', 
+                        fontFamily: 'roboto !important', 
                         backgroundColor: '#fff', 
                         height: '32px' 
                       } 

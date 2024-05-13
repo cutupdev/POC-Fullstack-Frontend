@@ -39,10 +39,12 @@ export default function AccountMenu() {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setProfileModal(true);
     setFullname('Microgift');
     setAnchorEl(null);
   };
+  const modalOpen = () => {
+    setProfileModal(true);
+  }
   const modalClose = () => {
     setProfileModal(false);
   }
@@ -104,10 +106,10 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose} className='menu-item'>
+        <MenuItem onClick={modalOpen} className='menu-item global-font'>
           <Avatar /> Profile
         </MenuItem>
-        <MenuItem onClick={handleClose} className='menu-item'>
+        <MenuItem onClick={handleClose} className='menu-item global-font'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -129,14 +131,15 @@ export default function AccountMenu() {
         //   },
         // }}
       >
-        <DialogTitle>Full Name Edit</DialogTitle>
+        <DialogTitle className='modal-title'>Full Name Edit</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText className='modal-text'>
             To edit your full name, just modify your full name here.
           </DialogContentText>
           <TextField
             autoFocus
             required
+            className='roboto-font'
             value={fullname}
             onChange={handleChange}
             margin="dense"
@@ -146,11 +149,20 @@ export default function AccountMenu() {
             type="text"
             fullWidth
             variant="standard"
+            inputProps={{ 
+              style: { 
+                fontSize: 20, 
+                borderRadius: 0, 
+                fontFamily: 'roboto !important',
+                height: '32px' 
+              } 
+            }} // font size of input text
+            InputLabelProps={{ style: { fontSize: 18, fontFamily: 'roboto !important' } }} // font size of input label
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={modalClose}>Cancel</Button>
-          <Button onClick={profileSubmit}>Save</Button>
+          <Button onClick={modalClose} className='modal-btn'>Cancel</Button>
+          <Button onClick={profileSubmit} className='modal-btn'>Save</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>
