@@ -81,9 +81,52 @@ const Card = styled(MuiCard)(({ theme }) => ({
       : 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px, hsla(220, 30%, 5%, 0.05) 0px 0px 0px 1px',
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
-    width: '450px',
+    width: '600px',
   },
 }));
+
+const theme = createTheme({
+  components: {
+    MuiFilledInput: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 0 0 1px black',
+          borderRadius: '0px !important',
+          backgroundColor: '#f3f3f3', // background color of the input
+          '&:before': { // underline pseudo-element
+            borderBottomColor: 'grey',
+          },
+          '&:hover:before': {
+            borderBottomColor: 'black', // on hover
+          },
+          '&.Mui-focused': {
+            borderRadius: '0px !important',
+            borderColor: 'blue', // focus color for entire border
+            boxShadow: '0 0 0 2px blue', // simulating border with box-shadow
+            '&:before': {
+              borderBottomColor: 'blue', // make the bottom border also blue
+            }
+          },
+          '&.Mui-error': {
+            boxShadow: '0 0 0 2px red', // Red outline simulating border for error
+            borderRadius: '0px !important',
+          },
+          '&:before': {
+            borderBottom: '1px solid grey', // Default underline color
+            left: 0,
+            bottom: 0,
+            right: 0,
+            content: '""',
+            position: 'absolute',
+          },
+          '&.Mui-error:before': {
+            borderBottom: '2px solid transparent', // Hide default underline when there's an error
+          }
+        }
+      }
+    }
+  }
+});
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
   height: 'auto',
@@ -227,6 +270,7 @@ export default function SignUp() {
             <SitemarkIcon />
             <Typography
               component="h1"
+              className='roboto-font'
               variant="h4"
               sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
             >
@@ -238,55 +282,86 @@ export default function SignUp() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                <FormLabel htmlFor="new-password">New Password</FormLabel>
-                <div className='password-box'>
+                <ThemeProvider theme={theme}>
                   <TextField
+                    label="New Password"
+                    variant="filled"
+                    // value={password}
+                    // color='primary'
+                    // onChange={pwdChange}
+                    className='signin-box'
+                    inputProps={{
+                      style: {
+                        fontSize: 24,
+                        borderRadius: 0,
+                        fontFamily: 'roboto',
+                        backgroundColor: '#fff',
+                        height: '32px',
+                      }
+                    }} // font size of input text
+                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
+                    FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 } }}
                     required
                     fullWidth
                     name="new-password"
-                    placeholder="••••••••"
                     type={newType}
                     id="new-password"
                     autoComplete="new-password"
-                    variant="outlined"
                     error={newPasswordError}
                     helperText={newPasswordErrorMessage}
                     color={newPasswordError ? 'error' : 'primary'}
                   />
-                  <span className='visibility-box'>
-                    {newVisible ? <VisibilityIcon className='visibility1' onClick={handleNewVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleNewVisibility} />}
-                  </span>
-                </div>
+                </ThemeProvider>
+                <span className='visibility-box'>
+                  {newVisible ? <VisibilityIcon className='visibility1' onClick={handleNewVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleNewVisibility} />}
+                </span>
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="confirm-password">Confirm Password</FormLabel>
-                <div className='password-box'>
+                <ThemeProvider theme={theme}>
                   <TextField
-                    required
-                    fullWidth
                     name="confirm-password"
-                    placeholder="••••••••"
                     type={confirmType}
                     id="confirm-password"
-                    autoComplete="new-password"
-                    variant="outlined"
+                    autoComplete="confirm-password"
                     error={confirmPasswordError}
                     helperText={confirmPasswordErrorMessage}
                     color={confirmPasswordError ? 'error' : 'primary'}
+                    label="Confirm Password"
+                    variant="filled"
+                    // value={password}
+                    // color='primary'
+                    // onChange={pwdChange}
+                    className='signin-box'
+                    inputProps={{
+                      style: {
+                        fontSize: 24,
+                        borderRadius: 0,
+                        fontFamily: 'roboto',
+                        backgroundColor: '#fff',
+                        height: '32px',
+                      }
+                    }} // font size of input text
+                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
+                    FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 } }}
+                    required
+                    fullWidth
                   />
-                  <span className='visibility-box'>
-                    {confirmVisible ? <VisibilityIcon className='visibility1' onClick={handleConfirmVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleConfirmVisibility} />}
-                  </span>
-                </div>
+                </ThemeProvider>
+                <span className='visibility-box'>
+                  {confirmVisible ? <VisibilityIcon className='visibility1' onClick={handleConfirmVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleConfirmVisibility} />}
+                </span>
               </FormControl>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                onClick={validateInputs}
-              >
-                Reset
-              </Button>
+              <div className='flex-end'>
+                <Button
+                  type="submit"
+                  className='submit-btn roboto-font'
+                  // fullWidth
+                  variant="contained"
+                  onClick={validateInputs}
+                >
+                  Reset
+                </Button>
+              </div>
             </Box>
           </Card>
         </Stack>

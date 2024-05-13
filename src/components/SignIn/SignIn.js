@@ -85,9 +85,52 @@ const Card = styled(MuiCard)(({ theme }) => ({
       : 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px, hsla(220, 30%, 5%, 0.05) 0px 0px 0px 1px',
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
-    width: '450px',
+    width: '600px',
   },
 }));
+
+const theme = createTheme({
+  components: {
+    MuiFilledInput: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 0 0 1px black',
+          borderRadius: '0px !important',
+          backgroundColor: '#f3f3f3', // background color of the input
+          '&:before': { // underline pseudo-element
+            borderBottomColor: 'grey',
+          },
+          '&:hover:before': {
+            borderBottomColor: 'black', // on hover
+          },
+          '&.Mui-focused': {
+            borderRadius: '0px !important',
+            borderColor: 'blue', // focus color for entire border
+            boxShadow: '0 0 0 2px blue', // simulating border with box-shadow
+            '&:before': {
+              borderBottomColor: 'blue', // make the bottom border also blue
+            }
+          },
+          '&.Mui-error': {
+            boxShadow: '0 0 0 2px red', // Red outline simulating border for error
+            borderRadius: '0px !important',
+          },
+          '&:before': {
+            borderBottom: '1px solid grey', // Default underline color
+            left: 0,
+            bottom: 0,
+            right: 0,
+            content: '""',
+            position: 'absolute',
+          },
+          '&.Mui-error:before': {
+            borderBottom: '2px solid transparent', // Hide default underline when there's an error
+          }
+        }
+      }
+    }
+  }
+});
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'auto',
@@ -222,6 +265,18 @@ export default function SignIn() {
             >
               Sign in
             </Typography>
+            <div className='flex roboto-font'>
+              <div className='roboto-font small-font-size'>If you don't have an account, &nbsp;  </div>
+              <Link
+                href="/sign-up/"
+                variant="body2"
+                className='roboto-font small-font-size'
+                sx={{ alignSelf: 'center' }}
+              >
+                you can sign up here
+              </Link>
+              <div sx={{ alignSelf: 'center' }}>.</div>
+            </div>
             <Box
               component="form"
               onSubmit={handleSubmit}
@@ -233,9 +288,9 @@ export default function SignIn() {
                 gap: 2,
               }}
             >
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <TextField
+              <FormControl className='signin-box'>
+                {/* <FormLabel htmlFor="email">Email</FormLabel> */}
+                {/* <TextField
                   error={emailError}
                   helperText={emailErrorMessage}
                   id="email"
@@ -249,27 +304,56 @@ export default function SignIn() {
                   variant="outlined"
                   color={emailError ? 'error' : 'primary'}
                   sx={{ ariaLabel: 'email' }}
-                />
+                /> */}
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    error={emailError}
+                    helperText={emailErrorMessage}
+                    id="email"
+                    type="email"
+                    name="email"
+                    label="Email"
+                    variant="filled"
+                    autoComplete="email"
+                    // autoFocus
+                    required
+                    fullWidth
+                    color={emailError ? 'error' : 'primary'}
+                    // sx={{ ariaLabel: 'email' }}
+                    className='signin-box'
+                    inputProps={{ 
+                      style: { 
+                        fontSize: 24, 
+                        borderRadius: 0, 
+                        fontFamily: 'roboto', 
+                        backgroundColor: '#fff', 
+                        height: '32px' 
+                      } 
+                    }} // font size of input text
+                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
+                    FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 }}}
+                  />
+                </ThemeProvider>
               </FormControl>
               <FormControl>
                 <Box
                   sx={{
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-end',
                   }}
                 >
-                  <FormLabel htmlFor="password">Password</FormLabel>
                   <Link
                     component="button"
+                    className='roboto-font small-font-size'
                     onClick={handleClickOpen}
                     variant="body2"
                     sx={{ alignSelf: 'baseline' }}
                   >
-                    Forgot your password?
+                    Forgot Password
                   </Link>
                 </Box>
                 <div className='password-box'>
-                  <TextField
+                  {/* <TextField
                     error={passwordError}
                     helperText={passwordErrorMessage}
                     name="password"
@@ -283,7 +367,45 @@ export default function SignIn() {
                     onChange={pwdChange}
                     variant="outlined"
                     color={passwordError ? 'error' : 'primary'}
-                  />
+                  /> */}
+                  {/* <TextField 
+                    id="password" 
+                    error={passwordError}
+                    helperText={passwordErrorMessage}
+                    type={type}
+                    label="Password" 
+                    variant="outlined" 
+                  /> */}
+                  <ThemeProvider theme={theme}>
+                    <TextField
+                      error={passwordError}
+                      helperText={passwordErrorMessage}
+                      id="password"
+                      type={type}
+                      name="password"
+                      label="Password"
+                      variant="filled"
+                      autoComplete="current-password"
+                      required
+                      fullWidth
+                      value={password}
+                      color={passwordError ? 'error' : 'primary'}
+                      // color='primary'
+                      onChange={pwdChange}
+                      className='signin-box'
+                      inputProps={{ 
+                        style: { 
+                          fontSize: 24, 
+                          borderRadius: 0, 
+                          fontFamily: 'roboto',
+                          backgroundColor: '#fff', 
+                          height: '32px',
+                        } 
+                      }} // font size of input text
+                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
+                      FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 }}}
+                    />
+                  </ThemeProvider>
                   <span className='visibility-box'>
                     {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
                   </span>
@@ -291,25 +413,22 @@ export default function SignIn() {
 
               </FormControl>
               <FormControlLabel
+                className='roboto-font small-font-size'
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
               <ForgotPassword open={open} handleClose={handleClose} />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                onClick={validateInputs}
-              >
-                Sign in
-              </Button>
-              <Link
-                href="/sign-up/"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
-                Don&apos;t have an account? Sign up
-              </Link>
+              <div className='flex-end'>
+                <Button
+                  type="submit"
+                  className='submit-btn roboto-font'
+                  // fullWidth
+                  variant="contained"
+                  onClick={validateInputs}
+                >
+                  Sign in
+                </Button>
+              </div>
             </Box>
           </Card>
         </Stack>
