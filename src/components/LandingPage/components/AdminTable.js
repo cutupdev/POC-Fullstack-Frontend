@@ -24,6 +24,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import ClearIcon from '@mui/icons-material/Clear';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import EditIcon from '@mui/icons-material/Edit';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -176,7 +177,7 @@ export default function AdminTable() {
     };
 
     const onMataViewOn = (event) => {
-        setMetaviewStatus(true);
+        // setMetaviewStatus(true);
     }
 
     const onMataviewOff = (event) => {
@@ -211,27 +212,25 @@ export default function AdminTable() {
                             : rows
                         ).map((row) => (
                             <StyledTableRow key={row.name}>
-                                <Tooltip className='tooltip' title={'This is tooltip for metadata'} onDoubleClick={onPreview}>
-                                    <StyledTableCell align="left" style={{ minWidth: 70 }} className='global-font'>
-                                        {row.name}
-                                    </StyledTableCell>
-                                </Tooltip>
-                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="left" style={{ minWidth: 70 }} className='global-font'>
+                                    {row.name}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font'>
                                     {row.date}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 160 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 160 }} className='global-font'>
                                     {row.sample}
                                 </StyledTableCell>
                                 <StyledTableCell align="right" style={{ minWidth: 95 }} >
-                                    <Tooltip className='tooltip' title={'Metadata details'}>
-                                        <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
+                                    <Tooltip className='tooltip' title={'Edit Category'}>
+                                        <EditIcon onClick={onMataViewOn} className='cursor-icon' />
                                     </Tooltip>
-                                    <Tooltip className='tooltip' title={'Peview document'}>
+                                    {/* <Tooltip className='tooltip' title={'Peview document'}>
                                         <RemoveRedEyeIcon className='cursor-icon' />
                                     </Tooltip>
                                     <Tooltip className='tooltip' title={'Remove document'}>
                                         <DeleteIcon className='cursor-icon' />
-                                    </Tooltip>
+                                    </Tooltip> */}
                                 </StyledTableCell>
                             </StyledTableRow>
                         ))}
