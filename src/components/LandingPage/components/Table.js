@@ -32,6 +32,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import DialogContentText from '@mui/material/DialogContentText';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -123,6 +124,24 @@ TablePaginationActions.propTypes = {
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
 };
+
+
+const metadatas = ['Type', 'Size', 'Storage Used', 'Owner', 'Modified', 'Opened', 'Created', 'Description']
+
+function createMeta(type, size, storage, owner, modify, open, create, description) {
+    return { type, size, storage, owner, modify, open, create, description };
+}
+
+const metaRows = [
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+    createMeta('Word', '16 KB', '16 KB', 'Rajan', '2023-11-19', '2024-04-11', '2033-11-01', 'no description'),
+]
 
 function createData(name, creator, date, type, size, category, classification, confident) {
     return { name, creator, date, type, size, category, classification, confident };
@@ -372,8 +391,86 @@ export default function CustomizedTables() {
                 </Dialog>
             </TableContainer>
             {metaviewStatus ? <div className='metaview-box'>
-                <div onClick={onMataviewOff} className='metaview-head'>
-                    <ClearIcon className='metaview-close' />
+                <div className='grey-line'></div>
+                <div className='metaview-container'>
+                    <div className='metaview-head'>
+                        <div className='dis-cencer'>
+                            <TextSnippetIcon />
+                            <div className='roboto-font font-size-16 black-font'> Microsoft.pdf </div>
+                        </div>
+                        <ClearIcon className='metaview-close' onClick={onMataviewOff} />
+                    </div>
+                    <div className='metaview-body'>
+                        {/* {metadatas.map((head) => ( */}
+
+                        {/* ))} */}
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Type
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                Word
+                            </div>
+                        </div>
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Size
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                16 KB
+                            </div>
+                        </div>
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Storage Used
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                16 KB
+                            </div>
+                        </div>
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Owner
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                Rajan
+                            </div>
+                        </div>
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Modified
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                2023-11-19
+                            </div>
+                        </div>
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Opened
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                2024-04-11
+                            </div>
+                        </div>
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Created
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                2033-11-01
+                            </div>
+                        </div>
+                        <div className='metaview-cell'>
+                            <div className='roboto-font font-size-12 font-bolder black-font'>
+                                Description
+                            </div>
+                            <div className='roboto-font font-size-16'>
+                                no description
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
                 </div>
             </div>
                 :
