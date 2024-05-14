@@ -212,15 +212,13 @@ export default function AdminTable() {
                             : rows
                         ).map((row) => (
                             <StyledTableRow key={row.name}>
-                                <Tooltip className='tooltip' title={'This is tooltip for metadata'} onDoubleClick={onPreview}>
-                                    <StyledTableCell align="left" style={{ minWidth: 70 }} className='global-font'>
-                                        {row.name}
-                                    </StyledTableCell>
-                                </Tooltip>
-                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="left" style={{ minWidth: 70 }} className='global-font'>
+                                    {row.name}
+                                </StyledTableCell>
+                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font'>
                                     {row.date}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 160 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 160 }} className='global-font'>
                                     {row.sample}
                                 </StyledTableCell>
                                 <StyledTableCell align="right" style={{ minWidth: 95 }} >
