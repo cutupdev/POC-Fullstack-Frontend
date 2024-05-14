@@ -52,6 +52,7 @@ export default function CategoryButton() {
                 <Select
                     multiple
                     displayEmpty
+                    className='global-font category-box'
                     value={personName}
                     onChange={handleChange}
                     input={<OutlinedInput />}

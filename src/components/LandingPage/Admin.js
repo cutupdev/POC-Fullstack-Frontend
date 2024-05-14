@@ -7,7 +7,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import AppAppBar from './components/AppAppBar';
-import Content from './components/Content';
+import AdminContent from './components/AdminContent';
 import Footer from './components/Footer';
 import getLPTheme from './getLPTheme';
 
@@ -71,7 +71,7 @@ export default function Admin() {
     <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
       {/* <CssBaseline /> */}
       <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
-      <Content />
+      <AdminContent />
       <Box sx={{ bgcolor: 'background.default' }}>
         <Footer />
       </Box>

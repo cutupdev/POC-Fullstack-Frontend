@@ -14,10 +14,10 @@ import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import { styled } from '@mui/material/styles';
 
-import CustomizedTables from './Table'
+import AdminTable from './AdminTable'
 
 
-export default function Content() {
+export default function AdminContent() {
   console.log(useLocation().pathname)
 
   return (
@@ -58,7 +58,7 @@ export default function Content() {
               id="email-hero"
               hiddenLabel
               InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }}
-              className='global-font search-box'
+              className='global-font search-box-admin'
               size="small"
               variant="outlined"
               aria-label="Enter your email address"
@@ -75,17 +75,17 @@ export default function Content() {
                 }
               }}
             />
-            <CategoryButton
+            {/* <CategoryButton
               className='global-font category-box' 
-            />
+            /> */}
             {/* <Upload /> */}
             <Button variant="contained" color="primary" className='doc-upload-btn'>
-              Upload
+              Add Category
             </Button>
           </Stack>
 
         </Stack>
-        <CustomizedTables />
+        <AdminTable />
       </Container>
     </Box>
   );
