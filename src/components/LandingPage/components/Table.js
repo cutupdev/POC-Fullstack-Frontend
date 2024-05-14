@@ -2,6 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
+import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import LastPageIcon from '@mui/icons-material/LastPage';
@@ -18,6 +19,8 @@ import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import Paper from '@mui/material/Paper';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import ClearIcon from '@mui/icons-material/Clear';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -125,41 +128,41 @@ function createData(name, creator, date, type, size, category, classification, c
 }
 
 const rows = [
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
-    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10kbyte", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+    createData('Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
 ];
 
 export default function CustomizedTables() {
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
 
@@ -193,18 +196,19 @@ export default function CustomizedTables() {
     return (
         <div className='metaview-content'>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 815 }} aria-label="customized table">
+                <Table sx={{ minWidth: 920 }} aria-label="customized table">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell align="left" className='global-font' style={{ minWidth: 80 }}>Name</StyledTableCell>
-                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 80 }}>Creator</StyledTableCell>
-                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 120 }}>Creation Date</StyledTableCell>
-                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 100 }}>File Type</StyledTableCell>
-                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 80 }}>File Size</StyledTableCell>
-                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 70 }}>Category</StyledTableCell>
-                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 150 }}>Classification Status</StyledTableCell>
-                            <StyledTableCell align="center" className='global-font' style={{ minWidth: 125 }}>Confident Score</StyledTableCell>
-                            <StyledTableCell align="right" className='global-font' style={{ minWidth: 10 }}></StyledTableCell>
+                            <StyledTableCell align="right" className='global-font teal' style={{ minWidth: 10 }}></StyledTableCell>
+                            <StyledTableCell align="left" className='global-font teal' style={{ minWidth: 70 }}>Name</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 80 }}>Creator</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 120 }}>Creation Date</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 90 }}>File Type</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 90 }}>File Size</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 70 }}>Category</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 160 }}>Classification Status</StyledTableCell>
+                            <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 135 }}>Confident Score</StyledTableCell>
+                            <StyledTableCell align="right" className='global-font teal' style={{ minWidth: 95 }}></StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -212,39 +216,45 @@ export default function CustomizedTables() {
                             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             : rows
                         ).map((row) => (
-                            <StyledTableRow key={row.name} onDoubleClick={onPreview}>
-                                <Tooltip className='tooltip' title={'This is tooltip for metadata'}>
-                                    <StyledTableCell align="left" style={{ minWidth: 80 }} className='global-font'>
+                            <StyledTableRow key={row.name}>
+                                <StyledTableCell align="left" style={{ minWidth: 10 }} className='global-font'>
+                                    <Checkbox  />
+                                </StyledTableCell>
+                                <Tooltip className='tooltip' title={'This is tooltip for metadata'} onDoubleClick={onPreview}>
+                                    <StyledTableCell align="left" style={{ minWidth: 70 }} className='global-font'>
                                         {row.name}
                                     </StyledTableCell>
                                 </Tooltip>
-                                <StyledTableCell align="center" style={{ minWidth: 80 }} className='global-font'>
+                                <StyledTableCell align="center" style={{ minWidth: 80 }} className='global-font' onDoubleClick={onPreview}>
                                     {row.creator}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font'>
+                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font' onDoubleClick={onPreview}>
                                     {row.date}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 100 }} className='global-font'>
+                                <StyledTableCell align="center" style={{ minWidth: 90 }} className='global-font' onDoubleClick={onPreview}>
                                     {row.type}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 80 }} className='global-font'>
+                                <StyledTableCell align="center" style={{ minWidth: 90 }} className='global-font' onDoubleClick={onPreview}>
                                     {row.size}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 70 }} className='global-font'>
+                                <StyledTableCell align="center" style={{ minWidth: 70 }} className='global-font' onDoubleClick={onPreview}>
                                     {row.category}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 150 }} className='global-font'>
+                                <StyledTableCell align="center" style={{ minWidth: 160 }} className='global-font' onDoubleClick={onPreview}>
                                     {row.classification}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 125 }} className='global-font'>
+                                <StyledTableCell align="center" style={{ minWidth: 135 }} className='global-font' onDoubleClick={onPreview}>
                                     {row.confident}
                                 </StyledTableCell>
-                                <StyledTableCell align="right" style={{ minWidth: 10 }} >
+                                <StyledTableCell align="right" style={{ minWidth: 95 }} >
                                     <Tooltip className='tooltip' title={'Metadata details'}>
-                                        <RemoveRedEyeIcon onClick={onMataViewOn} className='cursor-icon' />
+                                        <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
+                                    </Tooltip>
+                                    <Tooltip className='tooltip' title={'Peview document'}>
+                                        <RemoveRedEyeIcon className='cursor-icon' />
                                     </Tooltip>
                                     <Tooltip className='tooltip' title={'Remove document'}>
-                                        <DeleteForeverIcon className='cursor-icon' />
+                                        <DeleteIcon className='cursor-icon' />
                                     </Tooltip>
                                 </StyledTableCell>
                             </StyledTableRow>

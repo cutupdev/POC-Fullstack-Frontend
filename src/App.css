@@ -13,6 +13,10 @@ body {
   font-family: 'roboto' !important;
 }
 
+.roboto-font > span {
+  font-family: 'roboto' !important;
+}
+
 .light {
   --clr-bg: #fcfcfc;
   --clr-bg-alt: #fff;
@@ -191,6 +195,46 @@ main {
   font-weight: normal !important;
 }
 
+.teal {
+  background: #008080 !important;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.flex {
+  display: flex !important;
+}
+
+.small-font-size {
+  font-size: 16px !important;
+}
+
+.css-1for1q8-MuiInputBase-root-MuiFilledInput-root:before {
+  border-bottom: none !important;
+}
+
+.css-1for1q8-MuiInputBase-root-MuiFilledInput-root::before {
+  border-bottom: none !important;
+}
+
+.css-yadfaa-MuiInputBase-root-MuiFilledInput-root:before {
+  border-bottom: none !important;
+}
+
+.css-yadfaa-MuiInputBase-root-MuiFilledInput-root::before {
+  border-bottom: none !important;
+}
+
+.submit-btn {
+  width: 160px !important;
+  font-size: 18px !important;
+  border-radius: 0px !important;
+  height: 45px !important;
+}
+
 .assist-root {
   width: 100% !important;
   margin-bottom: 30px
@@ -243,19 +287,18 @@ main {
 
 .visibility1 {
   z-index: 9;
-  background: #F1F3F8;
+  background: transparent !important;
 }
 
 .visibility2 {
   z-index: 9;
-  background: #F1F3F8;
+  background: transparent !important;
 }
 
 .visibility-box {
   position: absolute;
-  margin-top: 8px;
+  margin-top: 20px;
   right: 10px !important;
-  height: 10px;
   background-color: white !important
 }
 
@@ -280,6 +323,11 @@ main {
   font-weight: normal !important;
   font-family: roboto !important;
   font-style: normal !important;
+}
+
+.signin-box {
+  background-color: ffffff !important;
+  background: transparent !important;
 }
 
 @media (max-width: 600px) {
