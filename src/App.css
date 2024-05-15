@@ -1,20 +1,36 @@
 .app {
-  font-family: 'roboto';
+  font-family: roboto;
   line-height: 1.5;
   color: var(--clr-fg);
   background-color: var(--clr-bg);
 }
 
 body {
-  font-family: 'roboto';
+  font-family: roboto;
 }
 
 .roboto-font {
-  font-family: 'roboto' !important;
+  font-family: roboto !important;
 }
 
 .roboto-font>span {
-  font-family: 'roboto' !important;
+  font-family: roboto !important;
+}
+
+.font-size-12 {
+  font-size: 12px !important;
+}
+
+.font-size-16 {
+  font-size: 16px !important;
+}
+
+.font-bolder {
+  font-weight: 600 !important;
+}
+
+.black-font {
+  color: #000000 !important;
 }
 
 .light {
@@ -195,23 +211,52 @@ main {
 }
 
 .metaview-box {
+  display: flex;
+  justify-content: space-between;
   width: 200px !important;
   max-width: 200px !important;
   min-width: 200px !important;
-  background-color: #aaaaaa !important;
+  background-color: #ffffff !important;
   border-radius: 10px;
+}
+
+.grey-line {
+  width: 8px !important;
+  max-width: 8px !important;
+  min-width: 8px !important;
+  height: 100%;
+  border-radius: 5px;
+  background-color: #bbbbbb !important;
+  margin-left: 5px !important;
+  margin-right: 20px !important;
+  border: 1px solid #888888;
+}
+
+.metaview-container {
+  width: 100%;
 }
 
 .metaview-head {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   border-radius: 10px;
 }
 
 .metaview-close {
   cursor: pointer;
-  margin-top: 10px;
-  margin-right: 10px;
+}
+
+.metaview-body {
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px !important;
+}
+
+.metaview-cell {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
 }
 
 .menu-item {
