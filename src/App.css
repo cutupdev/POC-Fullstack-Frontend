@@ -301,6 +301,19 @@ main {
   margin: 0px !important
 }
 
+.dis-center {
+  display: flex;
+  justify-content: center;
+}
+
+.color-red {
+  color: #f00 !important;
+}
+
+.wid-400 {
+  min-width: 400px !important;
+}
+
 .upload-box {
   border: 1px solid #CAD2E0 !important;
   border-radius: 10px;
@@ -309,6 +322,23 @@ main {
   background: #F3F4F9;
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.upload-category-btnbox {
+  display: flex;
+  justify-content: center;
+}
+
+.ant-upload {
+  width: 100% !important;
+}
+
+.upload-category-btn {
+  background: #00f;
+  display: flex;
+  justify-content: center;
+  font-size: 24px !important;
+  margin-top: 30px !important;
 }
 
 .upload-letter {

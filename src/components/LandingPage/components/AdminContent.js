@@ -39,10 +39,64 @@ import InputLabel from '@mui/material/InputLabel';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import CategoryButton from './CategoryButton';
-import Upload from './Upload';
 import { useLocation } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { visuallyHidden } from '@mui/utils';
+
+import { UploadOutlined } from '@ant-design/icons';
+import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Upload } from 'antd';
+import { color } from 'framer-motion';
+
+
+const theme = createTheme({
+  components: {
+    MuiFilledInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: '0px !important',
+          backgroundColor: 'transparent !important', // background color of the input
+          '&:hover:before': {
+            borderBottomColor: 'black', // on hover
+          },
+        }
+      }
+    }
+  }
+});
+
+
+const DraggableUploadListItem = ({ originNode, file }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: file.uid,
+  });
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    cursor: 'move',
+  };
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      // prevent preview event when drag end
+      className={isDragging ? 'is-dragging' : ''}
+      {...attributes}
+      {...listeners}
+    >
+      {/* hide error tooltip when dragging */}
+      {file.status === 'error' && isDragging ? originNode.props.children : originNode}
+    </div>
+  );
+};
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -177,8 +231,35 @@ export default function AdminContent() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [categoryName, setCategoryName] = React.useState('');
-  const [modalState, setModalState] = React.useState(false);
   const [editCase, setEditCase] = React.useState(false);
+  const [nameError, setNameError] = React.useState(false);
+  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [fileError, setFileError] = React.useState(false);
+  const [fileErrorMessage, setFileErrorMessage] = React.useState('');
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = (e) => {
+    setOpen(true);
+
+    if (e == null) {
+      setCategoryName("");
+      setEditCase(false);
+    } else {
+      setCategoryName(e.name);
+      setEditCase(true);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setEditCase(false);
+    setCategoryName("");
+    setNameError(false);
+    setNameErrorMessage('');
+    setFileError(false);
+    setFileErrorMessage("");
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -189,33 +270,99 @@ export default function AdminContent() {
     setPage(0);
   };
 
-  const modalClose = () => {
-    setModalState(false);
-    setEditCase(false);
-    setCategoryName("");
-  }
+  // const modalClose = () => {
+  //   setModalState(false);
+  //   setEditCase(false);
+  //   setCategoryName("");
+  // }
 
-  const modalOpen = (e) => {
-    if(e == null) {
-      setCategoryName("");
-      setEditCase(false);
-    } else {
-      setCategoryName(e.name);
-      setEditCase(true);
-    }
-    setModalState(true);
-  }
-
+  // const modalOpen = (e) => {
+  //   if (e == null) {
+  //     setCategoryName("");
+  //     setEditCase(false);
+  //   } else {
+  //     setCategoryName(e.name);
+  //     setEditCase(true);
+  //   }
+  //   setModalState(true);
+  // }
+  
   const onCategoryName = (e) => {
-    setCategoryName(e.target.value);
+    setCategoryName(e.target.value)
   }
 
   const onSubmit = (e) => {
-    setModalState(false);
-    setEditCase(false);
+    const name = document.getElementById('name');
+    
+    if(fileList.length == 0 || !name.value) {
+      if(!name.value) {
+        setNameError(true);
+        setNameErrorMessage('Category name is required !');
+      }
+      if(fileList.length == 0) {
+        setFileError(true);
+        setFileErrorMessage('Attach one more file for this category !');
+      }
+    } else {
+      setOpen(false);
+      setEditCase(false);
+      setNameError(false);
+      setNameErrorMessage('');
+      setFileError(false);
+      setFileErrorMessage("");
+    }
   }
 
+  const [fileList, setFileList] = React.useState([
+    {
+      uid: '-1',
+      name: 'mocrosoft.pdf',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+      uid: '-2',
+      name: 'poc.doc',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+      uid: '-3',
+      name: 'IT.pptx',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+  ]);
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+  const descriptionElementRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
+
+  const sensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+  const onDragEnd = ({ active, over }) => {
+    if (active.id !== over?.id) {
+      setFileList((prev) => {
+        const activeIndex = prev.findIndex((i) => i.uid === active.id);
+        const overIndex = prev.findIndex((i) => i.uid === over?.id);
+        return arrayMove(prev, activeIndex, overIndex);
+      });
+    }
+  };
+  const onChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
 
   return (
     <Box
@@ -276,130 +423,187 @@ export default function AdminContent() {
               className='global-font category-box' 
             /> */}
             {/* <Upload /> */}
-            <Button variant="contained" color="primary" onClick={() => modalOpen(null)} className='doc-upload-btn'>
+            <Button variant="contained" color="primary" onClick={() => handleClickOpen()} className='doc-upload-btn'>
               Add Category
             </Button>
           </Stack>
 
         </Stack>
         {/* <div className='metaview-content'> */}
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell align="left" className='global-font teal' style={{ minWidth: 100 }}>Name</StyledTableCell>
-                  <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 150 }}>Creation Date</StyledTableCell>
-                  <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 200 }}>Samples</StyledTableCell>
-                  <StyledTableCell align="right" className='global-font teal' style={{ minWidth: 50 }}></StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  : rows
-                ).map((row) => (
-                  <StyledTableRow key={row.name}>
-                    <StyledTableCell align="left" style={{ minWidth: 100 }} className='global-font'>
-                      {row.name}
-                    </StyledTableCell>
-                    <StyledTableCell align="center" style={{ minWidth: 150 }} className='global-font'>
-                      {row.date}
-                    </StyledTableCell>
-                    <StyledTableCell align="center" style={{ minWidth: 200 }} className='global-font'>
-                      {row.sample}
-                    </StyledTableCell>
-                    <StyledTableCell align="right" style={{ minWidth: 50 }} >
-                      <Tooltip className='tooltip' title={'Edit Category'}>
-                        <EditIcon onClick={() => modalOpen(row)} className='cursor-icon' />
-                      </Tooltip>
-                      {/* <Tooltip className='tooltip' title={'Peview document'}>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 500 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell align="left" className='global-font teal' style={{ minWidth: 100 }}>Name</StyledTableCell>
+                <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 150 }}>Creation Date</StyledTableCell>
+                <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 200 }}>Samples</StyledTableCell>
+                <StyledTableCell align="right" className='global-font teal' style={{ minWidth: 50 }}></StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                : rows
+              ).map((row) => (
+                <StyledTableRow key={row.name}>
+                  <StyledTableCell align="left" style={{ minWidth: 100 }} className='global-font'>
+                    {row.name}
+                  </StyledTableCell>
+                  <StyledTableCell align="center" style={{ minWidth: 150 }} className='global-font'>
+                    {row.date}
+                  </StyledTableCell>
+                  <StyledTableCell align="center" style={{ minWidth: 200 }} className='global-font'>
+                    {row.sample}
+                  </StyledTableCell>
+                  <StyledTableCell align="right" style={{ minWidth: 50 }} >
+                    <Tooltip className='tooltip' title={'Edit Category'}>
+                      <EditIcon onClick={() => handleClickOpen(row)} className='cursor-icon' />
+                    </Tooltip>
+                    {/* <Tooltip className='tooltip' title={'Peview document'}>
                                         <RemoveRedEyeIcon className='cursor-icon' />
                                     </Tooltip>
                                     <Tooltip className='tooltip' title={'Remove document'}>
                                         <DeleteIcon className='cursor-icon' />
                                     </Tooltip> */}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    className='pagination'
-                    rowsPerPageOptions={[10, 50, 100, { label: 'All', value: -1 }]}
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    slotProps={{
-                      select: {
-                        inputProps: {
-                          'aria-label': 'rows per page',
-                        },
-                        native: true,
-                      },
-                    }}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6} />
                 </TableRow>
-              </TableFooter>
-            </Table>
-            <Dialog
-              open={modalState}
-              onClose={modalClose}
-            // PaperProps={{
-            //   component: 'form',
-            //   onSubmit: (event) => {
-            //     event.preventDefault();
-            //     const formData = new FormData(event.currentTarget);
-            //     const formJson = Object.fromEntries(formData.entries());
-            //     const email = formJson.email;
-            //     console.log(email);
-            //     handleClose();
-            //   },
-            // }}
-            >
-              <DialogTitle className='modal-title'>{editCase? "Edit Category" : "New Category"}</DialogTitle>
-              <DialogContent>
-                <TextField
-                  autoFocus
-                  required
-                  className='roboto-font'
-                  value={categoryName}
-                  onChange={onCategoryName}
-                  margin="dense"
-                  id="name"
-                  name="name"
-                  label="Category name"
-                  type="text"
-                  fullWidth
-                  variant="standard"
-                  inputProps={{
-                    style: {
-                      fontSize: 20,
-                      borderRadius: 0,
-                      fontFamily: 'roboto !important',
-                      height: '32px'
-                    }
-                  }} // font size of input text
-                  InputLabelProps={{ style: { fontSize: 18, fontFamily: 'roboto !important' } }} // font size of input label
+              )}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  className='pagination'
+                  rowsPerPageOptions={[10, 50, 100, { label: 'All', value: -1 }]}
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  slotProps={{
+                    select: {
+                      inputProps: {
+                        'aria-label': 'rows per page',
+                      },
+                      native: true,
+                    },
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
                 />
-                <div>
-                  sfsdf
-                </div>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={modalClose} className='modal-btn'>Cancel</Button>
-                <Button onClick={onSubmit} className='modal-btn'>{editCase? "Edit" : "Add"}</Button>
-              </DialogActions>
-            </Dialog>
-          </TableContainer>
+              </TableRow>
+            </TableFooter>
+          </Table>
+          {/* <Dialog
+            open={open}
+            onClose={handleClose}
+            scroll={scroll}
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
+          >
+            <DialogTitle id="scroll-dialog-title" className='roboto-font' >File Upload</DialogTitle>
+            <DialogContent dividers={scroll === 'paper'}>
+              File Upload here
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} className='roboto-font' >Cancel</Button>
+              <Button onClick={handleClose} className='roboto-font' >Save</Button>
+            </DialogActions>
+          </Dialog> */}
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            scroll='paper'
+          >
+            <DialogTitle className='modal-title'><h2 className='dis-center wid-400'>{editCase ? "Edit Category" : "New Category"}</h2></DialogTitle>
+            <DialogContent dividers={true} >
+            <ThemeProvider theme={theme}>
+              <TextField 
+                autoFocus
+                required
+                error={nameError}
+                helperText={nameErrorMessage}
+                value={categoryName}
+                onChange={onCategoryName}
+                id="name" 
+                name='name'
+                label="Category name" 
+                variant="filled" 
+                fullWidth
+                type="text"
+                inputProps={{
+                  style: {
+                    fontSize: 24,
+                    borderRadius: 0,
+                    fontFamily: 'roboto !important',
+                    height: '32px',
+                    
+                  }
+                }} // font size of input text
+                InputLabelProps={{ 
+                  style: { 
+                    fontSize: 18, 
+                    fontFamily: 'roboto !important',
+                    color: '#000',
+                    
+                  } 
+                }} // font size of input label
+              />
+              </ThemeProvider>
+              {/* <TextField
+                autoFocus
+                required
+                className='roboto-font'
+                value={categoryName}
+                onChange={onCategoryName}
+                margin="dense"
+                id="name"
+                name="name"
+                label="Category name"
+                type="text"
+                fullWidth
+                variant="standard"
+                inputProps={{
+                  style: {
+                    fontSize: 20,
+                    borderRadius: 0,
+                    fontFamily: 'roboto !important',
+                    height: '32px'
+                  }
+                }} // font size of input text
+                InputLabelProps={{ style: { fontSize: 18, fontFamily: 'roboto !important' } }} // font size of input label
+              /> */}
+              <div>
+                <DndContext sensors={[sensor]} onDragEnd={onDragEnd} >
+                  <SortableContext items={fileList.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
+                    <Upload
+                      action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                      fileList={fileList}
+                      onChange={onChange}
+                      itemRender={(originNode, file) => (
+                        <DraggableUploadListItem originNode={originNode} file={file} />
+                      )}
+                    >
+                      <div className='upload-category-btnbox'>
+                        <Button className='upload-category-btn' icon={<UploadOutlined />}>Click to Upload</Button>
+                      </div>
+                      <div className='dis-center color-red roboto-font'>
+                        {fileError? fileErrorMessage : ""}
+                      </div>
+                    </Upload>
+                  </SortableContext>
+                </DndContext>
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} className='modal-btn'>Cancel</Button>
+              <Button onClick={onSubmit} className='modal-btn'>{editCase ? "Edit" : "Add"}</Button>
+            </DialogActions>
+          </Dialog>
+        </TableContainer>
         {/* </div> */}
       </Container>
     </Box>
