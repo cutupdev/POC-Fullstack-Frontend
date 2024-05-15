@@ -31,6 +31,7 @@ import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import DialogContentText from '@mui/material/DialogContentText';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -165,6 +166,8 @@ export default function CustomizedTables() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
+    const [deleteModal, setDeleteModal] = React.useState(false);
+    const [deleteData, setDeleteData] = React.useState("");
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -189,6 +192,21 @@ export default function CustomizedTables() {
 
     const offPreview = (event) => {
         setPreviewStatus(false);
+    }
+
+    const onDelete = (event) => {
+        setDeleteData(event.name);
+        setDeleteModal(true);
+    }
+
+    const deleteClose = (event) => {
+        setDeleteModal(false);
+        setDeleteData("");
+    }
+
+    const deleteSubmit = (event) => {
+        setDeleteModal(false);
+        setDeleteData("");
     }
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -218,42 +236,42 @@ export default function CustomizedTables() {
                         ).map((row) => (
                             <StyledTableRow key={row.name}>
                                 <StyledTableCell align="left" style={{ minWidth: 10 }} className='global-font'>
-                                    <Checkbox  />
+                                    <Checkbox />
                                 </StyledTableCell>
-                                <Tooltip className='tooltip' title={'This is tooltip for metadata'} onDoubleClick={onPreview}>
+                                <Tooltip className='tooltip' title={'This is tooltip for metadata'} onDoubleClick={() => onPreview(row)}>
                                     <StyledTableCell align="left" style={{ minWidth: 70 }} className='global-font'>
                                         {row.name}
                                     </StyledTableCell>
                                 </Tooltip>
-                                <StyledTableCell align="center" style={{ minWidth: 80 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 80 }} className='global-font' onDoubleClick={() => onPreview(row)}>
                                     {row.creator}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 120 }} className='global-font' onDoubleClick={() => onPreview(row)}>
                                     {row.date}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 90 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 90 }} className='global-font' onDoubleClick={() => onPreview(row)}>
                                     {row.type}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 90 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 90 }} className='global-font' onDoubleClick={() => onPreview(row)}>
                                     {row.size}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 70 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 70 }} className='global-font' onDoubleClick={() => onPreview(row)}>
                                     {row.category}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 160 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 160 }} className='global-font' onDoubleClick={() => onPreview(row)}>
                                     {row.classification}
                                 </StyledTableCell>
-                                <StyledTableCell align="center" style={{ minWidth: 135 }} className='global-font' onDoubleClick={onPreview}>
+                                <StyledTableCell align="center" style={{ minWidth: 135 }} className='global-font' onDoubleClick={() => onPreview(row)}>
                                     {row.confident}
                                 </StyledTableCell>
                                 <StyledTableCell align="right" style={{ minWidth: 95 }} >
                                     <Tooltip className='tooltip' title={'Metadata details'}>
                                         <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
                                     </Tooltip>
-                                    <Tooltip className='tooltip' title={'Peview document'}>
+                                    <Tooltip className='tooltip' title={'Peview document'} onClick={() => onPreview(row)} >
                                         <RemoveRedEyeIcon className='cursor-icon' />
                                     </Tooltip>
-                                    <Tooltip className='tooltip' title={'Remove document'}>
+                                    <Tooltip className='tooltip' title={'Remove document'} onClick={() => onDelete(row)}>
                                         <DeleteIcon className='cursor-icon' />
                                     </Tooltip>
                                 </StyledTableCell>
@@ -330,6 +348,28 @@ export default function CustomizedTables() {
                         </Button>
                     </DialogActions>
                 </BootstrapDialog>
+                <Dialog
+                    open={deleteModal}
+                    onClose={deleteClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle className='roboto-font' id="alert-dialog-title">
+                        {`Do you want to remove '${deleteData}' ?`}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className='roboto-font' id="alert-dialog-description">
+                            If you want to remove this data, just click 'Agree Button'.
+                            In this case, you can't recover this document.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={deleteClose} className='roboto-font'>Disagree</Button>
+                        <Button onClick={deleteSubmit} autoFocus className='roboto-font'>
+                            Agree
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </TableContainer>
             {metaviewStatus ? <div className='metaview-box'>
                 <div onClick={onMataviewOff} className='metaview-head'>

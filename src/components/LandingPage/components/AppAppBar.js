@@ -62,6 +62,7 @@ function AppAppBar({ mode, toggleColorMode }) {
       <Container maxWidth="lg">
         <Toolbar
           variant="regular"
+          className='custom-navbar'
           sx={(theme) => ({
             display: 'flex',
             alignItems: 'center',
