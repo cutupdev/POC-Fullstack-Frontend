@@ -7,7 +7,6 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import CategoryButton from './CategoryButton';
-// import Upload from './Upload';
 import CustomizedTables from './Table'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
