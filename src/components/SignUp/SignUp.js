@@ -18,6 +18,9 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import ReCAPTCHA from 'react-google-recaptcha'
+// import 'dotenv';
+// require('dotenv').config()
 
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -168,6 +171,8 @@ export default function SignUp() {
   }
 
   const validateInputs = () => {
+    console.log("ddddddddddddddddd")
+    console.log(process.env.REACT_APP_SITE_KEY)
     const name = document.getElementById('name');
     const email = document.getElementById('email');
     const password = document.getElementById('password');
@@ -238,12 +243,12 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    // console.log({
+    //   name: data.get('name'),
+    //   lastName: data.get('lastName'),
+    //   email: data.get('email'),
+    //   password: data.get('password'),
+    // });
   };
 
   return (
@@ -388,6 +393,9 @@ export default function SignUp() {
                 >
                   Sign up
                 </Button>
+              </div>
+              <div className='dis-center'>
+                <ReCAPTCHA sitekey={process.env.REACT_APP_SITE_KEY}/>
               </div>
             </Box>
           </Card>
