@@ -131,7 +131,7 @@ export default function AccountMenu() {
         //   },
         // }}
       >
-        <DialogTitle className='modal-title'>Full Name Edit</DialogTitle>
+        <DialogTitle className='modal-title'>Modify Profile</DialogTitle>
         <DialogContent>
           <DialogContentText className='modal-text'>
             To edit your full name, just modify your full name here.
