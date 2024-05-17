@@ -1,6 +1,9 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import InputLabel from '@mui/material/InputLabel';
 import Link from '@mui/material/Link';
@@ -14,7 +17,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { InboxOutlined } from '@ant-design/icons';
-import { message, Upload } from 'antd';
+import { message, Upload, Modal } from 'antd';
 
 const { Dragger } = Upload;
 
@@ -22,11 +25,13 @@ const { Dragger } = Upload;
 export default function Content() {
 
   const [open, setOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
 
-  const props = {
+  const [uploadProps, setUploadProps] = React.useState({
     name: 'file',
     multiple: true,
-    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+    // directory: true,
+    // action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
     onChange(info) {
       const { status } = info.file;
       if (status !== 'uploading') {
@@ -41,6 +46,18 @@ export default function Content() {
     onDrop(e) {
       console.log('Dropped files', e.dataTransfer.files);
     },
+  });
+
+  const handleUploadTypeSelection = (type) => {
+    setUploadProps({ ...uploadProps, directory: type === 'directory' });
+    setVisible(false);
+  };
+
+  const handleButtonClick = (e) => {
+    // Prevent the Dragger's and other events from being triggered
+    e.stopPropagation();
+    console.log("Button click event detected!");
+    // Implement your button-specific logic here
   };
 
   const handleClickOpen = () => {
@@ -61,6 +78,23 @@ export default function Content() {
       }
     }
   }, [open]);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log('Uploading file:', file.name);
+      // Assume setUploadProps is setting properties related to uploading files
+      setUploadProps(prev => ({...prev, file }));
+    }
+   };
+ 
+   const handleFolderUpload = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      console.log('Uploading folder:', files.length, 'files');
+      // Process the folder or multiple files upload logic
+    }
+   };
 
   return (
     <Box
@@ -132,11 +166,29 @@ export default function Content() {
         >
           <DialogTitle id="scroll-dialog-title"><div className='roboto-font font-size-28 dis-center'>Document Upload</div></DialogTitle>
           <DialogContent>
-            <Dragger {...props} className='mb-100 bg-remove'>
-              <p className="ant-upload-drag-icon bg-remove">
-                <InboxOutlined />
+            <Dragger {...uploadProps} className='mb-100 bg-remove'>
+              <p className="ant-upload-drag-icon bg-remove" onClick={handleButtonClick}>
+                <PopupState variant="popover" popupId="demo-popup-menu">
+                  {(popupState) => (
+                    <React.Fragment>
+                      <Button variant="contained" {...bindTrigger(popupState)} >
+                        Upload
+                      </Button>
+                      <Menu {...bindMenu(popupState)}>
+                        <MenuItem onClick={popupState.close}>
+                          <label htmlFor="file-upload">Upload File</label>
+                          <input type="file" id="file-upload" style={{ display: 'none' }} onChange={handleFileUpload} />
+                        </MenuItem>
+                        <MenuItem onClick={popupState.close}>
+                          <label htmlFor="folder-upload">Upload Folder</label>
+                          <input type="file" id="folder-upload" style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
+                        </MenuItem>
+                      </Menu>
+                    </React.Fragment>
+                  )}
+                </PopupState>
               </p>
-              <p className="ant-upload-text bg-remove">Click or drag file to this area to upload</p>
+              <p className="ant-upload-text bg-remove">Click or drag files to this area to upload</p>
               <p className="ant-upload-hint bg-remove">
                 Support for a single or bulk upload. Strictly prohibited from uploading company data or other
                 banned files.
