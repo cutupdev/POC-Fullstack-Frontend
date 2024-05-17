@@ -9,6 +9,14 @@ body {
   font-family: roboto;
 }
 
+.main-container-width {
+  width: 100% !important;
+}
+
+.footer-container-border {
+  width: 100% !important;
+}
+
 .roboto-font {
   font-family: roboto !important;
 }
@@ -499,7 +507,23 @@ main {
 }
 
 .custom-navbar {
-  /* width: 1000px !important; */
+  margin-top: 30px !important;
+}
+
+.dense-padding-box {
+  margin-left: 0px !important;
+  width: 140px !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (min-width: 1200px) {
+  .main-container-width {
+    max-width: none !important;
+  }
+  .footer-container-border {
+    max-width: none !important;
+  }
 }
 
 @media (max-width: 900px) {

@@ -30,6 +30,7 @@ function Copyright() {
 export default function Footer() {
   return (
     <Container
+      className='footer-container-border'
       sx={{
         display: 'flex',
         flexDirection: 'column',

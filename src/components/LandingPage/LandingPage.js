@@ -32,6 +32,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import AccountMenu from './components/AccountMenu'
 import Sitemark from './components/SitemarkIcon';
+import { useLocation } from 'react-router-dom';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -81,6 +82,14 @@ export default function TemporaryDrawer() {
   const LPtheme = createTheme(getLPTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
 
+  const location = useLocation().pathname;
+  let path = ""
+  if (location == '/admin/' || location == '/admin') {
+    path = "Dashboard";
+  } else {
+    path = "Admin";
+  }
+
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
     const offset = 128;
@@ -112,7 +121,22 @@ export default function TemporaryDrawer() {
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+        <ListItem disablePadding>
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <Button
+              href={path == "Admin" ? '/admin' : '/dashboard'}
+              variant="text"
+              className='global-font'
+              color="info"
+              size="small"
+              onClick={() => scrollToSection('testimonials')}
+            >
+              {path}
+            </Button>
+          </Box>
+        </ListItem>
+
+        {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>
@@ -121,20 +145,7 @@ export default function TemporaryDrawer() {
               <ListItemText primary={text} />
             </ListItemButton>
           </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        ))} */}
       </List>
     </Box>
   );
@@ -166,6 +177,7 @@ export default function TemporaryDrawer() {
         })}
       >
         <Box
+
           sx={{
             flexGrow: 1,
             display: 'flex',
@@ -185,19 +197,11 @@ export default function TemporaryDrawer() {
             <MenuIcon />
           </IconButton>
           {/* <Button onClick={toggleDrawer(true)}>Open drawer</Button> */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Button
-              // href={path == "Admin" ? '/admin' : '/dashboard'}
-              variant="text"
-              className='global-font'
-              color="info"
-              size="small"
-              onClick={() => scrollToSection('testimonials')}
-            >
-              {/* {path} */}dashboard
-            </Button>
-          </Box>
+
         </Box>
+        <Drawer open={open} onClose={toggleDrawer(false)}>
+          {DrawerList}
+        </Drawer>
         <Box
           sx={{
             display: { xs: 'none', md: 'flex' },
@@ -209,10 +213,8 @@ export default function TemporaryDrawer() {
         </Box>
       </Toolbar>
       {/* <AppAppBar mode={mode} toggleColorMode={toggleColorMode} /> */}
-      
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-        {DrawerList}
-      </Drawer>
+
+
       <Content />
       <Box sx={{ bgcolor: 'background.default' }}>
         <Footer />
