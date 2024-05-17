@@ -16,8 +16,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { InboxOutlined } from '@ant-design/icons';
 import { message, Upload, Modal } from 'antd';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const { Dragger } = Upload;
 
@@ -84,17 +87,17 @@ export default function Content() {
     if (file) {
       console.log('Uploading file:', file.name);
       // Assume setUploadProps is setting properties related to uploading files
-      setUploadProps(prev => ({...prev, file }));
+      setUploadProps(prev => ({ ...prev, file }));
     }
-   };
- 
-   const handleFolderUpload = (e) => {
+  };
+
+  const handleFolderUpload = (e) => {
     const files = e.target.files;
     if (files.length > 0) {
       console.log('Uploading folder:', files.length, 'files');
       // Process the folder or multiple files upload logic
     }
-   };
+  };
 
   return (
     <Box
@@ -172,25 +175,27 @@ export default function Content() {
                 <PopupState variant="popover" popupId="demo-popup-menu">
                   {(popupState) => (
                     <React.Fragment>
-                      <Button variant="contained" {...bindTrigger(popupState)} >
+                      <Button variant="contained" {...bindTrigger(popupState)} className='pop-upload roboto-font font-size-16 mouse-pointer' >
                         Upload
                       </Button>
-                      <Menu {...bindMenu(popupState)}>
-                        <MenuItem onClick={popupState.close}>
-                          <label htmlFor="file-upload">Upload File</label>
-                          <input type="file" id="file-upload" style={{ display: 'none' }} onChange={handleFileUpload} />
+                      <Menu {...bindMenu(popupState)} >
+                        <MenuItem onClick={popupState.close} className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
+                          <FileUploadIcon  className='mr-15 background-remove' />
+                          <label htmlFor="file-upload" className='background-remove mouse-pointer'>Upload File</label>
+                          <input type="file" id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
                         </MenuItem>
-                        <MenuItem onClick={popupState.close}>
-                          <label htmlFor="folder-upload">Upload Folder</label>
-                          <input type="file" id="folder-upload" style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
+                        <MenuItem onClick={popupState.close}  className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
+                          <FileUploadIcon className='mr-15 background-remove' />
+                          <label htmlFor="folder-upload" className='background-remove mouse-pointer'>Upload Folder</label>
+                          <input type="file" id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
                         </MenuItem>
                       </Menu>
                     </React.Fragment>
                   )}
                 </PopupState>
               </p>
-              <p className="ant-upload-text bg-remove">Click or drag files to this area to upload</p>
-              <p className="ant-upload-hint bg-remove">
+              <p className="ant-upload-text bg-remove roboto-font">Click or drag files to this area to upload</p>
+              <p className="ant-upload-hint bg-remove roboto-font">
                 Support for a single or bulk upload. Strictly prohibited from uploading company data or other
                 banned files.
               </p>

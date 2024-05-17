@@ -17,53 +17,56 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import ClearIcon from '@mui/icons-material/Clear';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import InfoIcon from '@mui/icons-material/Info';
+import DocViewer from "react-doc-viewer";
 import { visuallyHidden } from '@mui/utils';
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { FaRegFilePdf } from "react-icons/fa";
 import { RiFileWord2Line } from "react-icons/ri";
 import { RiFilePpt2Line } from "react-icons/ri";
 import { CiText } from "react-icons/ci";
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 
-function createData(id, name, creator, date, type, size, category, classification, confident) {
-    return { id, name, creator, date, type, size, category, classification, confident };
+function createData(id, name, creator, date, type, size, category, classification, confident, checked) {
+    return { id, name, creator, date, type, size, category, classification, confident, checked };
 }
 
-const rows = [
-    createData(1, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(2, 'Microsoft', "Microgift", "2024-05-09 20:30", "doc", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(3, 'Microsoft', "Microgift", "2024-05-09 20:30", "ppt", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(4, 'Microsoft', "Microgift", "2024-05-09 20:30", "text", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(5, 'Microsoft', "Microgift", "2024-05-09 20:30", "pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(6, 'Microsoft', "Microgift", "2024-05-09 20:30", "doc", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(7, 'Microsoft', "Microgift", "2024-05-09 20:30", "ppt", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(8, 'Microsoft', "Microgift", "2024-05-09 20:30", "text", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(9, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(10, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(11, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(12, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(13, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(14, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(15, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(16, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(17, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(18, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(19, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(20, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(21, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(22, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(23, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(24, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(25, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(26, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(27, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(28, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(29, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-    createData(30, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+const rowsTemp = [
+    createData(1, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(2, 'Microsoft', "Microgift", "2024-05-09 20:30", "doc", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(3, 'Microsoft', "Microgift", "2024-05-09 20:30", "ppt", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(4, 'Microsoft', "Microgift", "2024-05-09 20:30", "text", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(5, 'Microsoft', "Microgift", "2024-05-09 20:30", "pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(6, 'Microsoft', "Microgift", "2024-05-09 20:30", "doc", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(7, 'Microsoft', "Microgift", "2024-05-09 20:30", "ppt", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(8, 'Microsoft', "Microgift", "2024-05-09 20:30", "text", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(9, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(10, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(11, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(12, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(13, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(14, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(15, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(16, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(17, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(18, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(19, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(20, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(21, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(22, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(23, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(24, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(25, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(26, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(27, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(28, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(29, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
+    createData(30, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -107,43 +110,43 @@ const headCells = [
     },
     {
         id: 'creator',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Creator',
     },
     {
         id: 'date',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Creation Date',
     },
     {
         id: 'type',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'File Type',
     },
     {
         id: 'size',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'File Size',
     },
     {
         id: 'category',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Category',
     },
     {
         id: 'classification',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Classification Status',
     },
     {
         id: 'confident',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Confident Score',
     },
@@ -151,19 +154,19 @@ const headCells = [
 
 function FileType(props) {
     const { typeStr } = props;
-    if (typeStr === 'pdf' || typeStr === 'Pdf' || typeStr === 'PDF' ) {
+    if (typeStr === 'pdf' || typeStr === 'Pdf' || typeStr === 'PDF') {
         return (
             <FaRegFilePdf className='font-size-16' />
         );
-    } else if(typeStr === 'doc' || typeStr === 'docx' || typeStr === 'Doc' || typeStr === 'Docx' || typeStr === 'DOC' || typeStr === 'DOCX') {
+    } else if (typeStr === 'doc' || typeStr === 'docx' || typeStr === 'Doc' || typeStr === 'Docx' || typeStr === 'DOC' || typeStr === 'DOCX') {
         return (
             <RiFileWord2Line className='font-size-16' />
         );
-    } else if(typeStr === 'ppt' || typeStr === 'pptx' || typeStr === 'Ppt' || typeStr === 'Pptx' || typeStr === 'PPT' || typeStr === 'PPTX') {
+    } else if (typeStr === 'ppt' || typeStr === 'pptx' || typeStr === 'Ppt' || typeStr === 'Pptx' || typeStr === 'PPT' || typeStr === 'PPTX') {
         return (
             <RiFilePpt2Line className='font-size-16' />
         );
-    } else if(typeStr === 'text' || typeStr === 'Text' || typeStr === 'TEXT' || typeStr === 'txt' || typeStr === 'Txt' || typeStr === 'TXT') {
+    } else if (typeStr === 'text' || typeStr === 'Text' || typeStr === 'TEXT' || typeStr === 'txt' || typeStr === 'Txt' || typeStr === 'TXT') {
         return (
             <CiText className='font-size-16' />
         );
@@ -172,11 +175,10 @@ function FileType(props) {
             <IoDocumentTextSharp className='font-size-16' />
         );
     }
-} 
+}
 
 function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-        props;
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -184,7 +186,7 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                <TableCell padding="checkbox" align='right' className='table-cell-general'>
                     <Checkbox
                         color="primary"
                         indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -195,14 +197,16 @@ function EnhancedTableHead(props) {
                         }}
                     />
                 </TableCell>
-                <TableCell padding="checkbox" />
-                
+                <TableCell padding="checkbox" align='right' className='table-cell-general' />
+
                 {headCells.map((headCell) => (
+
                     <TableCell
                         key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
+                        align={'right'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
+                        className='table-cell-general'
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -218,7 +222,7 @@ function EnhancedTableHead(props) {
                         </TableSortLabel>
                     </TableCell>
                 ))}
-                <TableCell padding="checkbox" />
+                <TableCell padding="checkbox" className='table-cell-general' />
             </TableRow>
         </TableHead>
     );
@@ -289,6 +293,8 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable() {
+    const [rows, setRows] = React.useState(rowsTemp);
+    const [visibleRows, setVisibleRows] = React.useState(rowsTemp.slice(0, 10));
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
@@ -299,6 +305,15 @@ export default function EnhancedTable() {
     const [deleteData, setDeleteData] = React.useState("");
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
+    const docs = [
+        // { uri: "https://url-to-my-pdf.pdf" },
+        { uri: require("../../file/GenAI_details.pdf") }, // Local File
+    ];
+
+    React.useEffect(() => {
+        // setRows(rowsTemp);
+        // console.log(visibleRows);
+    }, [rows, visibleRows])
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -318,22 +333,44 @@ export default function EnhancedTable() {
         setPreviewStatus(true);
     }
 
+    const onPreviewOff = (event) => {
+        setPreviewStatus(false);
+    }
+
     const onDelete = (event) => {
         setDeleteData(event.name);
         setDeleteModal(true);
     }
 
     const handleSelectAllClick = (event) => {
+        console.log(event);
+
+        const temp = rows;
+        temp.map((row, id) => {
+            if (event.target.checked) {
+                row.checked = true;
+            } else {
+                row.checked = false;
+            }
+        })
+        // console.log(temp);
+        setRows(temp);
+
         if (event.target.checked) {
             const newSelected = rows.map((n) => n.id);
             setSelected(newSelected);
             return;
         }
+
         setSelected([]);
     };
 
     const handleClick = (event, id) => {
         const selectedIndex = selected.indexOf(id);
+        const temp = rows;
+        temp[id - 1].checked = !temp[id - 1].checked;
+        setRows(temp);
+        console.log("fsfa", id)
         let newSelected = [];
 
         if (selectedIndex === -1) {
@@ -353,11 +390,13 @@ export default function EnhancedTable() {
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
+        setVisibleRows(rows.slice(newPage * rowsPerPage, rowsPerPage * (newPage + 1)));
     };
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+        setVisibleRows(rows.slice(0, event.target.value));
     };
 
     const handleChangeDense = (event) => {
@@ -370,112 +409,225 @@ export default function EnhancedTable() {
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    const visibleRows = React.useMemo(
-        () =>
-            stableSort(rows, getComparator(order, orderBy)).slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage,
-            ),
-        [order, orderBy, page, rowsPerPage],
-    );
+    // const visibleRowsTemp = React.useMemo(
+    //     () =>
+    //         stableSort(rows, getComparator(order, orderBy)).slice(
+    //             page * rowsPerPage,
+    //             page * rowsPerPage + rowsPerPage,
+    //         ),
+    //     [order, orderBy, page, rowsPerPage],
+    // );
+
+    // setVisibleRows(visibleRowsTemp);
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
-                {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
-                <TableContainer>
-                    <Table
-                        sx={{ minWidth: 750 }}
-                        aria-labelledby="tableTitle"
-                        size={dense ? 'small' : 'medium'}
-                    >
-                        <EnhancedTableHead
-                            numSelected={selected.length}
-                            order={order}
-                            orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
-                        />
-                        <TableBody>
-                            {visibleRows.map((row, index) => {
-                                const isItemSelected = isSelected(row.id);
-                                const labelId = `enhanced-table-checkbox-${index}`;
+            <div className='metaview-content'>
+                <Paper sx={{ width: '100%', mb: 2 }}>
+                    {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
+                    <TableContainer>
+                        <Table
+                            sx={{ minWidth: 750 }}
+                            aria-labelledby="tableTitle"
+                            size={dense ? 'small' : 'medium'}
+                        >
+                            <EnhancedTableHead
+                                numSelected={selected.length}
+                                order={order}
+                                orderBy={orderBy}
+                                onSelectAllClick={handleSelectAllClick}
+                                onRequestSort={handleRequestSort}
+                                rowCount={rows.length}
+                            />
+                            <TableBody>
+                                {visibleRows.map((row, index) => {
+                                    const isItemSelected = isSelected(row.id);
+                                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                                return (
-                                    <TableRow
-                                        hover
-                                        onClick={(event) => handleClick(event, row.id)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
-                                        tabIndex={-1}
-                                        key={row.id}
-                                        selected={isItemSelected}
-                                        sx={{ cursor: 'pointer' }}
-                                    >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                color="primary"
-                                                checked={isItemSelected}
-                                                inputProps={{
-                                                    'aria-labelledby': labelId,
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <TableCell padding="checkbox">
-                                            <FileType typeStr={row.type} />
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
-                                            padding="none"
+                                    return (
+                                        <TableRow
+                                            hover
+                                            onClick={(event) => handleClick(event, row.id)}
+                                            role="checkbox"
+                                            aria-checked={isItemSelected}
+                                            tabIndex={-1}
+                                            key={row.id}
+                                            selected={isItemSelected}
+                                            sx={{ cursor: 'pointer' }}
                                         >
-                                            {row.name}
-                                        </TableCell>
-                                        <TableCell align="right">{row.creator}</TableCell>
-                                        <TableCell align="right">{row.date}</TableCell>
-                                        <TableCell align="right">{row.type}</TableCell>
-                                        <TableCell align="right">{row.size}</TableCell>
-                                        <TableCell align="right">{row.category}</TableCell>
-                                        <TableCell align="right">{row.classification}</TableCell>
-                                        <TableCell align="right">{row.confident}</TableCell>
-                                        <TableCell align="right" style={{ minWidth: 95 }}>
-                                            <Tooltip className='tooltip' title={'Metadata details'}>
-                                                <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
-                                            </Tooltip>
-                                            <Tooltip className='tooltip' title={'Peview document'} onClick={() => onPreview(row)} >
-                                                <RemoveRedEyeIcon className='cursor-icon' />
-                                            </Tooltip>
-                                            <Tooltip className='tooltip' title={'Remove document'} onClick={() => onDelete(row)}>
-                                                <DeleteIcon className='cursor-icon' />
-                                            </Tooltip>
-                                        </TableCell>
+                                            <TableCell align="right" padding="checkbox" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                                                <Checkbox
+                                                    color="primary"
+                                                    checked={isItemSelected}
+                                                    inputProps={{
+                                                        'aria-labelledby': labelId,
+                                                    }}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="right" padding="checkbox" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                                                <FileType typeStr={row.type} />
+                                            </TableCell>
+                                            <TableCell
+                                                className={row.checked ? 'table-cell-selected' : 'table-cell-general'}
+                                                align="right"
+                                                component="th"
+                                                id={labelId}
+                                                scope="row"
+                                                padding="none"
+                                            >
+                                                {row.name}
+                                            </TableCell>
+                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.creator}</TableCell>
+                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>
+                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.type}</TableCell>
+                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.size}</TableCell>
+                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.category}</TableCell>
+                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.classification}</TableCell>
+                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.confident}</TableCell>
+                                            <TableCell align="right" style={{ minWidth: 95 }} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                                                <Tooltip className='tooltip' title={'Metadata details'}>
+                                                    <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
+                                                </Tooltip>
+                                                <Tooltip className='tooltip' title={'Peview document'} onClick={() => onPreview(row)} >
+                                                    <RemoveRedEyeIcon className='cursor-icon' />
+                                                </Tooltip>
+                                                <Tooltip className='tooltip' title={'Remove document'} onClick={() => onDelete(row)}>
+                                                    <DeleteIcon className='cursor-icon' />
+                                                </Tooltip>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                                {emptyRows > 0 && (
+                                    <TableRow
+                                        style={{
+                                            height: (dense ? 33 : 53) * emptyRows,
+                                        }}
+                                    >
+                                        <TableCell colSpan={6} />
                                     </TableRow>
-                                );
-                            })}
-                            {emptyRows > 0 && (
-                                <TableRow
-                                    style={{
-                                        height: (dense ? 33 : 53) * emptyRows,
-                                    }}
-                                >
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 50, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Paper>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[10, 50, 100]}
+                        className='table-cell-footer'
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </Paper>
+                {metaviewStatus ? <div className='metaview-box'>
+                    <div className='grey-line'></div>
+                    <div className='metaview-container'>
+                        <div className='metaview-head'>
+                            <div className='dis-cencer'>
+                                <TextSnippetIcon />
+                                <div className='roboto-font font-size-16 black-font'> Microsoft.pdf </div>
+                            </div>
+                            <ClearIcon className='metaview-close' onClick={onMataviewOff} />
+                        </div>
+                        <div className='metaview-body'>
+                            {/* {metadatas.map((head) => ( */}
+
+                            {/* ))} */}
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Type
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    Word
+                                </div>
+                            </div>
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Size
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    16 KB
+                                </div>
+                            </div>
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Storage Used
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    16 KB
+                                </div>
+                            </div>
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Owner
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    Rajan
+                                </div>
+                            </div>
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Modified
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    2023-11-19
+                                </div>
+                            </div>
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Opened
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    2024-04-11
+                                </div>
+                            </div>
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Created
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    2033-11-01
+                                </div>
+                            </div>
+                            <div className='metaview-cell'>
+                                <div className='roboto-font font-size-12 font-bolder black-font'>
+                                    Description
+                                </div>
+                                <div className='roboto-font font-size-16'>
+                                    no description
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+                    :
+                    <div></div>
+                }
+                {previewStatus ? <div className='preview-box'>
+                    <div className='grey-line'></div>
+                    <div className='preview-container'>
+                        <div className='preview-head'>
+                            <div className='dis-cencer'>
+                                <TextSnippetIcon />
+                                <div className='roboto-font font-size-16 black-font'> Microsoft.pdf </div>
+                            </div>
+                            <ClearIcon className='metaview-close' onClick={onPreviewOff} />
+                        </div>
+                        <div className='preview-body'>
+                            <DocViewer documents={docs} />;
+                        </div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+                    :
+                    <div></div>
+                }
+            </div>
             <FormControlLabel
                 className='dense-padding-box'
                 control={<Switch checked={dense} onChange={handleChangeDense} />}

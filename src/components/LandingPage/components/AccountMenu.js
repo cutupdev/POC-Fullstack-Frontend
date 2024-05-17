@@ -67,7 +67,7 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar className='font-size-16 roboto-font menu-avatar-48'>M</Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -107,13 +107,14 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={modalOpen} className='menu-item global-font'>
-          <Avatar /> Profile
+          <Avatar /> 
+          <div className='font-size-16 roboto-font'>Profile</div>
         </MenuItem>
         <MenuItem onClick={handleClose} className='menu-item global-font'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          <div className='font-size-16 roboto-font'>Logout</div>
         </MenuItem>
       </Menu>
       <Dialog

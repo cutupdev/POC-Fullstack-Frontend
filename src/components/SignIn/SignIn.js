@@ -330,8 +330,8 @@ export default function SignIn() {
                         height: '32px' 
                       } 
                     }} // font size of input text
-                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-                    FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 }}}
+                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
+                    FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
                   />
                 </ThemeProvider>
               </FormControl>
@@ -397,13 +397,13 @@ export default function SignIn() {
                         style: { 
                           fontSize: 24, 
                           borderRadius: 0, 
-                          fontFamily: 'roboto',
+                          fontFamily: 'roboto !important',
                           backgroundColor: '#fff', 
                           height: '32px',
                         } 
                       }} // font size of input text
-                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-                      FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 }}}
+                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
+                      FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
                     />
                   </ThemeProvider>
                   <span className='visibility-box'>
