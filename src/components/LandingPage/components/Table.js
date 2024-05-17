@@ -477,6 +477,7 @@ export default function EnhancedTable() {
                 />
             </Paper>
             <FormControlLabel
+                className='dense-padding-box'
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />

@@ -106,13 +106,14 @@ export default function Content() {
       })}
     >
       <Container
+        className='main-container-width'
         sx={{
           display: 'flex',
           width: '100% !important',
           background: '#ffffff',
           flexDirection: 'column',
           alignItems: 'center',
-          pt: { xs: 14, sm: 20 },
+          pt: { xs: 4, sm: 6 },
           pb: { xs: 4, sm: 6 },
         }}
       >
