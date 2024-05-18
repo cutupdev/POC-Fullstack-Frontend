@@ -16,7 +16,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
   BrowserRouter as Router,
   Route,
-  Routes
+  Routes,
+  useNavigate
 } from 'react-router-dom';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -32,6 +33,8 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import AccountMenu from './components/AccountMenu'
 import Sitemark from './components/SitemarkIcon';
+import CloseIcon from '@mui/icons-material/Close';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useLocation } from 'react-router-dom';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
@@ -77,6 +80,7 @@ ToggleCustomTheme.propTypes = {
 };
 
 export default function TemporaryDrawer() {
+  const navigate = useNavigate();
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
@@ -112,6 +116,11 @@ export default function TemporaryDrawer() {
     setShowCustomTheme((prev) => !prev);
   };
 
+  const sidebarClose = () => {
+    setOpen(false);
+    console.log("sidebar closed! ")
+  }
+
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen) => () => {
@@ -119,34 +128,21 @@ export default function TemporaryDrawer() {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-      <List>
-        <ListItem disablePadding>
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Button
-              href={path == "Admin" ? '/admin' : '/dashboard'}
-              variant="text"
-              className='global-font'
-              color="info"
-              size="small"
-              onClick={() => scrollToSection('testimonials')}
-            >
-              {path}
-            </Button>
-          </Box>
-        </ListItem>
-
-        {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))} */}
-      </List>
+    <Box sx={{ width: 250, height: '100%', background: '#ffffff' }} role="presentation" onClick={toggleDrawer(false)}>
+      <div className='leftbar-box'>
+        <div className='leftbar-header'>
+          <Sitemark />
+          <div onClick={sidebarClose}>
+            <CloseIcon className='mouse-pointer' />
+          </div>
+        </div>
+        <div className='leftbar-content'>
+          <div className='leftbar-item-box mouse-pointer' onClick={() => navigate("/admin")}>
+            <AdminPanelSettingsIcon className='mouse-pointer ml-10' />
+            <p className='font-size-16 roboto-font leftbar-item-btn mouse-pointer leftbar-btn-background'>{path}</p>
+          </div>
+        </div>
+      </div>
     </Box>
   );
 
@@ -176,8 +172,7 @@ export default function TemporaryDrawer() {
           //     : '0 1px 2px hsla(210, 0%, 0%, 0.5), 0 2px 12px hsla(210, 100%, 25%, 0.3)',
         })}
       >
-        <Box
-
+        {/* <Box
           sx={{
             flexGrow: 1,
             display: 'flex',
@@ -185,20 +180,20 @@ export default function TemporaryDrawer() {
             alignItems: 'center',
             px: 0,
           }}
+        > */}
+        {/* <Sitemark /> */}
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          className='menu-avatar-36'
+          onClick={toggleDrawer(true)}
+          edge="start"
+          sx={{ mr: 2, ...(open && { display: 'none' }) }}
         >
-          {/* <Sitemark /> */}
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer(true)}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          {/* <Button onClick={toggleDrawer(true)}>Open drawer</Button> */}
-
-        </Box>
+          <MenuIcon className='menu-avatar-36' />
+        </IconButton>
+        {/* <Button onClick={toggleDrawer(true)}>Open drawer</Button> */}
+        {/* </Box> */}
         <Drawer open={open} onClose={toggleDrawer(false)}>
           {DrawerList}
         </Drawer>

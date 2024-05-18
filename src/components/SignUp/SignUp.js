@@ -262,6 +262,7 @@ export default function SignUp() {
           <Card>
             <SitemarkIcon />
             <Typography
+              className='roboto-font'
               component="h1"
               variant="h4"
               sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
@@ -306,13 +307,13 @@ export default function SignUp() {
                     style: { 
                       fontSize: 24, 
                       borderRadius: 0, 
-                      fontFamily: 'roboto', 
+                      fontFamily: 'roboto !important', 
                       backgroundColor: '#fff', 
                       height: '32px' 
                     } 
                   }} // font size of input text
-                  InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-                  FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 }}}
+                  InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
+                  FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
                 />
               </ThemeProvider>
               <ThemeProvider theme={theme}>
@@ -336,13 +337,13 @@ export default function SignUp() {
                     style: { 
                       fontSize: 24, 
                       borderRadius: 0, 
-                      fontFamily: 'roboto', 
+                      fontFamily: 'roboto !important', 
                       backgroundColor: '#fff', 
                       height: '32px' 
                     } 
                   }} // font size of input text
-                  InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-                  FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 }}}
+                  InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
+                  FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
                 />
               </ThemeProvider>
 
@@ -369,13 +370,13 @@ export default function SignUp() {
                         style: { 
                           fontSize: 24, 
                           borderRadius: 0, 
-                          fontFamily: 'roboto',
+                          fontFamily: 'roboto !important',
                           backgroundColor: '#fff', 
                           height: '32px',
                         } 
                       }} // font size of input text
-                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-                      FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 }}}
+                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
+                      FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
                     />
                   </ThemeProvider>
                   <span className='visibility-box'>

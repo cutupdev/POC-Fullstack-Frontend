@@ -111,6 +111,7 @@ function ForgotPassword({ open, handleClose }) {
       <DialogTitle
         className='roboto-font auth-box'
         variant="h4"
+        component="h1"
         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
       >
         Reset password
