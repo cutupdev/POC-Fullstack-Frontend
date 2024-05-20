@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -8,26 +8,7 @@ import TextField from '@mui/material/TextField';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import { isEmail } from '../../validation';
-import { Card as MuiCard } from '@mui/material';
-
-const MuiDialog = styled(Dialog)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  gap: theme.spacing(4),
-  width: '100%',
-  padding: theme.spacing(2),
-  boxShadow:
-    theme.palette.mode === 'light'
-      ? 'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px, hsla(220, 30%, 5%, 0.05) 0px 0px 0px 1px'
-      : 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px, hsla(220, 30%, 5%, 0.05) 0px 0px 0px 1px',
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-    width: '600px',
-  },
-}));
 
 const theme = createTheme({
   components: {
@@ -37,9 +18,6 @@ const theme = createTheme({
           boxShadow: '0 0 0 1px black',
           borderRadius: '0px !important',
           backgroundColor: '#f3f3f3', // background color of the input
-          '&:before': { // underline pseudo-element
-            borderBottomColor: 'grey',
-          },
           '&:hover:before': {
             borderBottomColor: 'black', // on hover
           },
@@ -56,7 +34,7 @@ const theme = createTheme({
             borderRadius: '0px !important',
           },
           '&:before': {
-            borderBottom: '1px solid grey', // Default underline color
+            borderBottom: '1px solid white', // Default underline color
             left: 0,
             bottom: 0,
             right: 0,

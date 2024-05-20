@@ -2,7 +2,6 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import LastPageIcon from '@mui/icons-material/LastPage';
@@ -12,38 +11,26 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableSortLabel from '@mui/material/TableSortLabel';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
+import Checkbox from '@mui/material/Checkbox';
 import Paper from '@mui/material/Paper';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import DeleteIcon from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import ClearIcon from '@mui/icons-material/Clear';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
-import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import InputLabel from '@mui/material/InputLabel';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import CategoryButton from './CategoryButton';
-import { useLocation } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
 import { visuallyHidden } from '@mui/utils';
-
 import { UploadOutlined } from '@ant-design/icons';
 import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import {
@@ -54,7 +41,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Upload } from 'antd';
-import { color } from 'framer-motion';
+import { DatasetLinked } from '@mui/icons-material';
 
 
 const theme = createTheme({
@@ -73,7 +60,6 @@ const theme = createTheme({
   }
 });
 
-
 const DraggableUploadListItem = ({ originNode, file }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: file.uid,
@@ -87,46 +73,14 @@ const DraggableUploadListItem = ({ originNode, file }) => {
     <div
       ref={setNodeRef}
       style={style}
-      // prevent preview event when drag end
       className={isDragging ? 'is-dragging' : ''}
       {...attributes}
       {...listeners}
     >
-      {/* hide error tooltip when dragging */}
       {file.status === 'error' && isDragging ? originNode.props.children : originNode}
     </div>
   );
 };
-
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -189,153 +143,158 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, date, sample) {
-  return { name, date, sample };
+function createData(id, name, date, sample, checked) {
+  return { id, name, date, sample, checked };
 }
 
-const rows = [
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
-  createData('Microsoft', "2024-05-09 20:30", "mocrosoft.pdf, poc.doc ..."),
+const rowsTemp = [
+  createData(1, 'Microsoft1', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(2, 'Microsoft2', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(3, 'Microsoft3', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(4, 'Microsoft4', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(5, 'Microsoft5', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(6, 'Microsoft6', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(7, 'Microsoft7', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(8, 'Microsoft8', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(9, 'Microsoft9', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(10, 'Microsoft10', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(11, 'Microsoft11', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(12, 'Microsoft12', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(13, 'Microsoft13', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(14, 'Microsoft14', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(15, 'Microsoft15', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(16, 'Microsoft16', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(17, 'Microsoft17', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(18, 'Microsoft18', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(19, 'Microsoft19', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(20, 'Microsoft20', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(21, 'Microsoft21', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(22, 'Microsoft22', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(23, 'Microsoft23', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(24, 'Microsoft24', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(25, 'Microsoft25', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(26, 'Microsoft26', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(27, 'Microsoft27', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(28, 'Microsoft28', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(29, 'Microsoft29', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(30, 'Microsoft30', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
 ];
 
+const headCells = [
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: true,
+    label: 'Name',
+  },
+  {
+    id: 'date',
+    numeric: false,
+    disablePadding: false,
+    label: 'Creation Date',
+  },
+  {
+    id: 'sample',
+    numeric: false,
+    disablePadding: false,
+    label: 'Sample Data',
+  },
+];
+
+function EnhancedTableHead(props) {
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const createSortHandler = (property) => (event) => {
+    onRequestSort(event, property);
+  };
+
+  return (
+    <TableHead>
+
+      <TableRow>
+        <TableCell padding="checkbox" align='right' className='table-cell-general'>
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              'aria-label': 'select all desserts',
+            }}
+          />
+        </TableCell>
+        {headCells.map((headCell) => (
+
+          <TableCell
+            key={headCell.id}
+            align={'right'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+            className='table-cell-general'
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+        <TableCell padding="checkbox" className='table-cell-general' />
+      </TableRow>
+    </TableHead>
+  );
+}
+
+EnhancedTableHead.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+  onRequestSort: PropTypes.func.isRequired,
+  onSelectAllClick: PropTypes.func.isRequired,
+  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  orderBy: PropTypes.string.isRequired,
+  rowCount: PropTypes.number.isRequired,
+};
 
 export default function AdminContent() {
+
+  const convertStr = (data) => {
+    const datas = data.map(item => {
+      // Convert the sample array to a single string with comma separated values
+      const sampleStr = item.sample.join(', ');
+      return {
+        id: item.id,
+        name: item.name,
+        date: item.date,
+        sample: sampleStr,
+        checked: item.checked
+      };
+    });
+    return datas;
+  }
+
+  const [categories, setCategories] = React.useState(rowsTemp);
+  const [rows, setRows] = React.useState(rowsTemp);
+  const [visibleRows, setVisibleRows] = React.useState(convertStr(rowsTemp.slice(0, 10)));
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [dense, setDense] = React.useState(false);
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('calories');
+  const [selected, setSelected] = React.useState([]);
   const [categoryName, setCategoryName] = React.useState('');
-  const [editCase, setEditCase] = React.useState(false);
+  const [editID, setEditID] = React.useState("");
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [fileError, setFileError] = React.useState(false);
   const [fileErrorMessage, setFileErrorMessage] = React.useState('');
-
+  const [fileList, setFileList] = React.useState([]);
+  const [searchValue, setSearchValue] = React.useState(['']);
   const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = (e) => {
-    setOpen(true);
-
-    if (e == null) {
-      setCategoryName("");
-      setEditCase(false);
-    } else {
-      setCategoryName(e.name);
-      setEditCase(true);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setEditCase(false);
-    setCategoryName("");
-    setNameError(false);
-    setNameErrorMessage('');
-    setFileError(false);
-    setFileErrorMessage("");
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  // const modalClose = () => {
-  //   setModalState(false);
-  //   setEditCase(false);
-  //   setCategoryName("");
-  // }
-
-  // const modalOpen = (e) => {
-  //   if (e == null) {
-  //     setCategoryName("");
-  //     setEditCase(false);
-  //   } else {
-  //     setCategoryName(e.name);
-  //     setEditCase(true);
-  //   }
-  //   setModalState(true);
-  // }
-  
-  const onCategoryName = (e) => {
-    setCategoryName(e.target.value)
-  }
-
-  const onSubmit = (e) => {
-    const name = document.getElementById('name');
-    
-    if(fileList.length == 0 || !name.value) {
-      if(!name.value) {
-        setNameError(true);
-        setNameErrorMessage('Category name is required !');
-      }
-      if(fileList.length == 0) {
-        setFileError(true);
-        setFileErrorMessage('Attach one more file for this category !');
-      }
-    } else {
-      setOpen(false);
-      setEditCase(false);
-      setNameError(false);
-      setNameErrorMessage('');
-      setFileError(false);
-      setFileErrorMessage("");
-    }
-  }
-
-  const [fileList, setFileList] = React.useState([
-    {
-      uid: '-1',
-      name: 'mocrosoft.pdf',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-2',
-      name: 'poc.doc',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-3',
-      name: 'IT.pptx',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-  ]);
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  const descriptionElementRef = React.useRef(null);
 
   React.useEffect(() => {
     if (open) {
@@ -346,11 +305,199 @@ export default function AdminContent() {
     }
   }, [open]);
 
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [rows]);
+
+  const handleClickOpen = (e) => {
+    
+    setOpen(true);
+
+    if (e == "") {
+      setCategoryName("");
+      setEditID({});
+      setFileList([]);
+    } else {
+      const files = rows.find(value => {
+        if(value.id === e.id) return value.sample;
+      })
+      
+      setCategoryName(e.name);
+      setEditID(e);
+
+      setFileList(files.sample.map(item => {
+        return {
+          uid: '-1',
+          name: item,
+          status: 'done',
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        };
+      }))
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setEditID({});
+    setCategoryName("");
+    setNameError(false);
+    setNameErrorMessage('');
+    setFileError(false);
+    setFileErrorMessage("");
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    onVisibleRows(newPage, rowsPerPage, rows);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    onVisibleRows(0, parseInt(event.target.value, 10), rows);
+  };
+
+  const onVisibleRows = (page, perRows, data) => {
+
+    const datas = convertStr(data);
+
+    if(data.length === 0) {
+      setPage(0);
+      setRowsPerPage(10);
+      setVisibleRows([]);
+    } else if (perRows * (page + 1) > datas.length) {
+      // if(data.length === 0) {
+      //   setPage(0);
+      // } else if(data.length > 0) {
+      //   setPage(Math.floor(datas.length / page));
+      // }
+      setPage(Math.floor((datas.length-1) / rowsPerPage));
+      setVisibleRows(datas.slice(Math.floor((datas.length-1) / rowsPerPage) * perRows, datas.length));
+    } else {
+      setVisibleRows(datas.slice(page * perRows, perRows * (page + 1)));
+    }
+  }
+
+  const onCategoryName = (e) => {
+    setCategoryName(e.target.value)
+  }
+
+  const onSubmit = (e) => {
+    const name = document.getElementById('name').value;
+
+    if (fileList.length === 0 || !name) {
+      if (!name) {
+        setNameError(true);
+        setNameErrorMessage('Category name is required !');
+      }
+      if (fileList.length === 0) {
+        setFileError(true);
+        setFileErrorMessage('Attach one more file for this category !');
+      }
+    } else {
+      const filenames = fileList.map(value => {
+        return value.name;
+      })
+      if(editID.id) {
+        const editData = {name: name, id: editID.id, date: '2024-05-20 09:30', sample: filenames, checked: editID.checked};
+        const editRows = categories.map(value => {
+          if (value.id === editID.id) {
+            return editData;
+          } else {
+            return value;
+          }
+        });
+        setCategories(editRows);
+        searchHandle(searchValue, editRows);
+        // setRows(editRows);
+        // onVisibleRows(page, rowsPerPage, editRows);
+      } else {
+        const newData = {name: name, id: categories.length+1, date: '2024-05-20 09:30', sample: filenames, checked: false};
+        let newCategory = categories.slice(0, categories.length);
+        newCategory.push(newData);
+        setCategories([...categories, newData]);
+        searchHandle(searchValue, newCategory);
+        // setRows([...rows, newData]);
+        // onVisibleRows(page, rowsPerPage, rows);
+      }
+      setOpen(false);
+      setEditID({});
+      setNameError(false);
+      setNameErrorMessage('');
+      setFileError(false);
+      setFileErrorMessage("");
+    }
+  }
+
+  const handleSelectAllClick = (event) => {
+
+    // const temp = rows.map((row) => {
+    //   return { ...row, checked: event.target.checked };
+    // });
+    const temp = categories.map((row) => {
+      return { ...row, checked: event.target.checked };
+    });
+
+    // setRows(temp);
+    setCategories(temp);
+    searchHandle(searchValue, temp);
+
+    if (event.target.checked) {
+      const newSelected = rows.map((n) => n.id);
+      setSelected(newSelected);
+      return;
+    }
+
+    setSelected([]);
+  };
+
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
+    // const temp = rows;
+    const temp = categories.slice(0, categories.length);
+    temp[id - 1].checked = !temp[id - 1].checked;
+    // setRows(temp);
+    setCategories(temp);
+    searchHandle(searchValue, temp);
+    
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+    setSelected(newSelected);
+  };
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+  const descriptionElementRef = React.useRef(null);
+
   const sensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 10,
     },
   });
+
   const onDragEnd = ({ active, over }) => {
     if (active.id !== over?.id) {
       setFileList((prev) => {
@@ -360,9 +507,36 @@ export default function AdminContent() {
       });
     }
   };
+
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
+
+  const onSearch = (e) => {
+    setSearchValue(e.target.value);
+    searchHandle(e.target.value, categories);
+    // const searchResult = categories.find(value => {
+    //   if(value.id === e.id) return value.sample;
+    // })
+  }
+
+  const searchHandle = (value, data) => {
+    const searchedData = [];
+    for(let i = 0; i < data.length; i++) {
+      if(data[i].name.toLowerCase().search(value) !== -1 || data[i].date.search(value) !== -1 || data[i].sample.indexOf(value) !== -1) {
+        searchedData.push(data[i]);
+      }
+    }
+    
+    if(searchedData.length === 0) {
+      setPage(0);
+      setRowsPerPage(10);
+    }
+    setRows(searchedData);
+    onVisibleRows(page, rowsPerPage, searchedData);
+  }
+
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   return (
     <Box
@@ -374,13 +548,14 @@ export default function AdminContent() {
       })}
     >
       <Container
+        className='main-container-width'
         sx={{
           display: 'flex',
           width: '100% !important',
           background: '#ffffff',
           flexDirection: 'column',
           alignItems: 'center',
-          pt: { xs: 14, sm: 20 },
+          pt: { xs: 4, sm: 6 },
           pb: { xs: 4, sm: 6 },
         }}
       >
@@ -402,6 +577,7 @@ export default function AdminContent() {
               id="email-hero"
               hiddenLabel
               InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }}
+              onChange={onSearch}
               className='global-font search-box-admin'
               size="small"
               variant="outlined"
@@ -412,126 +588,126 @@ export default function AdminContent() {
                 'aria-label': 'Enter your email address',
                 style: {
                   fontSize: 16,
-                  // borderRadius: 0,
                   fontFamily: 'roboto',
-                  // backgroundColor: '#fff',
                   height: '32px'
                 }
               }}
             />
-            {/* <CategoryButton
-              className='global-font category-box' 
-            /> */}
-            {/* <Upload /> */}
-            <Button variant="contained" color="primary" onClick={() => handleClickOpen()} className='doc-upload-btn'>
+            <Button variant="contained" color="primary" onClick={() => handleClickOpen("")} className='doc-upload-btn'>
               Add Category
             </Button>
           </Stack>
 
         </Stack>
-        {/* <div className='metaview-content'> */}
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 500 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="left" className='global-font teal' style={{ minWidth: 100 }}>Name</StyledTableCell>
-                <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 150 }}>Creation Date</StyledTableCell>
-                <StyledTableCell align="center" className='global-font teal' style={{ minWidth: 200 }}>Samples</StyledTableCell>
-                <StyledTableCell align="right" className='global-font teal' style={{ minWidth: 50 }}></StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {(rowsPerPage > 0
-                ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                : rows
-              ).map((row) => (
-                <StyledTableRow key={row.name}>
-                  <StyledTableCell align="left" style={{ minWidth: 100 }} className='global-font'>
-                    {row.name}
-                  </StyledTableCell>
-                  <StyledTableCell align="center" style={{ minWidth: 150 }} className='global-font'>
-                    {row.date}
-                  </StyledTableCell>
-                  <StyledTableCell align="center" style={{ minWidth: 200 }} className='global-font'>
-                    {row.sample}
-                  </StyledTableCell>
-                  <StyledTableCell align="right" style={{ minWidth: 50 }} >
-                    <Tooltip className='tooltip' title={'Edit Category'}>
-                      <EditIcon onClick={() => handleClickOpen(row)} className='cursor-icon' />
-                    </Tooltip>
-                    {/* <Tooltip className='tooltip' title={'Peview document'}>
-                                        <RemoveRedEyeIcon className='cursor-icon' />
-                                    </Tooltip>
-                                    <Tooltip className='tooltip' title={'Remove document'}>
-                                        <DeleteIcon className='cursor-icon' />
-                                    </Tooltip> */}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  className='pagination'
-                  rowsPerPageOptions={[10, 50, 100, { label: 'All', value: -1 }]}
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  slotProps={{
-                    select: {
-                      inputProps: {
-                        'aria-label': 'rows per page',
-                      },
-                      native: true,
-                    },
-                  }}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-          {/* <Dialog
-            open={open}
-            onClose={handleClose}
-            scroll={scroll}
-            aria-labelledby="scroll-dialog-title"
-            aria-describedby="scroll-dialog-description"
-          >
-            <DialogTitle id="scroll-dialog-title" className='roboto-font' >File Upload</DialogTitle>
-            <DialogContent dividers={scroll === 'paper'}>
-              File Upload here
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} className='roboto-font' >Cancel</Button>
-              <Button onClick={handleClose} className='roboto-font' >Save</Button>
-            </DialogActions>
-          </Dialog> */}
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            scroll='paper'
-          >
-            <DialogTitle className='modal-title'><h2 className='dis-center wid-400'>{editCase ? "Edit Category" : "New Category"}</h2></DialogTitle>
-            <DialogContent dividers={true} >
+        <Paper sx={{ width: '100%', mb: 2 }}>
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 550 }}
+              aria-labelledby="tableTitle"
+              size={dense ? 'small' : 'medium'}
+            >
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody>
+                {visibleRows.map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
+
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.id}
+                      selected={isItemSelected}
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      <TableCell align="right" padding="checkbox" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          onClick={(event) => handleClick(event, row.id)}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                      {/* <TableCell align="right" padding="checkbox" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                        <FileType typeStr={row.type} />
+                      </TableCell> */}
+                      <TableCell
+                        onClick={(event) => handleClick(event, row.id)}
+                        className={row.checked ? 'table-cell-selected' : 'table-cell-general'}
+                        align="right"
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row.name}
+                      </TableCell>
+                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>
+                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                        {row.sample}
+                      </TableCell>
+                      <TableCell align="right" style={{ minWidth: 95 }} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                        <Tooltip className='tooltip' title={'Edit Category'}>
+                          {/* dd */}
+                          <EditIcon onClick={() => handleClickOpen(row)} className='cursor-icon' />
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+                {/* {emptyRows > 0 && (
+                                    <TableRow
+                                        style={{
+                                            height: (dense ? 33 : 53) * emptyRows,
+                                        }}
+                                    >
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
+                                )} */}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 50, 100]}
+            className='table-cell-footer'
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          scroll='paper'
+        >
+          <DialogTitle className='modal-title'><h2 className='dis-center wid-400'>{editID.id ? "Edit Category" : "New Category"}</h2></DialogTitle>
+          <DialogContent dividers={true} >
             <ThemeProvider theme={theme}>
-              <TextField 
+              <TextField
                 autoFocus
                 required
                 error={nameError}
                 helperText={nameErrorMessage}
                 value={categoryName}
                 onChange={onCategoryName}
-                id="name" 
+                id="name"
                 name='name'
-                label="Category name" 
-                variant="filled" 
+                label="Category name"
+                variant="filled"
                 fullWidth
                 type="text"
                 inputProps={{
@@ -540,71 +716,46 @@ export default function AdminContent() {
                     borderRadius: 0,
                     fontFamily: 'roboto !important',
                     height: '32px',
-                    
+
                   }
                 }} // font size of input text
-                InputLabelProps={{ 
-                  style: { 
-                    fontSize: 18, 
+                InputLabelProps={{
+                  style: {
+                    fontSize: 18,
                     fontFamily: 'roboto !important',
                     color: '#000',
-                    
-                  } 
+
+                  }
                 }} // font size of input label
               />
-              </ThemeProvider>
-              {/* <TextField
-                autoFocus
-                required
-                className='roboto-font'
-                value={categoryName}
-                onChange={onCategoryName}
-                margin="dense"
-                id="name"
-                name="name"
-                label="Category name"
-                type="text"
-                fullWidth
-                variant="standard"
-                inputProps={{
-                  style: {
-                    fontSize: 20,
-                    borderRadius: 0,
-                    fontFamily: 'roboto !important',
-                    height: '32px'
-                  }
-                }} // font size of input text
-                InputLabelProps={{ style: { fontSize: 18, fontFamily: 'roboto !important' } }} // font size of input label
-              /> */}
-              <div>
-                <DndContext sensors={[sensor]} onDragEnd={onDragEnd} >
-                  <SortableContext items={fileList.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
-                    <Upload
-                      action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                      fileList={fileList}
-                      onChange={onChange}
-                      itemRender={(originNode, file) => (
-                        <DraggableUploadListItem originNode={originNode} file={file} />
-                      )}
-                    >
-                      <div className='upload-category-btnbox'>
-                        <Button className='upload-category-btn' icon={<UploadOutlined />}>Click to Upload</Button>
-                      </div>
-                      <div className='dis-center color-red roboto-font'>
-                        {fileError? fileErrorMessage : ""}
-                      </div>
-                    </Upload>
-                  </SortableContext>
-                </DndContext>
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} className='modal-btn'>Cancel</Button>
-              <Button onClick={onSubmit} className='modal-btn'>{editCase ? "Edit" : "Add"}</Button>
-            </DialogActions>
-          </Dialog>
-        </TableContainer>
-        {/* </div> */}
+            </ThemeProvider>
+            <div>
+              <DndContext sensors={[sensor]} onDragEnd={onDragEnd} >
+                <SortableContext items={fileList.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
+                  <Upload
+                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                    fileList={fileList}
+                    onChange={onChange}
+                    itemRender={(originNode, file) => (
+                      <DraggableUploadListItem originNode={originNode} file={file} />
+                    )}
+                  >
+                    <div className='upload-category-btnbox'>
+                      <Button className='upload-category-btn' icon={<UploadOutlined />}>Click to Upload</Button>
+                    </div>
+                    <div className='dis-center color-red roboto-font'>
+                      {fileError ? fileErrorMessage : ""}
+                    </div>
+                  </Upload>
+                </SortableContext>
+              </DndContext>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} className='modal-btn'>Cancel</Button>
+            <Button onClick={onSubmit} className='modal-btn'>{editID.id ? "Edit" : "Add"}</Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </Box>
   );
