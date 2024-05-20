@@ -5,14 +5,7 @@ import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Drawer from '@mui/material/Drawer';
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ToggleColorMode from './ToggleColorMode';
 import AccountMenu from './AccountMenu'
 import { useLocation } from 'react-router-dom';
 
@@ -20,7 +13,6 @@ import Sitemark from './SitemarkIcon';
 
 function AppAppBar({ mode, toggleColorMode }) {
   const [open, setOpen] = React.useState(false);
-  // const [location, setLocation] = React.useState("")
   const location = useLocation().pathname;
   let path = ""
   if(location == '/admin/' || location == '/admin') {
@@ -28,12 +20,6 @@ function AppAppBar({ mode, toggleColorMode }) {
   } else {
     path = "Admin";
   }
-
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
-  
-  // const location = useLocation()
 
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
@@ -95,7 +81,7 @@ function AppAppBar({ mode, toggleColorMode }) {
             <Sitemark />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button
-                href={path == "Admin" ? '/admin' : '/dashboard'}
+                href={path === "Admin" ? '/admin' : '/dashboard'}
                 variant="text"
                 className='global-font'
                 color="info"

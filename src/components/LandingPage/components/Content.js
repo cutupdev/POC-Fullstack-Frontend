@@ -5,8 +5,6 @@ import MenuItem from '@mui/material/MenuItem';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import InputLabel from '@mui/material/InputLabel';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import CategoryButton from './CategoryButton';
@@ -14,12 +12,8 @@ import CustomizedTables from './Table'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { InboxOutlined } from '@ant-design/icons';
-import { message, Upload, Modal } from 'antd';
+import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const { Dragger } = Upload;
@@ -28,7 +22,7 @@ const { Dragger } = Upload;
 export default function Content() {
 
   const [open, setOpen] = React.useState(false);
-  const [visible, setVisible] = React.useState(false);
+  // const [visible, setVisible] = React.useState(false);
 
   const [uploadProps, setUploadProps] = React.useState({
     name: 'file',
@@ -51,10 +45,10 @@ export default function Content() {
     },
   });
 
-  const handleUploadTypeSelection = (type) => {
-    setUploadProps({ ...uploadProps, directory: type === 'directory' });
-    setVisible(false);
-  };
+  // const handleUploadTypeSelection = (type) => {
+  //   setUploadProps({ ...uploadProps, directory: type === 'directory' });
+  //   setVisible(false);
+  // };
 
   const handleButtonClick = (e) => {
     // Prevent the Dragger's and other events from being triggered
@@ -95,7 +89,6 @@ export default function Content() {
     const files = e.target.files;
     if (files.length > 0) {
       console.log('Uploading folder:', files.length, 'files');
-      // Process the folder or multiple files upload logic
     }
   };
 
@@ -156,7 +149,6 @@ export default function Content() {
             <CategoryButton
               className='global-font category-box'
             />
-            {/* <Upload /> */}
             <Button variant="contained" color="primary" className='doc-upload-btn' onClick={handleClickOpen} >
               Upload
             </Button>

@@ -38,8 +38,7 @@
     "styled-components": "^6.1.8",
     "uniqid": "^5.4.0",
     "web-vitals": "^2.1.4",
-    "yup": "^1.4.0",
-    "react-doc-viewer": "^0.1.11"
+    "yup": "^1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

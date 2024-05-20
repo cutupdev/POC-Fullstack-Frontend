@@ -22,8 +22,13 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import Button from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/Info';
-import DocViewer from "react-doc-viewer";
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
 import { visuallyHidden } from '@mui/utils';
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { FaRegFilePdf } from "react-icons/fa";
@@ -69,37 +74,23 @@ const rowsTemp = [
     createData(30, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
 ];
 
-function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
+// function getComparator(order, orderBy) {
+//     return order === 'desc'
+//         ? (a, b) => descendingComparator(a, b, orderBy)
+//         : (a, b) => -descendingComparator(a, b, orderBy);
+// }
 
-function getComparator(order, orderBy) {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
-function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-}
+// function stableSort(array, comparator) {
+//     const stabilizedThis = array.map((el, index) => [el, index]);
+//     stabilizedThis.sort((a, b) => {
+//         const order = comparator(a[0], b[0]);
+//         if (order !== 0) {
+//             return order;
+//         }
+//         return a[1] - b[1];
+//     });
+//     return stabilizedThis.map((el) => el[0]);
+// }
 
 const headCells = [
     {
@@ -237,60 +228,60 @@ EnhancedTableHead.propTypes = {
     rowCount: PropTypes.number.isRequired,
 };
 
-function EnhancedTableToolbar(props) {
-    const { numSelected } = props;
+// function EnhancedTableToolbar(props) {
+//     const { numSelected } = props;
 
-    return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                    Nutrition
-                </Typography>
-            )}
+//     return (
+//         <Toolbar
+//             sx={{
+//                 pl: { sm: 2 },
+//                 pr: { xs: 1, sm: 1 },
+//                 ...(numSelected > 0 && {
+//                     bgcolor: (theme) =>
+//                         alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+//                 }),
+//             }}
+//         >
+//             {numSelected > 0 ? (
+//                 <Typography
+//                     sx={{ flex: '1 1 100%' }}
+//                     color="inherit"
+//                     variant="subtitle1"
+//                     component="div"
+//                 >
+//                     {numSelected} selected
+//                 </Typography>
+//             ) : (
+//                 <Typography
+//                     sx={{ flex: '1 1 100%' }}
+//                     variant="h6"
+//                     id="tableTitle"
+//                     component="div"
+//                 >
+//                     Nutrition
+//                 </Typography>
+//             )}
 
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Toolbar>
-    );
-}
+//             {numSelected > 0 ? (
+//                 <Tooltip title="Delete">
+//                     <IconButton>
+//                         <DeleteIcon />
+//                     </IconButton>
+//                 </Tooltip>
+//             ) : (
+//                 <Tooltip title="Filter list">
+//                     <IconButton>
+//                         <FilterListIcon />
+//                     </IconButton>
+//                 </Tooltip>
+//             )}
+//         </Toolbar>
+//     );
+// }
 
-EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-};
+// EnhancedTableToolbar.propTypes = {
+//     numSelected: PropTypes.number.isRequired,
+// };
 
 export default function EnhancedTable() {
     const [rows, setRows] = React.useState(rowsTemp);
@@ -305,13 +296,13 @@ export default function EnhancedTable() {
     const [deleteData, setDeleteData] = React.useState("");
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
-    const docs = [
-        // { uri: "https://url-to-my-pdf.pdf" },
-        { uri: require("../../file/GenAI_details.pdf") }, // Local File
-    ];
+    // const docs = [
+    //     // { uri: "https://url-to-my-pdf.pdf" },
+    //     { uri: require("../../file/GenAI_details.pdf") }, // Local File
+    // ];
 
     React.useEffect(() => {
-        // setRows(rowsTemp);
+        // console.log(rows);
         // console.log(visibleRows);
     }, [rows, visibleRows])
 
@@ -322,6 +313,7 @@ export default function EnhancedTable() {
     };
 
     const onMataViewOn = (event) => {
+        setPreviewStatus(false);
         setMetaviewStatus(true);
     }
 
@@ -330,6 +322,7 @@ export default function EnhancedTable() {
     }
 
     const onPreview = (event) => {
+        setMetaviewStatus(false);
         setPreviewStatus(true);
     }
 
@@ -337,23 +330,48 @@ export default function EnhancedTable() {
         setPreviewStatus(false);
     }
 
-    const onDelete = (event) => {
-        setDeleteData(event.name);
+    const onDelete = (data) => {
+        setDeleteData(data);
         setDeleteModal(true);
     }
 
-    const handleSelectAllClick = (event) => {
-        console.log(event);
+    const deleteClose = (event) => {
+        setDeleteModal(false);
+        setDeleteData({});
+    }
 
-        const temp = rows;
-        temp.map((row, id) => {
-            if (event.target.checked) {
-                row.checked = true;
+    const deleteSubmit = (id) => {
+        setDeleteModal(false);
+        const filteredData = rows.filter(data => data.id !== id);
+        setRows(filteredData);
+    
+        if(filteredData.length === page * rowsPerPage) {
+            if(page > 0) {
+                setPage(page - 1);
+                onVisibleRows(page - 1, rowsPerPage, filteredData);
             } else {
-                row.checked = false;
+                onVisibleRows(0, rowsPerPage, filteredData);
             }
-        })
-        // console.log(temp);
+        } else {
+            onVisibleRows(page, rowsPerPage, filteredData);
+        }
+        setDeleteData({});
+    }
+
+    const onVisibleRows = (page, perRows, data) => {
+        if (perRows * (page + 1) > data.length) {
+            setVisibleRows(data.slice(page * perRows, data.length));
+        } else {
+            setVisibleRows(data.slice(page * perRows, perRows * (page + 1)));
+        }
+    }
+
+    const handleSelectAllClick = (event) => {
+
+        const temp = rows.map((row) => {
+            return { ...row, checked: event.target.checked };
+        });
+
         setRows(temp);
 
         if (event.target.checked) {
@@ -370,7 +388,6 @@ export default function EnhancedTable() {
         const temp = rows;
         temp[id - 1].checked = !temp[id - 1].checked;
         setRows(temp);
-        console.log("fsfa", id)
         let newSelected = [];
 
         if (selectedIndex === -1) {
@@ -390,13 +407,13 @@ export default function EnhancedTable() {
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
-        setVisibleRows(rows.slice(newPage * rowsPerPage, rowsPerPage * (newPage + 1)));
+        onVisibleRows(newPage, rowsPerPage, rows);
     };
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        setVisibleRows(rows.slice(0, event.target.value));
+        onVisibleRows(0, parseInt(event.target.value, 10), rows);
     };
 
     const handleChangeDense = (event) => {
@@ -409,22 +426,10 @@ export default function EnhancedTable() {
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    // const visibleRowsTemp = React.useMemo(
-    //     () =>
-    //         stableSort(rows, getComparator(order, orderBy)).slice(
-    //             page * rowsPerPage,
-    //             page * rowsPerPage + rowsPerPage,
-    //         ),
-    //     [order, orderBy, page, rowsPerPage],
-    // );
-
-    // setVisibleRows(visibleRowsTemp);
-
     return (
         <Box sx={{ width: '100%' }}>
             <div className='metaview-content'>
                 <Paper sx={{ width: '100%', mb: 2 }}>
-                    {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
                     <TableContainer>
                         <Table
                             sx={{ minWidth: 750 }}
@@ -447,7 +452,6 @@ export default function EnhancedTable() {
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={(event) => handleClick(event, row.id)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
@@ -455,7 +459,7 @@ export default function EnhancedTable() {
                                             selected={isItemSelected}
                                             sx={{ cursor: 'pointer' }}
                                         >
-                                            <TableCell align="right" padding="checkbox" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                                            <TableCell align="right" onClick={(event) => handleClick(event, row.id)} padding="checkbox" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
                                                 <Checkbox
                                                     color="primary"
                                                     checked={isItemSelected}
@@ -464,10 +468,11 @@ export default function EnhancedTable() {
                                                     }}
                                                 />
                                             </TableCell>
-                                            <TableCell align="right" padding="checkbox" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                                            <TableCell align="right" padding="checkbox" onClick={(event) => handleClick(event, row.id)} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
                                                 <FileType typeStr={row.type} />
                                             </TableCell>
                                             <TableCell
+                                                onClick={(event) => handleClick(event, row.id)}
                                                 className={row.checked ? 'table-cell-selected' : 'table-cell-general'}
                                                 align="right"
                                                 component="th"
@@ -477,13 +482,13 @@ export default function EnhancedTable() {
                                             >
                                                 {row.name}
                                             </TableCell>
-                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.creator}</TableCell>
-                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>
-                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.type}</TableCell>
-                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.size}</TableCell>
-                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.category}</TableCell>
-                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.classification}</TableCell>
-                                            <TableCell align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.confident}</TableCell>
+                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.creator}</TableCell>
+                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>
+                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.type}</TableCell>
+                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.size}</TableCell>
+                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.category}</TableCell>
+                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.classification}</TableCell>
+                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.confident}</TableCell>
                                             <TableCell align="right" style={{ minWidth: 95 }} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
                                                 <Tooltip className='tooltip' title={'Metadata details'}>
                                                     <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
@@ -498,7 +503,7 @@ export default function EnhancedTable() {
                                         </TableRow>
                                     );
                                 })}
-                                {emptyRows > 0 && (
+                                {/* {emptyRows > 0 && (
                                     <TableRow
                                         style={{
                                             height: (dense ? 33 : 53) * emptyRows,
@@ -506,7 +511,7 @@ export default function EnhancedTable() {
                                     >
                                         <TableCell colSpan={6} />
                                     </TableRow>
-                                )}
+                                )} */}
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -521,6 +526,28 @@ export default function EnhancedTable() {
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </Paper>
+                <Dialog
+                    open={deleteModal}
+                    onClose={deleteClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle className='roboto-font' id="alert-dialog-title">
+                        {`Do you want to remove '${deleteData.name}' ?`}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className='roboto-font' id="alert-dialog-description">
+                            If you want to remove this data, just click 'Agree Button'.
+                            In this case, you can't recover this document.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={deleteClose} className='roboto-font'>Disagree</Button>
+                        <Button onClick={() => { deleteSubmit(deleteData.id) }} autoFocus className='roboto-font'>
+                            Agree
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 {metaviewStatus ? <div className='metaview-box'>
                     <div className='grey-line'></div>
                     <div className='metaview-container'>
@@ -532,9 +559,6 @@ export default function EnhancedTable() {
                             <ClearIcon className='metaview-close' onClick={onMataviewOff} />
                         </div>
                         <div className='metaview-body'>
-                            {/* {metadatas.map((head) => ( */}
-
-                            {/* ))} */}
                             <div className='metaview-cell'>
                                 <div className='roboto-font font-size-12 font-bolder black-font'>
                                     Type
@@ -618,7 +642,7 @@ export default function EnhancedTable() {
                             <ClearIcon className='metaview-close' onClick={onPreviewOff} />
                         </div>
                         <div className='preview-body'>
-                            <DocViewer documents={docs} />;
+                            pdf contents
                         </div>
                     </div>
                     <div>

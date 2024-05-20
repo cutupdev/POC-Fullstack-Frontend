@@ -1,17 +1,10 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -19,58 +12,51 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import ReCAPTCHA from 'react-google-recaptcha'
-// import 'dotenv';
-// require('dotenv').config()
-
-import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
-
 import getSignUpTheme from './getSignUpTheme';
-import ToggleColorMode from './ToggleColorMode';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import {  SitemarkIcon } from './CustomIcons';
 
-function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100dvw',
-        position: 'fixed',
-        bottom: 24,
-      }}
-    >
-      <ToggleButtonGroup
-        color="primary"
-        exclusive
-        value={showCustomTheme}
-        onChange={toggleCustomTheme}
-        aria-label="Toggle design language"
-        sx={{
-          backgroundColor: 'background.default',
-          '& .Mui-selected': {
-            pointerEvents: 'none',
-          },
-        }}
-      >
-        <ToggleButton value>
-          <AutoAwesomeRoundedIcon sx={{ fontSize: '20px', mr: 1 }} />
-          Custom theme
-        </ToggleButton>
-        <ToggleButton value={false}>Material Design 2</ToggleButton>
-      </ToggleButtonGroup>
-    </Box>
-  );
-}
+// function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
+//   return (
+//     <Box
+//       sx={{
+//         display: 'flex',
+//         flexDirection: 'column',
+//         alignItems: 'center',
+//         width: '100dvw',
+//         position: 'fixed',
+//         bottom: 24,
+//       }}
+//     >
+//       <ToggleButtonGroup
+//         color="primary"
+//         exclusive
+//         value={showCustomTheme}
+//         onChange={toggleCustomTheme}
+//         aria-label="Toggle design language"
+//         sx={{
+//           backgroundColor: 'background.default',
+//           '& .Mui-selected': {
+//             pointerEvents: 'none',
+//           },
+//         }}
+//       >
+//         <ToggleButton value>
+//           <AutoAwesomeRoundedIcon sx={{ fontSize: '20px', mr: 1 }} />
+//           Custom theme
+//         </ToggleButton>
+//         <ToggleButton value={false}>Material Design 2</ToggleButton>
+//       </ToggleButtonGroup>
+//     </Box>
+//   );
+// }
 
-ToggleCustomTheme.propTypes = {
-  showCustomTheme: PropTypes.shape({
-    valueOf: PropTypes.func.isRequired,
-  }).isRequired,
-  toggleCustomTheme: PropTypes.func.isRequired,
-};
+// ToggleCustomTheme.propTypes = {
+//   showCustomTheme: PropTypes.shape({
+//     valueOf: PropTypes.func.isRequired,
+//   }).isRequired,
+//   toggleCustomTheme: PropTypes.func.isRequired,
+// };
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -97,9 +83,6 @@ const theme = createTheme({
           boxShadow: '0 0 0 1px black',
           borderRadius: '0px !important',
           backgroundColor: '#f3f3f3', // background color of the input
-          '&:before': { // underline pseudo-element
-            borderBottomColor: 'grey',
-          },
           '&:hover:before': {
             borderBottomColor: 'black', // on hover
           },
@@ -116,7 +99,7 @@ const theme = createTheme({
             borderRadius: '0px !important',
           },
           '&:before': {
-            borderBottom: '1px solid grey', // Default underline color
+            borderBottom: '1px solid white', // Default underline color
             left: 0,
             bottom: 0,
             right: 0,
@@ -147,10 +130,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-  const [mode, setMode] = React.useState('light');
-  const [showCustomTheme, setShowCustomTheme] = React.useState(true);
-  const defaultTheme = createTheme({ palette: { mode } });
-  const SignUpTheme = createTheme(getSignUpTheme(mode));
+  const SignUpTheme = createTheme(getSignUpTheme('light'));
   const [emailError, setEmailError] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -163,7 +143,7 @@ export default function SignUp() {
 
   const pwdChange = (event) => {
     let pwd = document.getElementById('password');
-    if (pwd.value != password || pwd.value != "") {
+    if (pwd.value !== password || pwd.value !== "") {
       setPassword(event.target.value);
     }
     setPassword(event.target.value);
@@ -171,8 +151,6 @@ export default function SignUp() {
   }
 
   const validateInputs = () => {
-    console.log("ddddddddddddddddd")
-    console.log(process.env.REACT_APP_SITE_KEY)
     const name = document.getElementById('name');
     const email = document.getElementById('email');
     const password = document.getElementById('password');
@@ -222,13 +200,13 @@ export default function SignUp() {
     return isValid;
   };
 
-  const toggleColorMode = () => {
-    setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  // const toggleColorMode = () => {
+  //   setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  // };
 
-  const toggleCustomTheme = () => {
-    setShowCustomTheme((prev) => !prev);
-  };
+  // const toggleCustomTheme = () => {
+  //   setShowCustomTheme((prev) => !prev);
+  // };
 
   const handleVisibility = () => {
     if (type === 'password') {
@@ -242,7 +220,7 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    // const data = new FormData(event.currentTarget);
     // console.log({
     //   name: data.get('name'),
     //   lastName: data.get('lastName'),
@@ -252,7 +230,7 @@ export default function SignUp() {
   };
 
   return (
-    <ThemeProvider theme={showCustomTheme ? SignUpTheme : defaultTheme}>
+    <ThemeProvider theme={ SignUpTheme }>
       <CssBaseline />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Stack
