@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -50,22 +51,64 @@ const theme = createTheme({
   }
 });
 
-function ForgotPassword({ open, handleClose }) {
+function ForgotPassword({ open, handleClose, setSnackState }) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  const [email, setEmail] = React.useState('');
+
+  React.useEffect(() => {
+    setEmail('');
+  }, [])
+
+  const onEmail = (e) => {
+    setEmail(e.target.value);
+  }
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
 
     let isValid = true;
 
-    if (!email.value || !isEmail(email.value)) {
+    if (!email || !isEmail(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
     } else {
       setEmailError(false);
-      setEmailErrorMessage('');
+      setEmailErrorMessage('');      
+    }
+
+    if (isValid) {
+      const user = {
+        email: email,
+      };
+
+      axios.post('http://45.8.22.59:5000/api/users/forgotPassword', user)
+        .then(res => {
+          if(res.data.success) {
+            setSnackState({
+              snackOpen: true,
+              vertical: 'top',
+              horizontal: 'center',
+              message: "We sent verification link to you. Please check your mail. If you can't find, check your spam folder."
+            });
+          } else {
+            setSnackState({
+              snackOpen: true,
+              vertical: 'top',
+              horizontal: 'center',
+              message: "Unfortunatelly we can't send verification link to you. Try again or contact the support team."
+            });
+          }
+        })
+        .catch(err => {
+          setSnackState({
+            snackOpen: true,
+            vertical: 'top',
+            horizontal: 'center',
+            message: "Unfortunatelly we can't send verification link to you. Try again or contact the support team."
+          });
+          console.log(err);
+        })
     }
 
     return isValid;
@@ -75,14 +118,16 @@ function ForgotPassword({ open, handleClose }) {
   return (
     <Dialog
       open={open}
-      style={{background: '#FBFCFE !important'}}
+      style={{ background: '#FBFCFE !important' }}
       className='auth-box'
       onClose={handleClose}
       PaperProps={{
         component: 'form',
         onSubmit: (event) => {
           event.preventDefault();
-          handleClose();
+          setTimeout(() => {
+            handleClose();
+          }, 10000)
         },
       }}
     >
@@ -107,6 +152,7 @@ function ForgotPassword({ open, handleClose }) {
         <ThemeProvider theme={theme}>
           <TextField
             error={emailError}
+            onChange={onEmail}
             helperText={emailErrorMessage}
             id="email"
             type="email"
@@ -130,14 +176,14 @@ function ForgotPassword({ open, handleClose }) {
               }
             }} // font size of input text
             InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-            FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 } }}
+            FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16, color: '#ff0000 !important' } }}
           />
         </ThemeProvider>
       </DialogContent>
       <DialogActions sx={{ pb: 3, px: 3 }} className='auth-box'>
         <Button onClick={handleClose} className='roboto-font reset-btn'>Cancel</Button>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           type="submit"
           onClick={validateInputs}
           className='roboto-font reset-btn'

@@ -41,6 +41,10 @@ p {
   font-size: 16px !important;
 }
 
+.font-size-20 {
+  font-size: 20px !important;
+}
+
 .font-size-28 {
   font-size: 28px !important;
 }
@@ -55,8 +59,6 @@ p {
   border: 1px solid black;
   position: relative;
 }
-
-
 
 .file-type-icon {
   position: relative;
@@ -512,6 +514,18 @@ main {
   height: 45px !important;
 }
 
+.remember-box {
+  display: flex;
+  align-items: center;
+}
+
+.remember-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
 .assist-root {
   width: 100% !important;
   margin-bottom: 30px
@@ -533,8 +547,8 @@ main {
 }
 
 .dis-center {
-  display: flex;
-  justify-content: center;
+  display: flex !important;
+  justify-content: center !important;
 }
 
 .color-red {
@@ -639,7 +653,7 @@ main {
   position: absolute;
   margin-top: 20px;
   right: 10px !important;
-  background-color: white !important
+  background: transparent !important
 }
 
 .cursor-icon {
@@ -687,6 +701,12 @@ main {
 
 .pop-upload {
   width: 125px !important;
+}
+
+.verifying {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media (min-width: 1200px) {

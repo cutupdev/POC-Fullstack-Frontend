@@ -1,4 +1,6 @@
 import * as React from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,49 +16,21 @@ import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import ReCAPTCHA from 'react-google-recaptcha'
 import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
 import getSignUpTheme from './getSignUpTheme';
-import {  SitemarkIcon } from './CustomIcons';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import { SitemarkIcon } from './CustomIcons';
 
-// function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
-//   return (
-//     <Box
-//       sx={{
-//         display: 'flex',
-//         flexDirection: 'column',
-//         alignItems: 'center',
-//         width: '100dvw',
-//         position: 'fixed',
-//         bottom: 24,
-//       }}
-//     >
-//       <ToggleButtonGroup
-//         color="primary"
-//         exclusive
-//         value={showCustomTheme}
-//         onChange={toggleCustomTheme}
-//         aria-label="Toggle design language"
-//         sx={{
-//           backgroundColor: 'background.default',
-//           '& .Mui-selected': {
-//             pointerEvents: 'none',
-//           },
-//         }}
-//       >
-//         <ToggleButton value>
-//           <AutoAwesomeRoundedIcon sx={{ fontSize: '20px', mr: 1 }} />
-//           Custom theme
-//         </ToggleButton>
-//         <ToggleButton value={false}>Material Design 2</ToggleButton>
-//       </ToggleButtonGroup>
-//     </Box>
-//   );
-// }
 
-// ToggleCustomTheme.propTypes = {
-//   showCustomTheme: PropTypes.shape({
-//     valueOf: PropTypes.func.isRequired,
-//   }).isRequired,
-//   toggleCustomTheme: PropTypes.func.isRequired,
-// };
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -130,9 +104,17 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const SignUpTheme = createTheme(getSignUpTheme('light'));
+  const [message, setMessage] = React.useState("");
+  const [registerState, setRegisterState] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
   const [password, setPassword] = React.useState("");
+  const [captchaError, setCaptchaError] = React.useState(false);
+  const [captchaErrorMessage, setCaptchaErrorMessage] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('Password must be longer than 12 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
@@ -140,24 +122,52 @@ export default function SignUp() {
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [visible, setVisible] = React.useState(false);
   const [type, setType] = React.useState('password');
+  const recaptcha = React.useRef();
+
+  React.useEffect(() => {
+    if(localStorage.getItem('user')) {
+      navigate('/dashboard');
+    } 
+    setEmail("");
+    setPassword("");
+    setName("");
+    setMessage("");
+    setRegisterState(false);
+  }, [])
+
+  React.useEffect(() => {
+
+  }, [message])
 
   const pwdChange = (event) => {
-    let pwd = document.getElementById('password');
-    if (pwd.value !== password || pwd.value !== "") {
-      setPassword(event.target.value);
-    }
     setPassword(event.target.value);
-    console.log(password)
+  }
+
+  const nameChange = (event) => {
+    setName(event.target.value);
+  }
+
+  const emailChange = (event) => {
+    setEmail(event.target.value);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  }
+
+  const handleVerify = () => {
+    setOpen(false);
+    if(registerState) {
+      navigate("/");
+    } 
+    setRegisterState(false);    
   }
 
   const validateInputs = () => {
-    const name = document.getElementById('name');
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
 
     let isValid = true;
 
-    if (!name.value) {
+    if (!name) {
       setNameError(true);
       setNameErrorMessage('Please fill out the name.');
       isValid = false;
@@ -166,7 +176,7 @@ export default function SignUp() {
       setNameErrorMessage('');
     }
 
-    if (!email.value || !isEmail(email.value)) {
+    if (!email || !isEmail(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -175,17 +185,17 @@ export default function SignUp() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 12 || !hasUpperCase(password.value) || !hasLowerCase(password.value) || !hasNumeric(password.value) || !hasSpecialCharacter(password.value)) {
+    if (!password || password.length < 12 || !hasUpperCase(password) || !hasLowerCase(password) || !hasNumeric(password) || !hasSpecialCharacter(password)) {
       setPasswordError(true);
-      if (!password.value || password.value.length < 12) {
+      if (!password || password.length < 12) {
         setPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(password.value)) {
+      } else if (!hasUpperCase(password)) {
         setPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(password.value)) {
+      } else if (!hasLowerCase(password)) {
         setPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(password.value)) {
+      } else if (!hasNumeric(password)) {
         setPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(password.value)) {
+      } else if (!hasSpecialCharacter(password)) {
         setPasswordErrorMessage('Password must include one special character at least.');
       } else {
         setPasswordErrorMessage('Password format is not correct. Try again.');
@@ -200,14 +210,6 @@ export default function SignUp() {
     return isValid;
   };
 
-  // const toggleColorMode = () => {
-  //   setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  // };
-
-  // const toggleCustomTheme = () => {
-  //   setShowCustomTheme((prev) => !prev);
-  // };
-
   const handleVisibility = () => {
     if (type === 'password') {
       setVisible(true);
@@ -219,18 +221,49 @@ export default function SignUp() {
   }
 
   const handleSubmit = (event) => {
+
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-    // console.log({
-    //   name: data.get('name'),
-    //   lastName: data.get('lastName'),
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    // });
+
+    const captchaValue = recaptcha.current.getValue()
+
+    if (!captchaValue) {
+      setCaptchaError(true);
+      setCaptchaErrorMessage("Please verify the reCAPTCHA!");
+    } else {
+
+      setCaptchaError(false);
+      setCaptchaErrorMessage("");
+
+      const newUser = {
+        username: name,
+        email: email,
+        password: password,
+        captcha: captchaValue
+      };
+      
+      axios.post('http://45.8.22.59:5000/api/users/signup', newUser)
+        .then(res => {
+          if (res.data.success) {
+            setRegisterState(true);
+            setMessage("Your account registered successfully! To use your account, you need to verify your account. Our verification link sent to your email. Please check your email box, if you can't find, check the spam folder.");
+            setOpen(true);
+          } else {
+            setRegisterState(false);
+            setMessage("Unfortunately your account registration was failed. It might be your email or password. Please try again with new credentials. For more helps, contact with suport team.");
+            setOpen(true);
+          }
+        })
+        .catch(err => {
+          setRegisterState(false);
+          setMessage("Unfortunately your account registration was failed. It might be your email or password. Please try again with new credentials. For more helps, contact with suport team.");
+          setOpen(true);
+          console.log(err.response.data);
+        })
+    }
   };
 
   return (
-    <ThemeProvider theme={ SignUpTheme }>
+    <ThemeProvider theme={SignUpTheme}>
       <CssBaseline />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Stack
@@ -271,6 +304,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="name"
+                  onChange={nameChange}
                   // placeholder="Jon Snow"
                   error={nameError}
                   helperText={nameErrorMessage}
@@ -281,17 +315,17 @@ export default function SignUp() {
                   color={nameError ? 'error' : 'primary'}
                   // sx={{ ariaLabel: 'email' }}
                   className='signin-box'
-                  inputProps={{ 
-                    style: { 
-                      fontSize: 24, 
-                      borderRadius: 0, 
-                      fontFamily: 'roboto !important', 
-                      backgroundColor: '#fff', 
-                      height: '32px' 
-                    } 
+                  inputProps={{
+                    style: {
+                      fontSize: 24,
+                      borderRadius: 0,
+                      fontFamily: 'roboto !important',
+                      backgroundColor: '#fff',
+                      height: '32px'
+                    }
                   }} // font size of input text
                   InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
-                  FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
+                  FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 } }}
                 />
               </ThemeProvider>
               <ThemeProvider theme={theme}>
@@ -305,61 +339,62 @@ export default function SignUp() {
                   label="Email"
                   variant="filled"
                   autoComplete="email"
+                  onChange={emailChange}
                   // autoFocus
                   required
                   fullWidth
                   color={emailError ? 'error' : 'primary'}
                   // sx={{ ariaLabel: 'email' }}
                   className='signin-box'
-                  inputProps={{ 
-                    style: { 
-                      fontSize: 24, 
-                      borderRadius: 0, 
-                      fontFamily: 'roboto !important', 
-                      backgroundColor: '#fff', 
-                      height: '32px' 
-                    } 
+                  inputProps={{
+                    style: {
+                      fontSize: 24,
+                      borderRadius: 0,
+                      fontFamily: 'roboto !important',
+                      backgroundColor: '#fff',
+                      height: '32px'
+                    }
                   }} // font size of input text
                   InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
-                  FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
+                  FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 } }}
                 />
               </ThemeProvider>
 
               <FormControl>
                 {/* <div className='password-box'> */}
-                  <ThemeProvider theme={theme}>
-                    <TextField
-                      error={passwordError}
-                      helperText={passwordErrorMessage}
-                      id="password"
-                      type={type}
-                      name="password"
-                      label="Password"
-                      variant="filled"
-                      autoComplete="current-password"
-                      required
-                      fullWidth
-                      value={password}
-                      color={passwordError ? 'error' : 'primary'}
-                      // color='primary'
-                      onChange={pwdChange}
-                      className='signin-box'
-                      inputProps={{ 
-                        style: { 
-                          fontSize: 24, 
-                          borderRadius: 0, 
-                          fontFamily: 'roboto !important',
-                          backgroundColor: '#fff', 
-                          height: '32px',
-                        } 
-                      }} // font size of input text
-                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
-                      FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
-                    />
-                  </ThemeProvider>
-                  <span className='visibility-box'>
-                    {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
-                  </span>
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    error={passwordError}
+                    helperText={passwordErrorMessage}
+                    id="password"
+                    type={type}
+                    name="password"
+                    label="Password"
+                    variant="filled"
+                    autoComplete="current-password"
+                    required
+                    fullWidth
+                    value={password}
+                    color={passwordError ? 'error' : 'primary'}
+                    // color='primary'
+                    onChange={pwdChange}
+                    className='signin-box'
+                    inputProps={{
+                      style: {
+                        fontSize: 24,
+                        borderRadius: 0,
+                        fontFamily: 'roboto !important',
+                        backgroundColor: '#fff',
+                        height: '32px',
+                      }
+                    }} // font size of input text
+                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
+                    FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 } }}
+                  />
+                </ThemeProvider>
+                <span className='visibility-box'>
+                  {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
+                </span>
                 {/* </div> */}
               </FormControl>
               <div className='flex-end'>
@@ -374,10 +409,30 @@ export default function SignUp() {
                 </Button>
               </div>
               <div className='dis-center'>
-                <ReCAPTCHA sitekey={process.env.REACT_APP_SITE_KEY}/>
+                <ReCAPTCHA ref={recaptcha} sitekey={process.env.REACT_APP_SITE_KEY} />
               </div>
+              {captchaError ? <p className='dis-center color-red'>{captchaErrorMessage}</p> : <p></p>}
             </Box>
           </Card>
+          <BootstrapDialog
+            onClose={handleClose}
+            aria-labelledby="customized-dialog-title"
+            open={open}
+          >
+            <DialogTitle className='dis-center' sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+              <p className='font-size-28 roboto-font'>{registerState ? "Verify Your Account" : "Retry Your Registration"}</p>
+            </DialogTitle>
+            <DialogContent dividers>
+              <Typography className='font-size-16 roboto-font' gutterBottom>
+                {message}
+              </Typography>
+            </DialogContent>
+            <DialogActions className='dis-center'>
+              <Button className='font-size-20 roboto-font' autoFocus onClick={handleVerify}>
+                {registerState ? "Go to Sign in" : "Retry"}
+              </Button>
+            </DialogActions>
+          </BootstrapDialog>
         </Stack>
       </SignUpContainer>
     </ThemeProvider>
