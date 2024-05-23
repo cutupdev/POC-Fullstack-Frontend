@@ -390,7 +390,7 @@ export default function CustomizedTables() {
                     </DialogActions>
                 </Dialog>
             </TableContainer>
-            {metaviewStatus ? <div className='metaview-box'>
+            {metaviewStatus && <div className='metaview-box'>
                 <div className='grey-line'></div>
                 <div className='metaview-container'>
                     <div className='metaview-head'>
@@ -473,8 +473,7 @@ export default function CustomizedTables() {
                 <div>
                 </div>
             </div>
-                :
-                <div></div>}
+            }
         </div>
     );
 }

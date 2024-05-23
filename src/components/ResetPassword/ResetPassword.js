@@ -223,7 +223,7 @@ export default function SignUp() {
       token: token,
       password: confirmPassword
     };
-    axios.post('http://45.8.22.59:5000/api/users/resetPassword', data)
+    axios.post('https://45.8.22.59:5000/api/users/resetPassword', data)
       .then(res => {
         if (res.data.success) {
           setSnackState({

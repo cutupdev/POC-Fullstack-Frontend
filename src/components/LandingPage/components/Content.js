@@ -167,7 +167,7 @@ export default function Content() {
         >
           <DialogTitle id="scroll-dialog-title"><div className='roboto-font font-size-28 dis-center'>Document Upload</div></DialogTitle>
           <DialogContent>
-            <Dragger name='drag' onChange={onUploadChange} onDrop={onUploadDrop} onRemove={onDelete} fileList={fileList} multiple={true} className='mb-100 bg-remove'>
+            <Dragger name='drag' listType='text' onChange={onUploadChange} onDrop={onUploadDrop} onRemove={onDelete} fileList={fileList} multiple={true} className='mb-100 bg-remove'>
               <p className="ant-upload-drag-icon bg-remove" onClick={handleButtonClick}>
                 <PopupState variant="popover" popupId="demo-popup-menu">
                   {(popupState) => (
@@ -179,12 +179,12 @@ export default function Content() {
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="file-upload" className='background-remove mouse-pointer'>Upload File</label>
-                          <input type="file" multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
+                          <input type="file" list='text' multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
                         </MenuItem>
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="folder-upload" className='background-remove mouse-pointer'>Upload Folder</label>
-                          <input type="file" multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
+                          <input type="file" list='text' multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
                         </MenuItem>
                       </Menu>
                     </React.Fragment>

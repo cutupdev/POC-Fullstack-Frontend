@@ -17,6 +17,34 @@ p {
   font-family: roboto !important;
 }
 
+td {
+  font-family: roboto !important;
+}
+
+th {
+  font-family: roboto !important;
+}
+
+span {
+  font-family: roboto !important;
+}
+
+input {
+  font-family: roboto !important;
+}
+
+h1 {
+  font-family: roboto !important;
+}
+
+h2 {
+  font-family: roboto !important;
+}
+
+button {
+  font-family: roboto !important;
+}
+
 .main-container-width {
   width: 100% !important;
 }
@@ -318,6 +346,7 @@ main {
   width: 150px !important;
   height: 45px !important;
   font-size: 16px !important;
+  font-family: roboto !important;
 }
 
 .metaview-body {
@@ -336,6 +365,17 @@ main {
   display: flex;
   justify-content: space-between;
   width: 100% !important;
+  /* 320 560 640 768 800 910 1024 1280 1440 1510 1920 */
+}
+
+.metaview-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
 }
 
 .metaview-box {
@@ -377,6 +417,8 @@ main {
 
 .metaview-close {
   cursor: pointer;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .preview-body {
@@ -400,11 +442,13 @@ main {
 .preview-box {
   display: flex;
   justify-content: space-between;
-  width: 800px !important;
-  max-width: 800px !important;
-  min-width: 800px !important;
   background-color: #ffffff !important;
   border-radius: 10px;
+  min-width: 500px;
+
+  @media (max-width: 1024px) {
+    order: -1;
+  }
 }
 
 .preview-container {
@@ -747,6 +791,7 @@ main {
     width: 150px !important;
     height: 45px !important;
     font-size: 16px !important;
+    font-family: roboto !important;
   }
   .search-box-admin {
     width: 450px !important;
@@ -763,6 +808,7 @@ main {
     width: 150px !important;
     height: 45px !important;
     font-size: 14px !important;
+    font-family: roboto !important;
   }
 }
 

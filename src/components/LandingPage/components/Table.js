@@ -1,6 +1,5 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,18 +9,14 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import ClearIcon from '@mui/icons-material/Clear';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import Button from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/Info';
 import Dialog from '@mui/material/Dialog';
@@ -36,6 +31,7 @@ import { RiFileWord2Line } from "react-icons/ri";
 import { RiFilePpt2Line } from "react-icons/ri";
 import { CiText } from "react-icons/ci";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import clsx from 'clsx';
 
 function createData(id, name, creator, date, type, size, category, classification, confident, checked) {
     return { id, name, creator, date, type, size, category, classification, confident, checked };
@@ -74,75 +70,6 @@ const rowsTemp = [
     createData(30, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%", false),
 ];
 
-// function getComparator(order, orderBy) {
-//     return order === 'desc'
-//         ? (a, b) => descendingComparator(a, b, orderBy)
-//         : (a, b) => -descendingComparator(a, b, orderBy);
-// }
-
-// function stableSort(array, comparator) {
-//     const stabilizedThis = array.map((el, index) => [el, index]);
-//     stabilizedThis.sort((a, b) => {
-//         const order = comparator(a[0], b[0]);
-//         if (order !== 0) {
-//             return order;
-//         }
-//         return a[1] - b[1];
-//     });
-//     return stabilizedThis.map((el) => el[0]);
-// }
-
-const headCells = [
-    {
-        id: 'name',
-        numeric: false,
-        disablePadding: true,
-        label: 'Name',
-    },
-    {
-        id: 'creator',
-        numeric: false,
-        disablePadding: false,
-        label: 'Creator',
-    },
-    {
-        id: 'date',
-        numeric: false,
-        disablePadding: false,
-        label: 'Creation Date',
-    },
-    {
-        id: 'type',
-        numeric: false,
-        disablePadding: false,
-        label: 'File Type',
-    },
-    {
-        id: 'size',
-        numeric: false,
-        disablePadding: false,
-        label: 'File Size',
-    },
-    {
-        id: 'category',
-        numeric: false,
-        disablePadding: false,
-        label: 'Category',
-    },
-    {
-        id: 'classification',
-        numeric: false,
-        disablePadding: false,
-        label: 'Classification Status',
-    },
-    {
-        id: 'confident',
-        numeric: false,
-        disablePadding: false,
-        label: 'Confident Score',
-    },
-];
-
 function FileType(props) {
     const { typeStr } = props;
     if (typeStr === 'pdf' || typeStr === 'Pdf' || typeStr === 'PDF') {
@@ -169,10 +96,91 @@ function FileType(props) {
 }
 
 function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, previewStatus } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
+    const [headCells, setHeadCells] = React.useState(
+        [
+            {
+                id: 'name', numeric: false, disablePadding: true, label: 'Name',
+            },
+            {
+                id: 'creator', numeric: false, disablePadding: false, label: 'Creator',
+            },
+            {
+                id: 'date', numeric: false, disablePadding: false, label: 'Creation Date',
+            },
+            {
+                id: 'type', numeric: false, disablePadding: false, label: 'File Type',
+            },
+            {
+                id: 'size', numeric: false, disablePadding: false, abel: 'File Size',
+            },
+            {
+                id: 'category', numeric: false, disablePadding: false, label: 'Category',
+            },
+            {
+                id: 'classification', numeric: false, disablePadding: false, label: 'Classification Status',
+            },
+            {
+                id: 'confident', numeric: false, disablePadding: false, label: 'Confident Score',
+            },
+        ]
+    );
+
+    React.useEffect(() => {
+        if (previewStatus) {
+            setHeadCells(
+                [
+                    {
+                        id: 'name', numeric: false, disablePadding: true, label: 'Name',
+                    },
+                    {
+                        id: 'creator', numeric: false, disablePadding: false, label: 'Creator',
+                    },
+                    {
+                        id: 'category', numeric: false, disablePadding: false, label: 'Category',
+                    },
+                    {
+                        id: 'classification', numeric: false, disablePadding: false, label: 'Classification Status',
+                    },
+                    {
+                        id: 'confident', numeric: false, disablePadding: false, label: 'Confident Score',
+                    },
+                ]
+            );
+        } else {
+            setHeadCells(
+                [
+                    {
+                        id: 'name', numeric: false, disablePadding: true, label: 'Name',
+                    },
+                    {
+                        id: 'creator', numeric: false, disablePadding: false, label: 'Creator',
+                    },
+                    {
+                        id: 'date', numeric: false, disablePadding: false, label: 'Creation Date',
+                    },
+                    {
+                        id: 'type', numeric: false, disablePadding: false, label: 'File Type',
+                    },
+                    {
+                        id: 'size', numeric: false, disablePadding: false, label: 'File Size',
+                    },
+                    {
+                        id: 'category', numeric: false, disablePadding: false, label: 'Category',
+                    },
+                    {
+                        id: 'classification', numeric: false, disablePadding: false, label: 'Classification Status',
+                    },
+                    {
+                        id: 'confident', numeric: false, disablePadding: false, label: 'Confident Score',
+                    },
+                ]
+            );
+        }
+    }, [previewStatus])
 
     return (
         <TableHead>
@@ -228,60 +236,6 @@ EnhancedTableHead.propTypes = {
     rowCount: PropTypes.number.isRequired,
 };
 
-// function EnhancedTableToolbar(props) {
-//     const { numSelected } = props;
-
-//     return (
-//         <Toolbar
-//             sx={{
-//                 pl: { sm: 2 },
-//                 pr: { xs: 1, sm: 1 },
-//                 ...(numSelected > 0 && {
-//                     bgcolor: (theme) =>
-//                         alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-//                 }),
-//             }}
-//         >
-//             {numSelected > 0 ? (
-//                 <Typography
-//                     sx={{ flex: '1 1 100%' }}
-//                     color="inherit"
-//                     variant="subtitle1"
-//                     component="div"
-//                 >
-//                     {numSelected} selected
-//                 </Typography>
-//             ) : (
-//                 <Typography
-//                     sx={{ flex: '1 1 100%' }}
-//                     variant="h6"
-//                     id="tableTitle"
-//                     component="div"
-//                 >
-//                     Nutrition
-//                 </Typography>
-//             )}
-
-//             {numSelected > 0 ? (
-//                 <Tooltip title="Delete">
-//                     <IconButton>
-//                         <DeleteIcon />
-//                     </IconButton>
-//                 </Tooltip>
-//             ) : (
-//                 <Tooltip title="Filter list">
-//                     <IconButton>
-//                         <FilterListIcon />
-//                     </IconButton>
-//                 </Tooltip>
-//             )}
-//         </Toolbar>
-//     );
-// }
-
-// EnhancedTableToolbar.propTypes = {
-//     numSelected: PropTypes.number.isRequired,
-// };
 
 export default function EnhancedTable() {
     const [rows, setRows] = React.useState(rowsTemp);
@@ -344,9 +298,9 @@ export default function EnhancedTable() {
         setDeleteModal(false);
         const filteredData = rows.filter(data => data.id !== id);
         setRows(filteredData);
-    
-        if(filteredData.length === page * rowsPerPage) {
-            if(page > 0) {
+
+        if (filteredData.length === page * rowsPerPage) {
+            if (page > 0) {
                 setPage(page - 1);
                 onVisibleRows(page - 1, rowsPerPage, filteredData);
             } else {
@@ -428,15 +382,16 @@ export default function EnhancedTable() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <div className='metaview-content'>
+            <div className={clsx('metaview-content', previewStatus && 'metaview-grid')}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <TableContainer>
                         <Table
-                            sx={{ minWidth: 750 }}
+                            sx={previewStatus ? { minWidth: 500 } : { minWidth: 750 }}
                             aria-labelledby="tableTitle"
                             size={dense ? 'small' : 'medium'}
                         >
                             <EnhancedTableHead
+                                previewStatus={previewStatus}
                                 numSelected={selected.length}
                                 order={order}
                                 orderBy={orderBy}
@@ -483,9 +438,9 @@ export default function EnhancedTable() {
                                                 {row.name}
                                             </TableCell>
                                             <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.creator}</TableCell>
-                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>
-                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.type}</TableCell>
-                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.size}</TableCell>
+                                            {previewStatus ? '' : <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>}
+                                            {previewStatus ? '' : <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.type}</TableCell>}
+                                            {previewStatus ? '' : <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.size}</TableCell>}
                                             <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.category}</TableCell>
                                             <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.classification}</TableCell>
                                             <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.confident}</TableCell>
@@ -548,7 +503,7 @@ export default function EnhancedTable() {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                {metaviewStatus ? <div className='metaview-box'>
+                {metaviewStatus && <div className='metaview-box'>
                     <div className='grey-line'></div>
                     <div className='metaview-container'>
                         <div className='metaview-head'>
@@ -628,10 +583,9 @@ export default function EnhancedTable() {
                     <div>
                     </div>
                 </div>
-                    :
-                    <div></div>
                 }
-                {previewStatus ? <div className='preview-box'>
+
+                {previewStatus && <div className='preview-box'>
                     <div className='grey-line'></div>
                     <div className='preview-container'>
                         <div className='preview-head'>
@@ -648,12 +602,10 @@ export default function EnhancedTable() {
                     <div>
                     </div>
                 </div>
-                    :
-                    <div></div>
                 }
             </div>
             <FormControlLabel
-                className='dense-padding-box'
+                className='dense-padding-box roboto-font'
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />
