@@ -2,7 +2,6 @@ import { useContext, useEffect } from 'react'
 import { ThemeContext } from './context/theme'
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { AuthContext, AuthProvider } from './context/authContext';
-import { useAuth } from './hook/useAuth';
 import SignIn from './components/SignIn/SignIn'
 import SignUp from './components/SignUp/SignUp'
 import ResetPassword from './components/ResetPassword/ResetPassword'
@@ -13,8 +12,6 @@ import './App.css'
 import './global.css'
 
 const App = () => {
-
-  const { user, login, logout, setUser, loginStatus, setLoginStatus } = useAuth();
 
   const [{ themeName }] = useContext(ThemeContext);
 

@@ -22,8 +22,14 @@ const { Dragger } = Upload;
 export default function Content() {
 
   const [open, setOpen] = React.useState(false);
+  const [fileList, setFileList] = React.useState([
+    {
+      uid: '0',
+      name: 'xxx.png',
+    },
+  ]);
   const descriptionElementRef = React.useRef(null);
-  
+
   React.useEffect(() => {
     if (open) {
       const { current: descriptionElement } = descriptionElementRef;
@@ -33,25 +39,46 @@ export default function Content() {
     }
   }, [open]);
 
-  const [uploadProps, setUploadProps] = React.useState({
-    name: 'file',
-    multiple: true,
-    // action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== 'uploading') {
-        // console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    onDrop(e) {
-      // console.log('Dropped files', e.dataTransfer.files);
-    },
-  });
+  const onUploadChange = (e) => {
+    console.log('upload change event');
+    console.log(e);
+    // const files = e.target.files;
+    // if (files.length) {
+    //   setFileList(prev => ({ ...prev, files }));
+    // }
+  }
+
+  const onUploadDrop = (e) => {
+    console.log('upload drop event');
+    console.log(e);
+    // const files = e.target.files;
+    // if (files.length) {
+    //   setFileList(prev => ({ ...prev, files }));
+    // }
+  }
+
+  const onDelete = (e) => {
+    console.log('upload delete event');
+    console.log(e);
+  }
+
+  const handleFileUpload = (e) => {
+    console.log('file upload button');
+    console.log(e);
+    // const files = e.target.files;
+    // if (files.length) {
+    //   setFileList(prev => ({ ...prev, files }));
+    // }
+  };
+
+  const handleFolderUpload = (e) => {
+    console.log('folder upload button');
+    console.log(e);
+    // const files = e.target.files;
+    // if (files.length > 0) {
+    //   setFileList(prev => ({ ...prev, files }));
+    // }
+  };
 
   const handleButtonClick = (e) => {
     // Prevent the Dragger's and other events from being triggered
@@ -64,22 +91,6 @@ export default function Content() {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleFileUpload = (e) => {
-    console.log("dfsfsadf")
-    const file = e.target.files[0];
-    if (file) {
-      console.log('Uploading file:', file.name);
-      setUploadProps(prev => ({ ...prev, file }));
-    }
-  };
-
-  const handleFolderUpload = (e) => {
-    const files = e.target.files;
-    if (files.length > 0) {
-      console.log('Uploading folder:', files.length, 'files');
-    }
   };
 
   const uploadSubmit = (e) => {
@@ -156,7 +167,7 @@ export default function Content() {
         >
           <DialogTitle id="scroll-dialog-title"><div className='roboto-font font-size-28 dis-center'>Document Upload</div></DialogTitle>
           <DialogContent>
-            <Dragger {...uploadProps} className='mb-100 bg-remove'>
+            <Dragger name='drag' onChange={onUploadChange} onDrop={onUploadDrop} onRemove={onDelete} fileList={fileList} multiple={true} className='mb-100 bg-remove'>
               <p className="ant-upload-drag-icon bg-remove" onClick={handleButtonClick}>
                 <PopupState variant="popover" popupId="demo-popup-menu">
                   {(popupState) => (
@@ -165,15 +176,15 @@ export default function Content() {
                         Upload
                       </Button>
                       <Menu {...bindMenu(popupState)} >
-                        <MenuItem onClick={popupState.close} className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
-                          <FileUploadIcon  className='mr-15 background-remove' />
+                        <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
+                          <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="file-upload" className='background-remove mouse-pointer'>Upload File</label>
-                          <input type="file" id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
+                          <input type="file" multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
                         </MenuItem>
-                        <MenuItem onClick={popupState.close}  className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
+                        <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="folder-upload" className='background-remove mouse-pointer'>Upload Folder</label>
-                          <input type="file" id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
+                          <input type="file" multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
                         </MenuItem>
                       </Menu>
                     </React.Fragment>
@@ -194,6 +205,6 @@ export default function Content() {
         </Dialog>
         <CustomizedTables />
       </Container>
-    </Box>
+    </Box >
   );
 }
