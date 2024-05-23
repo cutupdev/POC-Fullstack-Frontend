@@ -30,7 +30,7 @@ const EmailVerificationSuccess = () => {
     const token = location.pathname.split("verify/")[1];
     const verifyEmail = async () => {
       try {
-        const response = await axios.get(`https://45.8.22.59:5000/api/users/verify/${token}`);
+        const response = await axios.get(`https://poc-fullstack-backend.vercel.app/api/users/verify/${token}`);
         if (response.data.success) {
           setSnackState({
             snackOpen: true,

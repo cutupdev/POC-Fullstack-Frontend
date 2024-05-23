@@ -241,7 +241,7 @@ export default function SignUp() {
         captcha: captchaValue
       };
       
-      axios.post('https://45.8.22.59:5000/api/users/signup', newUser)
+      axios.post('https://poc-fullstack-backend.vercel.app/api/users/signup', newUser)
         .then(res => {
           if (res.data.success) {
             setRegisterState(true);
