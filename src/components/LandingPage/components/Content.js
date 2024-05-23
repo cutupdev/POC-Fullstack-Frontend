@@ -22,17 +22,25 @@ const { Dragger } = Upload;
 export default function Content() {
 
   const [open, setOpen] = React.useState(false);
-  // const [visible, setVisible] = React.useState(false);
+  const descriptionElementRef = React.useRef(null);
+  
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
 
   const [uploadProps, setUploadProps] = React.useState({
     name: 'file',
     multiple: true,
-    // directory: true,
     // action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
     onChange(info) {
       const { status } = info.file;
       if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
+        // console.log(info.file, info.fileList);
       }
       if (status === 'done') {
         message.success(`${info.file.name} file uploaded successfully.`);
@@ -41,20 +49,13 @@ export default function Content() {
       }
     },
     onDrop(e) {
-      console.log('Dropped files', e.dataTransfer.files);
+      // console.log('Dropped files', e.dataTransfer.files);
     },
   });
-
-  // const handleUploadTypeSelection = (type) => {
-  //   setUploadProps({ ...uploadProps, directory: type === 'directory' });
-  //   setVisible(false);
-  // };
 
   const handleButtonClick = (e) => {
     // Prevent the Dragger's and other events from being triggered
     e.stopPropagation();
-    console.log("Button click event detected!");
-    // Implement your button-specific logic here
   };
 
   const handleClickOpen = () => {
@@ -65,22 +66,11 @@ export default function Content() {
     setOpen(false);
   };
 
-  const descriptionElementRef = React.useRef(null);
-
-  React.useEffect(() => {
-    if (open) {
-      const { current: descriptionElement } = descriptionElementRef;
-      if (descriptionElement !== null) {
-        descriptionElement.focus();
-      }
-    }
-  }, [open]);
-
   const handleFileUpload = (e) => {
+    console.log("dfsfsadf")
     const file = e.target.files[0];
     if (file) {
       console.log('Uploading file:', file.name);
-      // Assume setUploadProps is setting properties related to uploading files
       setUploadProps(prev => ({ ...prev, file }));
     }
   };
@@ -91,6 +81,10 @@ export default function Content() {
       console.log('Uploading folder:', files.length, 'files');
     }
   };
+
+  const uploadSubmit = (e) => {
+    setOpen(false);
+  }
 
   return (
     <Box
@@ -195,7 +189,7 @@ export default function Content() {
           </DialogContent>
           <DialogActions className='space-between'>
             <Button onClick={handleClose} className='roboto-font font-size-16' >Cancel</Button>
-            <Button onClick={handleClose} className='roboto-font font-size-16 mr-10' >Upload</Button>
+            <Button onClick={uploadSubmit} className='roboto-font font-size-16 mr-10' >Upload</Button>
           </DialogActions>
         </Dialog>
         <CustomizedTables />

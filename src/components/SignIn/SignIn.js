@@ -1,5 +1,6 @@
 import * as React from 'react';
-// import PropTypes from 'prop-types';
+import axios from 'axios';
+import { useAuth } from '../../context/authContext'; 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -8,62 +9,19 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
-// import ToggleButton from '@mui/material/ToggleButton';
-// import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Snackbar from '@mui/joy/Snackbar';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { Card as MuiCard } from '@mui/material';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-// import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
 import ForgotPassword from './ForgotPassword';
 import getSignInTheme from './getSignInTheme';
-import {  SitemarkIcon } from './CustomIcons';
+import { SitemarkIcon } from './CustomIcons';
+import { useNavigate } from 'react-router-dom';
 
-
-// function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
-//   return (
-//     <Box
-//       sx={{
-//         display: 'flex',
-//         flexDirection: 'column',
-//         alignItems: 'center',
-//         width: '100dvw',
-//         position: 'fixed',
-//         bottom: 24,
-//       }}
-//     >
-//       <ToggleButtonGroup
-//         color="primary"
-//         exclusive
-//         value={showCustomTheme}
-//         onChange={toggleCustomTheme}
-//         aria-label="Toggle design language"
-//         sx={{
-//           backgroundColor: 'background.default',
-//           '& .Mui-selected': {
-//             pointerEvents: 'none',
-//           },
-//         }}
-//       >
-//         <ToggleButton value>
-//           <AutoAwesomeRoundedIcon sx={{ fontSize: '20px', mr: 1 }} />
-//           Custom theme
-//         </ToggleButton>
-//         <ToggleButton value={false}>Material Design 2</ToggleButton>
-//       </ToggleButtonGroup>
-//     </Box>
-//   );
-// }
-
-// ToggleCustomTheme.propTypes = {
-//   showCustomTheme: PropTypes.shape({
-//     valueOf: PropTypes.func.isRequired,
-//   }).isRequired,
-//   toggleCustomTheme: PropTypes.func.isRequired,
-// };
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -137,7 +95,10 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn() {
-  const SignInTheme = createTheme(getSignInTheme(true));
+  const navigate = useNavigate();
+  const SignInTheme = createTheme(getSignInTheme('light'));
+  const { login, loginStatus, setLoginStatus } = useAuth();
+  const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [password, setPassword] = React.useState("");
@@ -146,18 +107,39 @@ export default function SignIn() {
   const [open, setOpen] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   const [type, setType] = React.useState('password');
+  const checkboxRef = React.useRef(null);
+  const [snackState, setSnackState] = React.useState({
+    snackOpen: false,
+    vertical: 'top',
+    horizontal: 'center',
+    message: ""
+  });
+  const { vertical, horizontal, snackOpen, message } = snackState;
 
   React.useEffect(() => {
+    if(localStorage.getItem('user')) {
+      navigate('/dashboard');
+    } 
     setPassword("");
+    setLoginStatus(false);
   }, [])
 
-  const pwdChange = (event) => {
-    let pwd = document.getElementById('password');
-    if (pwd.value !== password || pwd.value !== "") {
-      setPassword(event.target.value);
+  React.useEffect(() => {
+    if(loginStatus) {
+      setEmailError(true);
+      setEmailErrorMessage("Email or password incorrect, try again with correct credential");
+    } else {
+      setEmailError(false);
+      setEmailErrorMessage("");
     }
+  }, [loginStatus])
+
+  const onEmail = (e) => {
+    setEmail(e.target.value);
+  }
+
+  const pwdChange = (event) => {
     setPassword(event.target.value);
-    console.log(password)
   }
 
   const handleClickOpen = () => {
@@ -180,20 +162,21 @@ export default function SignIn() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    setLoginStatus(false);
+    const loginUser = {
+      email: email,
+      password: password,
+      checked: checkboxRef.current.checked
+    }
+    
+    login(loginUser);
   };
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
 
     let isValid = true;
 
-    if (!email.value || !isEmail(email.value)) {
+    if (!email || !isEmail(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -202,17 +185,17 @@ export default function SignIn() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 12 || !hasUpperCase(password.value) || !hasLowerCase(password.value) || !hasNumeric(password.value) || !hasSpecialCharacter(password.value)) {
+    if (!password || password.length < 12 || !hasUpperCase(password) || !hasLowerCase(password) || !hasNumeric(password) || !hasSpecialCharacter(password)) {
       setPasswordError(true);
-      if (!password.value || password.value.length < 12) {
+      if (!password || password.length < 12) {
         setPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(password.value)) {
+      } else if (!hasUpperCase(password)) {
         setPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(password.value)) {
+      } else if (!hasLowerCase(password)) {
         setPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(password.value)) {
+      } else if (!hasNumeric(password)) {
         setPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(password.value)) {
+      } else if (!hasSpecialCharacter(password)) {
         setPasswordErrorMessage('Password must include one special character at least.');
       } else {
         setPasswordErrorMessage('Password format is not correct. Try again.');
@@ -227,191 +210,177 @@ export default function SignIn() {
   };
 
   return (
-    <ThemeProvider theme={ SignInTheme }>
-      <CssBaseline />
-      <SignInContainer direction="column" justifyContent="space-between" className='roboto-font'>
-        <Stack
-          justifyContent="center"
-          sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
-        >
-          <Card>
-            <SitemarkIcon />
-            <Typography
-              className='roboto-font'
-              component="h1"
-              variant="h4"
-              sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-            >
-              Sign in
-            </Typography>
-            <div className='flex roboto-font'>
-              <div className='roboto-font small-font-size'>If you don't have an account, &nbsp;  </div>
-              <Link
-                href="/sign-up/"
-                variant="body2"
-                className='roboto-font small-font-size'
-                sx={{ alignSelf: 'center' }}
+    <div>
+      <ThemeProvider theme={SignInTheme}>
+        <CssBaseline />
+        <SignInContainer direction="column" justifyContent="space-between" className='roboto-font'>
+          <Stack
+            justifyContent="center"
+            sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
+          >
+            <Card>
+              <SitemarkIcon />
+              <Typography
+                className='roboto-font'
+                component="h1"
+                variant="h4"
+                sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
               >
-                you can sign up here
-              </Link>
-              <div sx={{ alignSelf: 'center' }}>.</div>
-            </div>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              noValidate
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-                gap: 2,
-              }}
-            >
-              <FormControl className='signin-box'>
-                {/* <FormLabel htmlFor="email">Email</FormLabel> */}
-                {/* <TextField
-                  error={emailError}
-                  helperText={emailErrorMessage}
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="your@email.com"
-                  autoComplete="email"
-                  autoFocus
-                  required
-                  fullWidth
-                  variant="outlined"
-                  color={emailError ? 'error' : 'primary'}
-                  sx={{ ariaLabel: 'email' }}
-                /> */}
-                <ThemeProvider theme={theme}>
-                  <TextField
-                    error={emailError}
-                    helperText={emailErrorMessage}
-                    id="email"
-                    type="email"
-                    name="email"
-                    label="Email"
-                    variant="filled"
-                    autoComplete="email"
-                    // autoFocus
-                    required
-                    fullWidth
-                    color={emailError ? 'error' : 'primary'}
-                    // sx={{ ariaLabel: 'email' }}
-                    className='signin-box'
-                    inputProps={{ 
-                      style: { 
-                        fontSize: 24, 
-                        borderRadius: 0, 
-                        fontFamily: 'roboto !important', 
-                        backgroundColor: '#fff', 
-                        height: '32px' 
-                      } 
-                    }} // font size of input text
-                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
-                    FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
-                  />
-                </ThemeProvider>
-              </FormControl>
-              <FormControl>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                  }}
+                Sign in
+              </Typography>
+              <div className='flex roboto-font'>
+                <div className='roboto-font small-font-size'>If you don't have an account, &nbsp;  </div>
+                <Link
+                  href="/sign-up/"
+                  variant="body2"
+                  className='roboto-font small-font-size'
+                  sx={{ alignSelf: 'center' }}
                 >
-                  <Link
-                    component="button"
-                    className='roboto-font small-font-size'
-                    onClick={handleClickOpen}
-                    variant="body2"
-                    sx={{ alignSelf: 'baseline' }}
-                  >
-                    Forgot Password
-                  </Link>
-                </Box>
-                <div className='password-box'>
-                  {/* <TextField
-                    error={passwordError}
-                    helperText={passwordErrorMessage}
-                    name="password"
-                    placeholder="••••••••"
-                    type={type}
-                    id="password"
-                    autoComplete="current-password"
-                    required
-                    fullWidth
-                    value={password}
-                    onChange={pwdChange}
-                    variant="outlined"
-                    color={passwordError ? 'error' : 'primary'}
-                  /> */}
-                  {/* <TextField 
-                    id="password" 
-                    error={passwordError}
-                    helperText={passwordErrorMessage}
-                    type={type}
-                    label="Password" 
-                    variant="outlined" 
-                  /> */}
+                  you can sign up here
+                </Link>
+                <div sx={{ alignSelf: 'center' }}>.</div>
+              </div>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '100%',
+                  gap: 2,
+                }}
+              >
+                <FormControl className='signin-box'>
                   <ThemeProvider theme={theme}>
                     <TextField
-                      error={passwordError}
-                      helperText={passwordErrorMessage}
-                      id="password"
-                      type={type}
-                      name="password"
-                      label="Password"
+                      error={emailError}
+                      helperText={emailErrorMessage}
+                      id="email"
+                      type="email"
+                      name="email"
+                      label="Email"
                       variant="filled"
-                      autoComplete="current-password"
+                      autoComplete="email"
+                      onChange={onEmail}
                       required
                       fullWidth
-                      value={password}
-                      color={passwordError ? 'error' : 'primary'}
-                      // color='primary'
-                      onChange={pwdChange}
+                      color={emailError ? 'error' : 'primary'}
                       className='signin-box'
-                      inputProps={{ 
-                        style: { 
-                          fontSize: 24, 
-                          borderRadius: 0, 
+                      inputProps={{
+                        style: {
+                          fontSize: 24,
+                          borderRadius: 0,
                           fontFamily: 'roboto !important',
-                          backgroundColor: '#fff', 
-                          height: '32px',
-                        } 
+                          backgroundColor: '#fff',
+                          height: '32px'
+                        }
                       }} // font size of input text
                       InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
-                      FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 }}}
+                      FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 } }}
                     />
                   </ThemeProvider>
-                  <span className='visibility-box'>
-                    {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
-                  </span>
-                </div>
+                </FormControl>
+                <FormControl>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                    }}
+                  >
+                    <Link
+                      component="button"
+                      className='roboto-font small-font-size'
+                      onClick={handleClickOpen}
+                      variant="body2"
+                      sx={{ alignSelf: 'baseline' }}
+                    >
+                      Forgot Password
+                    </Link>
+                  </Box>
+                  <div className='password-box'>
+                    <ThemeProvider theme={theme}>
+                      <TextField
+                        error={passwordError}
+                        helperText={passwordErrorMessage}
+                        id="password"
+                        type={type}
+                        name="password"
+                        label="Password"
+                        variant="filled"
+                        autoComplete="current-password"
+                        required
+                        fullWidth
+                        value={password}
+                        color={passwordError ? 'error' : 'primary'}
+                        onChange={pwdChange}
+                        className='signin-box'
+                        inputProps={{
+                          style: {
+                            fontSize: 24,
+                            borderRadius: 0,
+                            fontFamily: 'roboto !important',
+                            backgroundColor: '#fff',
+                            height: '32px',
+                          }
+                        }} // font size of input text
+                        InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto !important' } }} // font size of input label
+                        FormHelperTextProps={{ style: { fontFamily: 'roboto !important', fontSize: 16 } }}
+                      />
+                    </ThemeProvider>
+                    <span className='visibility-box'>
+                      {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
+                    </span>
+                  </div>
 
-              </FormControl>
-              <FormControlLabel
-                className='roboto-font small-font-size'
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <ForgotPassword open={open} handleClose={handleClose} />
-              <div className='flex-end'>
-                <Button
-                  type="submit"
-                  className='submit-btn roboto-font'
-                  // fullWidth
-                  variant="contained"
-                  onClick={validateInputs}
-                >
-                  Sign in
-                </Button>
-              </div>
-            </Box>
-          </Card>
-        </Stack>
-      </SignInContainer>
-    </ThemeProvider>
+                </FormControl>
+                <div className='remember-box'>
+                <input
+                  className='roboto-font small-font-size remember-checkbox'
+                  type="checkbox"
+                  id="checkbox"
+                  defaultChecked={true}
+                  ref={checkboxRef}
+                />
+                <p className='roboto-font small-font-size'>Remember me</p>
+                </div>
+                <ForgotPassword open={open} handleClose={handleClose} setSnackState={setSnackState} />
+                <div className='flex-end'>
+                  <Button
+                    type="submit"
+                    className='submit-btn roboto-font'
+                    variant="contained"
+                    onClick={validateInputs}
+                  >
+                    Sign in
+                  </Button>
+                </div>
+              </Box>
+
+            </Card>
+          </Stack>
+        </SignInContainer>
+      </ThemeProvider>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        autoHideDuration={10000}
+        open={snackOpen}
+        variant='outlined'
+        color='primary'
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return;
+          }
+          setSnackState({
+            snackOpen: false,
+            vertical: 'top',
+            horizontal: 'center',
+            message: ""
+          });
+        }}
+      >
+        {message}
+      </Snackbar>
+    </div>
   );
 }

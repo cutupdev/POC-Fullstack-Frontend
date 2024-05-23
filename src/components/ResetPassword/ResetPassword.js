@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import FormControl from '@mui/material/FormControl';
@@ -13,48 +14,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter } from '../../validation';
 import getSignUpTheme from './getSignUpTheme';
 import { SitemarkIcon } from './CustomIcons';
+import Snackbar from '@mui/joy/Snackbar';
+import axios from 'axios';
 
-// function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
-//   return (
-//     <Box
-//       sx={{
-//         display: 'flex',
-//         flexDirection: 'column',
-//         alignItems: 'center',
-//         width: '100dvw',
-//         position: 'fixed',
-//         bottom: 24,
-//       }}
-//     >
-//       <ToggleButtonGroup
-//         color="primary"
-//         exclusive
-//         value={showCustomTheme}
-//         onChange={toggleCustomTheme}
-//         aria-label="Toggle design language"
-//         sx={{
-//           backgroundColor: 'background.default',
-//           '& .Mui-selected': {
-//             pointerEvents: 'none',
-//           },
-//         }}
-//       >
-//         <ToggleButton value>
-//           <AutoAwesomeRoundedIcon sx={{ fontSize: '20px', mr: 1 }} />
-//           Custom theme
-//         </ToggleButton>
-//         <ToggleButton value={false}>Material Design 2</ToggleButton>
-//       </ToggleButtonGroup>
-//     </Box>
-//   );
-// }
-
-// ToggleCustomTheme.propTypes = {
-//   showCustomTheme: PropTypes.shape({
-//     valueOf: PropTypes.func.isRequired,
-//   }).isRequired,
-//   toggleCustomTheme: PropTypes.func.isRequired,
-// };
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -131,33 +93,66 @@ export default function SignUp() {
   // const [mode, setMode] = React.useState('light');
   // const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   // const defaultTheme = createTheme({ palette: { mode } });
-  const SignUpTheme = createTheme(getSignUpTheme(true));
+  const SignUpTheme = createTheme(getSignUpTheme('light'));
+  const [newPassword, setNewPassword] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [token, setToken] = React.useState("");
   const [newPasswordError, setNewPasswordError] = React.useState(false);
   const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState('Password must be longer than 12 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = React.useState('');
   const [newVisible, setNewVisible] = React.useState(false);
   const [newType, setNewType] = React.useState('password');
   const [confirmVisible, setConfirmVisible] = React.useState(false);
   const [confirmType, setConfirmType] = React.useState('password');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [snackState, setSnackState] = React.useState({
+    snackOpen: false,
+    vertical: 'top',
+    horizontal: 'center',
+    message: ""
+  });
+  const { vertical, horizontal, snackOpen, message } = snackState;
+
+  React.useEffect(() => {
+    setNewPassword("");
+    setConfirmPassword("");
+    setNewPasswordError(false);
+    setNewPasswordErrorMessage("");
+    setConfirmPasswordError(false);
+    setConfirmPasswordErrorMessage('');
+  }, [])
+
+  React.useEffect(() => {
+    setEmail(location.pathname.split('/reset-password/')[0].split('/')[1]);
+    setToken(location.pathname.split('/reset-password/')[1]);
+  }, [navigate, location])
+
+  const onNewPass = (e) => {
+    setNewPassword(e.target.value);
+  }
+
+  const onConfirmPass = (e) => {
+    setConfirmPassword(e.target.value);
+  }
 
   const validateInputs = () => {
-    const newPassword = document.getElementById('new-password');
-    const confirmPassword = document.getElementById('confirm-password');
 
     let isValid = true;
 
-    if (!newPassword.value || newPassword.value.length < 12 || !hasUpperCase(newPassword.value) || !hasLowerCase(newPassword.value) || !hasNumeric(newPassword.value) || !hasSpecialCharacter(newPassword.value)) {
+    if (!newPassword || newPassword.length < 12 || !hasUpperCase(newPassword) || !hasLowerCase(newPassword) || !hasNumeric(newPassword) || !hasSpecialCharacter(newPassword)) {
       setNewPasswordError(true);
-      if (!newPassword.value || newPassword.value.length < 12) {
+      if (!newPassword || newPassword.length < 12) {
         setNewPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(newPassword.value)) {
+      } else if (!hasUpperCase(newPassword)) {
         setNewPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(newPassword.value)) {
+      } else if (!hasLowerCase(newPassword)) {
         setNewPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(newPassword.value)) {
+      } else if (!hasNumeric(newPassword)) {
         setNewPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(newPassword.value)) {
+      } else if (!hasSpecialCharacter(newPassword)) {
         setNewPasswordErrorMessage('Password must include one special character at least.');
       } else {
         setNewPasswordErrorMessage('Password format is not correct. Try again.');
@@ -168,17 +163,17 @@ export default function SignUp() {
       setNewPasswordErrorMessage('Enough Possible');
     }
 
-    if (!confirmPassword.value || confirmPassword.value.length < 12 || !hasUpperCase(confirmPassword.value) || !hasLowerCase(confirmPassword.value) || !hasNumeric(confirmPassword.value) || !hasSpecialCharacter(confirmPassword.value)) {
+    if (!confirmPassword || confirmPassword.length < 12 || !hasUpperCase(confirmPassword) || !hasLowerCase(confirmPassword) || !hasNumeric(confirmPassword) || !hasSpecialCharacter(confirmPassword)) {
       setConfirmPasswordError(true);
-      if (!confirmPassword.value || confirmPassword.value.length < 12) {
+      if (!confirmPassword || confirmPassword.length < 12) {
         setConfirmPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(confirmPassword.value)) {
+      } else if (!hasUpperCase(confirmPassword)) {
         setConfirmPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(confirmPassword.value)) {
+      } else if (!hasLowerCase(confirmPassword)) {
         setConfirmPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(confirmPassword.value)) {
+      } else if (!hasNumeric(confirmPassword)) {
         setConfirmPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(confirmPassword.value)) {
+      } else if (!hasSpecialCharacter(confirmPassword)) {
         setConfirmPasswordErrorMessage('Password must include one special character at least.');
       } else {
         setConfirmPasswordErrorMessage('Password format is not correct. Try again.');
@@ -189,7 +184,7 @@ export default function SignUp() {
       setConfirmPasswordErrorMessage('Enough Possible');
     }
 
-    if (newPassword.value === confirmPassword.value) {
+    if (newPassword === confirmPassword) {
       setConfirmPasswordError(false);
       setConfirmPasswordErrorMessage('');
     } else {
@@ -223,123 +218,178 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const data = {
+      email: email,
+      token: token,
+      password: confirmPassword
+    };
+    axios.post('http://45.8.22.59:5000/api/users/resetPassword', data)
+      .then(res => {
+        if (res.data.success) {
+          setSnackState({
+            snackOpen: true,
+            vertical: 'top',
+            horizontal: 'center',
+            message: "Your password reseted succssfully! You can sign in now."
+          });
+          setTimeout(() => {
+            navigate("/");
+          }, 10000)
+        } else {
+          setSnackState({
+            snackOpen: true,
+            vertical: 'top',
+            horizontal: 'center',
+            message: "Unfortunately your password resetting was failed! Try again now."
+          });
+          setTimeout(() => {
+            navigate("/");
+          }, 10000)
+        }
+      })
+      .catch(err => {
+        setSnackState({
+          snackOpen: true,
+          vertical: 'top',
+          horizontal: 'center',
+          message: "Unfortunately your password resetting was failed! Try again now."
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 10000)
+      })
   };
 
   return (
-    <ThemeProvider theme={ SignUpTheme }>
-      <CssBaseline />
-      <SignUpContainer direction="column" justifyContent="space-between">
-        <Stack
-          justifyContent="center"
-          sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
-        >
-          <Card>
-            <SitemarkIcon />
-            <Typography
-              component="h1"
-              className='roboto-font'
-              variant="h4"
-              sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-            >
-              Reset Password
-            </Typography>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-            >
-              <FormControl>
-                <ThemeProvider theme={theme}>
-                  <TextField
-                    label="New Password"
-                    variant="filled"
-                    // value={password}
-                    // color='primary'
-                    // onChange={pwdChange}
-                    className='signin-box'
-                    inputProps={{
-                      style: {
-                        fontSize: 24,
-                        borderRadius: 0,
-                        fontFamily: 'roboto',
-                        backgroundColor: '#fff',
-                        height: '32px',
-                      }
-                    }} // font size of input text
-                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-                    FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 } }}
-                    required
-                    fullWidth
-                    name="new-password"
-                    type={newType}
-                    id="new-password"
-                    autoComplete="new-password"
-                    error={newPasswordError}
-                    helperText={newPasswordErrorMessage}
-                    color={newPasswordError ? 'error' : 'primary'}
-                  />
-                </ThemeProvider>
-                <span className='visibility-box'>
-                  {newVisible ? <VisibilityIcon className='visibility1' onClick={handleNewVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleNewVisibility} />}
-                </span>
-              </FormControl>
-              <FormControl>
-                <ThemeProvider theme={theme}>
-                  <TextField
-                    name="confirm-password"
-                    type={confirmType}
-                    id="confirm-password"
-                    autoComplete="confirm-password"
-                    error={confirmPasswordError}
-                    helperText={confirmPasswordErrorMessage}
-                    color={confirmPasswordError ? 'error' : 'primary'}
-                    label="Confirm Password"
-                    variant="filled"
-                    // value={password}
-                    // color='primary'
-                    // onChange={pwdChange}
-                    className='signin-box'
-                    inputProps={{
-                      style: {
-                        fontSize: 24,
-                        borderRadius: 0,
-                        fontFamily: 'roboto',
-                        backgroundColor: '#fff',
-                        height: '32px',
-                      }
-                    }} // font size of input text
-                    InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
-                    FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 } }}
-                    required
-                    fullWidth
-                  />
-                </ThemeProvider>
-                <span className='visibility-box'>
-                  {confirmVisible ? <VisibilityIcon className='visibility1' onClick={handleConfirmVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleConfirmVisibility} />}
-                </span>
-              </FormControl>
-              <div className='flex-end'>
-                <Button
-                  type="submit"
-                  className='submit-btn roboto-font'
-                  // fullWidth
-                  variant="contained"
-                  onClick={validateInputs}
-                >
-                  Reset
-                </Button>
-              </div>
-            </Box>
-          </Card>
-        </Stack>
-      </SignUpContainer>
-    </ThemeProvider>
+    <div>
+      <ThemeProvider theme={SignUpTheme}>
+        <CssBaseline />
+        <SignUpContainer direction="column" justifyContent="space-between">
+          <Stack
+            justifyContent="center"
+            sx={{ height: { xs: '100%', sm: '100dvh' }, p: 2 }}
+          >
+            <Card>
+              <SitemarkIcon />
+              <Typography
+                component="h1"
+                className='roboto-font'
+                variant="h4"
+                sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+              >
+                Reset Password
+              </Typography>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+              >
+                <FormControl>
+                  <ThemeProvider theme={theme}>
+                    <TextField
+                      label="New Password"
+                      variant="filled"
+                      value={newPassword}
+                      // color='primary'
+                      onChange={onNewPass}
+                      className='signin-box'
+                      inputProps={{
+                        style: {
+                          fontSize: 24,
+                          borderRadius: 0,
+                          fontFamily: 'roboto',
+                          backgroundColor: '#fff',
+                          height: '32px',
+                        }
+                      }} // font size of input text
+                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
+                      FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 } }}
+                      required
+                      fullWidth
+                      name="new-password"
+                      type={newType}
+                      id="new-password"
+                      autoComplete="new-password"
+                      error={newPasswordError}
+                      helperText={newPasswordErrorMessage}
+                      color={newPasswordError ? 'error' : 'primary'}
+                    />
+                  </ThemeProvider>
+                  <span className='visibility-box'>
+                    {newVisible ? <VisibilityIcon className='visibility1' onClick={handleNewVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleNewVisibility} />}
+                  </span>
+                </FormControl>
+                <FormControl>
+                  <ThemeProvider theme={theme}>
+                    <TextField
+                      name="confirm-password"
+                      type={confirmType}
+                      id="confirm-password"
+                      autoComplete="confirm-password"
+                      error={confirmPasswordError}
+                      helperText={confirmPasswordErrorMessage}
+                      color={confirmPasswordError ? 'error' : 'primary'}
+                      label="Confirm Password"
+                      variant="filled"
+                      value={confirmPassword}
+                      // color='primary'
+                      onChange={onConfirmPass}
+                      className='signin-box'
+                      inputProps={{
+                        style: {
+                          fontSize: 24,
+                          borderRadius: 0,
+                          fontFamily: 'roboto',
+                          backgroundColor: '#fff',
+                          height: '32px',
+                        }
+                      }} // font size of input text
+                      InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }} // font size of input label
+                      FormHelperTextProps={{ style: { fontFamily: 'roboto', fontSize: 16 } }}
+                      required
+                      fullWidth
+                    />
+                  </ThemeProvider>
+                  <span className='visibility-box'>
+                    {confirmVisible ? <VisibilityIcon className='visibility1' onClick={handleConfirmVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleConfirmVisibility} />}
+                  </span>
+                </FormControl>
+                <div className='flex-end'>
+                  <Button
+                    type="submit"
+                    className='submit-btn roboto-font'
+                    // fullWidth
+                    variant="contained"
+                    onClick={validateInputs}
+                  >
+                    Reset
+                  </Button>
+                </div>
+              </Box>
+            </Card>
+          </Stack>
+        </SignUpContainer>
+      </ThemeProvider>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        autoHideDuration={10000}
+        open={snackOpen}
+        variant='outlined'
+        color='primary'
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return;
+          }
+          setSnackState({
+            snackOpen: false,
+            vertical: 'top',
+            horizontal: 'center',
+            message: ""
+          });
+        }}
+      >
+        {message}
+      </Snackbar>
+    </div>
   );
 }

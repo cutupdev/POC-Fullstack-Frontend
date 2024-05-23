@@ -17,7 +17,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
 import TextField from '@mui/material/TextField';
-// import CloseIcon from '@mui/icons-material/Close';
+import { useAuth } from '../../../context/authContext';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 
@@ -31,6 +31,7 @@ import { styled } from '@mui/material/styles';
 // }));
 
 export default function AccountMenu() {
+  const { logout, loginStatus } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [profileModal, setProfileModal] = React.useState(false);
   const [fullname, setFullname] = React.useState("Microgift");
@@ -49,11 +50,15 @@ export default function AccountMenu() {
     setProfileModal(false);
   }
   const profileSubmit = () => {
-    console.log("submit")
     setProfileModal(false);
   }
   const handleChange = (event) => {
     setFullname(event.target.value);
+  }
+  const logOut = (e) => {
+    setFullname('Microgift');
+    setAnchorEl(null);
+    logout();
   }
   return (
     <React.Fragment>
@@ -110,7 +115,7 @@ export default function AccountMenu() {
           <Avatar /> 
           <div className='font-size-16 roboto-font'>Profile</div>
         </MenuItem>
-        <MenuItem onClick={handleClose} className='menu-item global-font'>
+        <MenuItem onClick={logOut} className='menu-item global-font'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -120,17 +125,6 @@ export default function AccountMenu() {
       <Dialog
         open={profileModal}
         onClose={modalClose}
-        // PaperProps={{
-        //   component: 'form',
-        //   onSubmit: (event) => {
-        //     event.preventDefault();
-        //     const formData = new FormData(event.currentTarget);
-        //     const formJson = Object.fromEntries(formData.entries());
-        //     const email = formJson.email;
-        //     console.log(email);
-        //     handleClose();
-        //   },
-        // }}
       >
         <DialogTitle className='modal-title'>Modify Profile</DialogTitle>
         <DialogContent>
