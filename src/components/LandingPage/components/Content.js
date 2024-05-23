@@ -13,23 +13,30 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import S3 from "react-aws-s3";
 import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useApp } from '../../../context/appContext';
-
+window.Buffer = window.Buffer || require("buffer").Buffer;
 const { Dragger } = Upload;
 
 
 export default function Content() {
-  // const { fileLength, newFile, addFile, removeFile } = useApp();
+  const { fileLength, newFile, addFile, removeFile } = useApp();
   const [open, setOpen] = React.useState(false);
-  const [fileList, setFileList] = React.useState([
-    {
-      uid: '0',
-      name: 'xxx.png',
-    },
-  ]);
+  const [fileList, setFileList] = React.useState([]);
   const descriptionElementRef = React.useRef(null);
+
+  const config = {
+    bucketName: process.env.BUCKET_NAME,
+    region: process.env.BUCKET_REGION,
+    accessKeyId: process.env.BUCKET_ACCESS_KEY_ID,
+    secretAccessKey: process.env.BUCKET_SECRET_ACCESS_KEY,
+  };
+
+  React.useEffect(() => {
+    setFileList([]);
+  }, [])
 
   React.useEffect(() => {
     if (open) {
@@ -40,46 +47,49 @@ export default function Content() {
     }
   }, [open]);
 
+  React.useEffect(() => {
+    console.log(fileList);
+  }, [fileList])
+
   const onUploadChange = (e) => {
-    console.log('upload change event');
-    console.log(e);
-    // const files = e.target.files;
-    // if (files.length) {
-    //   setFileList(prev => ({ ...prev, files }));
-    // }
+    const temp = e.fileList.map(val => {
+      if(val.originFileObj) {
+        return val.originFileObj;
+      } else {
+        return val;
+      }
+    })
+    setFileList([...temp]);
   }
 
   const onUploadDrop = (e) => {
-    console.log('upload drop event');
-    console.log(e);
-    // const files = e.target.files;
-    // if (files.length) {
-    //   setFileList(prev => ({ ...prev, files }));
-    // }
+    // setFileList([...e.dataTransfer.files]);
   }
+
+  const handleFileUpload = (e) => {
+    const temp = Array.from(e.target.files)
+    if (fileList) {
+      fileList.map(val => {
+        temp.push(val);
+      })
+    }
+    setFileList([...temp]);
+  };
+
+  const handleFolderUpload = (e) => {
+    const temp = Array.from(e.target.files)
+    if (fileList) {
+      fileList.map(val => {
+        temp.push(val);
+      })
+    }
+    setFileList([...temp]);
+  };
 
   const onDelete = (e) => {
     console.log('upload delete event');
     console.log(e);
   }
-
-  const handleFileUpload = (e) => {
-    console.log('file upload button');
-    console.log(e);
-    // const files = e.target.files;
-    // if (files.length) {
-    //   setFileList(prev => ({ ...prev, files }));
-    // }
-  };
-
-  const handleFolderUpload = (e) => {
-    console.log('folder upload button');
-    console.log(e);
-    // const files = e.target.files;
-    // if (files.length > 0) {
-    //   setFileList(prev => ({ ...prev, files }));
-    // }
-  };
 
   const handleButtonClick = (e) => {
     // Prevent the Dragger's and other events from being triggered
@@ -87,15 +97,37 @@ export default function Content() {
   };
 
   const handleClickOpen = () => {
+    setFileList([]);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+    setFileList([]);
   };
 
   const uploadSubmit = (e) => {
-    setOpen(false);
+    console.log("submit");
+    for (let i = 0; i < fileList.length; i++) {
+      handleUpload(fileList[i]);
+    }
+    // setOpen(false);
+  }
+
+  const handleUpload = (file) => {
+    console.log('uploading');
+    let newFileName = file.name.replace(/\..+$/, "");
+    const ReactS3Client = new S3(config);
+    ReactS3Client.uploadFile(file, newFileName).then((data) => {
+      if (data.status === 204) {
+        console.log("success");
+        console.log(data);
+      } else {
+        console.log("fail");
+      }
+    }).catch((err) => {
+      console.log("err", err)
+    });
   }
 
   return (
@@ -180,12 +212,12 @@ export default function Content() {
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="file-upload" className='background-remove mouse-pointer'>Upload File</label>
-                          <input type="file" list='text' multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
+                          <input type="file" multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
                         </MenuItem>
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="folder-upload" className='background-remove mouse-pointer'>Upload Folder</label>
-                          <input type="file" list='text' multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
+                          <input type="file" multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
                         </MenuItem>
                       </Menu>
                     </React.Fragment>

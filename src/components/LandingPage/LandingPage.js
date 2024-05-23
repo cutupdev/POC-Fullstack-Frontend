@@ -26,9 +26,9 @@ export default function TemporaryDrawer() {
   // const defaultTheme = createTheme({ palette: { mode } });
 
   React.useEffect(() => {
-    if(!localStorage.getItem('user')) {
-      navigate('/');
-    } 
+    // if(!localStorage.getItem('user')) {
+    //   navigate('/');
+    // } 
   }, [])
 
   const location = useLocation().pathname;
