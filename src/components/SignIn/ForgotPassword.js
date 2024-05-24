@@ -59,9 +59,9 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
   const [email, setEmail] = React.useState('');
 
   React.useEffect(() => {
-    if(localStorage.getItem('user')) {
+    if (localStorage.getItem('user')) {
       navigate('/dashboard');
-    } 
+    }
     setEmail('');
   }, [])
 
@@ -79,7 +79,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
       isValid = false;
     } else {
       setEmailError(false);
-      setEmailErrorMessage('');      
+      setEmailErrorMessage('');
     }
 
     if (isValid) {
@@ -89,7 +89,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
 
       axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/forgotPassword', user)
         .then(res => {
-          if(res.data.success) {
+          if (res.data.success) {
             setSnackState({
               snackOpen: true,
               vertical: 'top',
@@ -116,6 +116,10 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
         })
     }
 
+    setTimeout(() => {
+      handleClose();
+    }, 10000)
+
     return isValid;
   };
 
@@ -126,15 +130,15 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
       style={{ background: '#FBFCFE !important' }}
       className='auth-box'
       onClose={handleClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event) => {
-          event.preventDefault();
-          setTimeout(() => {
-            handleClose();
-          }, 10000)
-        },
-      }}
+    // PaperProps={{
+    //   component: 'form',
+    //   onSubmit: (event) => {
+    //     event.preventDefault();
+    //     setTimeout(() => {
+    //       handleClose();
+    //     }, 10000)
+    //   },
+    // }}
     >
       <DialogTitle
         className='roboto-font auth-box'
@@ -189,7 +193,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
         <Button onClick={handleClose} className='roboto-font reset-btn'>Cancel</Button>
         <Button
           variant="contained"
-          type="submit"
+          // type="submit"
           onClick={validInputs}
           className='roboto-font reset-btn'
         >

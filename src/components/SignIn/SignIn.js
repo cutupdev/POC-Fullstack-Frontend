@@ -137,6 +137,12 @@ export default function SignIn() {
   }
 
   const handleClickOpen = () => {
+    setEmailError(false);
+    setEmailErrorMessage('');
+    setPasswordError(false);
+    setEmailErrorMessage('');
+    setEmail('');
+    setPassword('');
     setOpen(true);
   };
 
