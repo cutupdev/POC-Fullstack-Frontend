@@ -273,7 +273,7 @@ main {
 }
 
 .leftbar-box {
-  padding: 20px; 
+  padding: 20px;
 }
 
 .leftbar-header {
@@ -301,7 +301,7 @@ main {
   color: #ffffff !important;
 }
 
-.leftbar-item-box:hover > p {
+.leftbar-item-box:hover>p {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -497,19 +497,19 @@ main {
 }
 
 .menu-avatar-48 {
-  width: 48px !important; 
+  width: 48px !important;
   height: 48px !important;
 }
 
 .menu-avatar-36 {
-  width: 36px !important; 
+  width: 36px !important;
   height: 36px !important;
   border-radius: 50% !important;
   margin: 0px !important;
 }
 
 .menu-avatar-36:hover {
-  width: 36px !important; 
+  width: 36px !important;
   height: 36px !important;
   border-radius: 50% !important;
 }
@@ -675,11 +675,11 @@ main {
   background: transparent !important;
 }
 
-.leftbar-btn-background:hover > p {
+.leftbar-btn-background:hover>p {
   background: transparent !important;
 }
 
-.leftbar-btn-background > p {
+.leftbar-btn-background>p {
   background: transparent !important;
 }
 
@@ -742,6 +742,7 @@ main {
 
 .pop-upload {
   width: 125px !important;
+  margin-top: 40px !important;
 }
 
 .verifying {
@@ -756,10 +757,17 @@ main {
   text-align: center;
 }
 
+.up-exp {
+  margin-bottom: 40px !important;
+  margin-left: 100px !important;
+  margin-right: 100px !important;
+}
+
 @media (min-width: 1200px) {
   .main-container-width {
     max-width: none !important;
   }
+
   .footer-container-border {
     max-width: none !important;
   }
@@ -790,16 +798,19 @@ main {
   .section {
     margin-top: 4em;
   }
+
   .doc-upload-btn {
     width: 150px !important;
     height: 45px !important;
     font-size: 16px !important;
     font-family: roboto !important;
   }
+
   .search-box-admin {
     width: 450px !important;
     height: 45px;
   }
+
   .category-box {
     width: 300px !important;
     height: 45px !important;
@@ -820,6 +831,7 @@ main {
     width: 350px !important;
     height: 45px;
   }
+
   .search-box {
     width: 350px !important;
     height: 45px;
@@ -831,6 +843,7 @@ main {
     width: 250px !important;
     height: 45px;
   }
+
   .search-box {
     width: 250px !important;
     height: 45px;

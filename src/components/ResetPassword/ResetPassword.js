@@ -100,7 +100,7 @@ export default function SignUp() {
   const [newPasswordError, setNewPasswordError] = React.useState(false);
   const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState('Password must be longer than 12 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = React.useState(true);
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = React.useState('');
   const [newVisible, setNewVisible] = React.useState(false);
   const [newType, setNewType] = React.useState('password');
@@ -122,7 +122,7 @@ export default function SignUp() {
     setNewPasswordError(false);
     setNewPasswordErrorMessage("");
     setConfirmPasswordError(false);
-    setConfirmPasswordErrorMessage('');
+    setConfirmPasswordErrorMessage('Password must be longer than 12 characters. Also it must include one numeric, one special character, one upper case, one lower case at least.');
   }, [])
 
   React.useEffect(() => {
@@ -230,7 +230,7 @@ export default function SignUp() {
             snackOpen: true,
             vertical: 'top',
             horizontal: 'center',
-            message: "Your password reseted succssfully! You can sign in now."
+            message: "Your password is reset. You can sign-in now"
           });
           setTimeout(() => {
             navigate("/");
@@ -240,7 +240,7 @@ export default function SignUp() {
             snackOpen: true,
             vertical: 'top',
             horizontal: 'center',
-            message: "Unfortunately your password resetting was failed! Try again now."
+            message: "Your password couldn't reset! Try again now."
           });
           setTimeout(() => {
             navigate("/");
@@ -252,7 +252,7 @@ export default function SignUp() {
           snackOpen: true,
           vertical: 'top',
           horizontal: 'center',
-          message: "Unfortunately your password resetting was failed! Try again now."
+          message: "Your password couldn't reset! Try again now."
         });
         setTimeout(() => {
           navigate("/");
@@ -357,6 +357,7 @@ export default function SignUp() {
                 <div className='flex-end'>
                   <Button
                     type="submit"
+                    // {snackOpen? disabled: ""}
                     className='submit-btn roboto-font'
                     // fullWidth
                     variant="contained"
@@ -373,7 +374,7 @@ export default function SignUp() {
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         autoHideDuration={10000}
-        open={snackOpen}
+        open={snackOpen && (!(newPasswordError || confirmPasswordError))}
         variant='outlined'
         color='primary'
         onClose={(event, reason) => {

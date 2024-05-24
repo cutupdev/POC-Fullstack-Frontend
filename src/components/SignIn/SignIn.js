@@ -162,6 +162,7 @@ export default function SignIn() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log('clieck submit')
     const loginUser = {
       email: email,
       password: password,
@@ -171,6 +172,7 @@ export default function SignIn() {
   };
 
   const validateInputs = () => {
+    console.log('clieck valid')
     let isValid = true;
 
     if (!email || !isEmail(email)) {

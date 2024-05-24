@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import Snackbar from '@mui/joy/Snackbar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
@@ -13,25 +14,15 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-// import S3 from "react-aws-s3";
 import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useApp } from '../../../context/appContext';
 import { jwtDecode } from "jwt-decode";
 import AWS from 'aws-sdk';
-import S3 from 'aws-sdk/clients/s3'; 
+import S3 from 'aws-sdk/clients/s3';
 import axios from 'axios';
 window.Buffer = window.Buffer || require("buffer").Buffer;
 const { Dragger } = Upload;
-
-// text/plain    .txt
-// application/pdf    .pdf
-// application/msword   .doc
-// application/vnd.openxmlformats-officedocument.wordprocessingml.document     .docx
-// application/vnd.ms-powerpoint    .ppt
-// application/vnd.openxmlformats-officedocument.presentationml.presentation    .pptx
-
-
 
 
 export default function Content() {
@@ -39,6 +30,13 @@ export default function Content() {
   const [open, setOpen] = React.useState(false);
   const [fileList, setFileList] = React.useState([]);
   const descriptionElementRef = React.useRef(null);
+  const [snackState, setSnackState] = React.useState({
+    snackOpen: false,
+    vertical: 'top',
+    horizontal: 'center',
+    message: ""
+  });
+  const { vertical, horizontal, snackOpen, message } = snackState;
 
   const S3_BUCKET = 'docubucket';
   const REGION = process.env.REACT_APP_BUCKET_REGION;
@@ -152,9 +150,22 @@ export default function Content() {
   };
 
   const uploadSubmit = (e) => {
+    console.log("length ===> ", fileList.length)
+
+    if(fileList.length) {
+      alert(`${fileList.length} files uploaded successfully!`);
+    } else {
+      alert(`No file uploaded!`);
+    }
+
     for (let i = 0; i < fileList.length; i++) {
       handleUpload(fileList[i]);
     }
+    // if(fileList.length) {
+    //   alert(`${fileList.length} files uploaded successfully!`);
+    // } else {
+    //   alert(`No file uploaded!`);
+    // }
     setFileList([]);
     setOpen(false);
   }
@@ -169,7 +180,7 @@ export default function Content() {
     try {
       const upload = await s3.putObject(params).promise();
       console.log("File uploaded successfully ===>>> ", upload);
-      const fileInf = { 
+      const fileInf = {
         creatorName: jwtDecode(localStorage.getItem('user')).user.username,
         filename: file.name,
         type: file.type,
@@ -282,20 +293,40 @@ export default function Content() {
                   )}
                 </PopupState>
               </p>
-              <p className="ant-upload-text bg-remove roboto-font">Click or drag files to this area to upload</p>
-              <p className="ant-upload-hint bg-remove roboto-font">
+              <p className="ant-upload-text bg-remove roboto-font up-exp">Click or drag files to this area to upload</p>
+              {/* <p className="ant-upload-hint bg-remove roboto-font">
                 Support for a single or bulk upload. Strictly prohibited from uploading company data or other
                 banned files.
-              </p>
+              </p> */}
             </Dragger>
           </DialogContent>
           <DialogActions className='space-between'>
             <Button onClick={handleClose} className='roboto-font font-size-16' >Cancel</Button>
-            <Button onClick={uploadSubmit} className='roboto-font font-size-16 mr-10' >Upload</Button>
+            <Button disabled={snackOpen} onClick={uploadSubmit} className='roboto-font font-size-16 mr-10' >Upload</Button>
           </DialogActions>
         </Dialog>
         <CustomizedTables />
       </Container>
+      {/* <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        autoHideDuration={7000}
+        open={snackOpen}
+        variant='outlined'
+        color='primary'
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return;
+          }
+          setSnackState({
+            snackOpen: false,
+            vertical: 'top',
+            horizontal: 'center',
+            message: ""
+          })
+        }}
+      >
+        {message}
+      </Snackbar> */}
     </Box >
   );
 }
