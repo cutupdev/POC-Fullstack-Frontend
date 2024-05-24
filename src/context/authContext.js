@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (credentials) => {
         try {
-            const response = await axios.post('http://45.8.22.59:5000/api/users/signin', credentials);
+            const response = await axios.post('https://45.8.22.59:5000/api/users/signin', credentials);
             if (response.data.authToken) {
                 localStorage.setItem('user', JSON.stringify(response.data));
                 addUser(response.data);
