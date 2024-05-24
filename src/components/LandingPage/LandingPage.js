@@ -93,7 +93,7 @@ export default function TemporaryDrawer() {
         </Drawer>
         <Box
           sx={{
-            display: { xs: 'none', md: 'flex' },
+            display: { md: 'flex' },
             margin: '0px !important',
             gap: 0.5,
             alignItems: 'center',
