@@ -17,8 +17,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useApp } from '../../../context/appContext';
+import { jwtDecode } from "jwt-decode";
 import AWS from 'aws-sdk';
 import S3 from 'aws-sdk/clients/s3'; 
+import axios from 'axios';
 window.Buffer = window.Buffer || require("buffer").Buffer;
 const { Dragger } = Upload;
 
@@ -82,6 +84,7 @@ export default function Content() {
     e.fileList.map(val => {
       if (allowedTypes.includes(val.type)) {
         if (val.originFileObj) {
+          console.log(val.originFileObj);
           temp.push(val.originFileObj);
         } else {
           temp.push(val);
@@ -167,6 +170,23 @@ export default function Content() {
     try {
       const upload = await s3.putObject(params).promise();
       console.log("File uploaded successfully ===>>> ", upload);
+      const fileInf = { 
+        creatorName: jwtDecode(localStorage.getItem('user')).user.username,
+        filename: file.name,
+        type: file.type,
+        size: file.size
+      }
+      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/files/newUpload', {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        }
+      }, fileInf)
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(err => {
+          console.log(err);
+        })
     } catch (error) {
       console.error("error ===>>> ", error);
     }
