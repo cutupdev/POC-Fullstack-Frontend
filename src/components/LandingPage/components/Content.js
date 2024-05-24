@@ -15,12 +15,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { useApp } from '../../../context/appContext';
 
 const { Dragger } = Upload;
 
 
 export default function Content() {
-
+  // const { fileLength, newFile, addFile, removeFile } = useApp();
   const [open, setOpen] = React.useState(false);
   const [fileList, setFileList] = React.useState([
     {

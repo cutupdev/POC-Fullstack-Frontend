@@ -9,7 +9,7 @@ import ResetPassword from './components/ResetPassword/ResetPassword'
 import LangdingPage from './components/LandingPage/LandingPage'
 import Admin from './components/LandingPage/Admin';
 import EmailVerificationSuccess from './components/Verify/EmailVerificationSuccess';
-import Test from './components/LandingPage/components/Test';
+// import Test from './components/LandingPage/components/Test';
 import './App.css'
 import './global.css'
 
@@ -28,7 +28,7 @@ const App = () => {
             <Route exact path='/dashboard' element={<LangdingPage />} />
             <Route exact path='/admin' element={<Admin />} />
             <Route exact path='/verify/:id' element={<EmailVerificationSuccess />} />
-            <Route exact path='/test' element={<Test />} />
+            {/* <Route exact path='/test' element={<Test />} /> */}
           </Routes>
         </div>
       </AuthProvider>
