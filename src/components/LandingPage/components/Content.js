@@ -38,7 +38,7 @@ export default function Content() {
   const [fileList, setFileList] = React.useState([]);
   const descriptionElementRef = React.useRef(null);
 
-  const S3_BUCKET = process.env.REACT_APP_BUCKET_NAME;
+  const S3_BUCKET = 'docwarehouse';
   const REGION = process.env.REACT_APP_BUCKET_REGION;
 
   AWS.config.update({
