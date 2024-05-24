@@ -160,7 +160,7 @@ export default function SignUp() {
       isValid = false;
     } else {
       setNewPasswordError(false);
-      setNewPasswordErrorMessage('Enough Possible');
+      setNewPasswordErrorMessage('');
     }
 
     if (!confirmPassword || confirmPassword.length < 12 || !hasUpperCase(confirmPassword) || !hasLowerCase(confirmPassword) || !hasNumeric(confirmPassword) || !hasSpecialCharacter(confirmPassword)) {
