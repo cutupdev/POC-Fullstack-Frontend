@@ -244,11 +244,7 @@ export default function SignUp() {
         captcha: captchaValue
       };
       
-      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signup', {
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        }
-      },  newUser)
+      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signup',  newUser)
         .then(res => {
           if (res.data.success) {
             setRegisterState(true);

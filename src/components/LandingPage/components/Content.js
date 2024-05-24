@@ -84,7 +84,6 @@ export default function Content() {
     e.fileList.map(val => {
       if (allowedTypes.includes(val.type)) {
         if (val.originFileObj) {
-          console.log(val.originFileObj);
           temp.push(val.originFileObj);
         } else {
           temp.push(val);
@@ -153,11 +152,11 @@ export default function Content() {
   };
 
   const uploadSubmit = (e) => {
-    console.log("submit");
     for (let i = 0; i < fileList.length; i++) {
       handleUpload(fileList[i]);
     }
-    // setOpen(false);
+    setFileList([]);
+    setOpen(false);
   }
 
   const handleUpload = async (file) => {
@@ -176,19 +175,16 @@ export default function Content() {
         type: file.type,
         size: file.size
       }
-      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/files/newUpload', {
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        }
-      }, fileInf)
+      console.log("backend sending data ===> ", fileInf);
+      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/files/newUpload', fileInf)
         .then(res => {
-          console.log(res.data);
+          console.log("File Inf saving success ===> ", res.data);
         })
         .catch(err => {
           console.log(err);
         })
     } catch (error) {
-      console.error("error ===>>> ", error);
+      console.error("File Inf saving error ===>>> ", error);
     }
   }
 
