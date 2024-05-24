@@ -1,6 +1,6 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { ThemeContext } from './context/theme'
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/authContext';
 import { AppProvider } from './context/appContext';
 import SignIn from './components/SignIn/SignIn'
@@ -9,9 +9,7 @@ import ResetPassword from './components/ResetPassword/ResetPassword'
 import LangdingPage from './components/LandingPage/LandingPage'
 import Admin from './components/LandingPage/Admin';
 import EmailVerificationSuccess from './components/Verify/EmailVerificationSuccess';
-// import Test from './components/LandingPage/components/Test';
 import './App.css'
-import './global.css'
 
 const App = () => {
 
@@ -28,7 +26,6 @@ const App = () => {
             <Route exact path='/dashboard' element={<LangdingPage />} />
             <Route exact path='/admin' element={<Admin />} />
             <Route exact path='/verify/:id' element={<EmailVerificationSuccess />} />
-            {/* <Route exact path='/test' element={<Test />} /> */}
           </Routes>
         </div>
       </AuthProvider>
