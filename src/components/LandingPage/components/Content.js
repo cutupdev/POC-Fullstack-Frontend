@@ -13,12 +13,23 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import S3 from "react-aws-s3";
+// import S3 from "react-aws-s3";
 import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useApp } from '../../../context/appContext';
+import AWS from 'aws-sdk';
+import S3 from 'aws-sdk/clients/s3'; 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 const { Dragger } = Upload;
+
+// text/plain    .txt
+// application/pdf    .pdf
+// application/msword   .doc
+// application/vnd.openxmlformats-officedocument.wordprocessingml.document     .docx
+// application/vnd.ms-powerpoint    .ppt
+// application/vnd.openxmlformats-officedocument.presentationml.presentation    .pptx
+
+
 
 
 export default function Content() {
@@ -27,12 +38,28 @@ export default function Content() {
   const [fileList, setFileList] = React.useState([]);
   const descriptionElementRef = React.useRef(null);
 
-  const config = {
-    bucketName: process.env.BUCKET_NAME,
-    region: process.env.BUCKET_REGION,
-    accessKeyId: process.env.BUCKET_ACCESS_KEY_ID,
-    secretAccessKey: process.env.BUCKET_SECRET_ACCESS_KEY,
-  };
+  const S3_BUCKET = process.env.REACT_APP_BUCKET_NAME; 
+  console.log(process.env.REACT_APP_BUCKET_NAME, process.env.REACT_APP_BUCKET_REGION)
+  const REGION = process.env.REACT_APP_BUCKET_REGION;
+
+  AWS.config.update({
+    accessKeyId: process.env.REACT_APP_BUCKET_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_BUCKET_SECRET_ACCESS_KEY,
+  });
+
+  const s3 = new S3({
+    params: { Bucket: S3_BUCKET },
+    region: REGION,
+  });
+
+  const allowedTypes = [
+    'text/plain',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  ];
 
   React.useEffect(() => {
     setFileList([]);
@@ -52,11 +79,14 @@ export default function Content() {
   }, [fileList])
 
   const onUploadChange = (e) => {
-    const temp = e.fileList.map(val => {
-      if(val.originFileObj) {
-        return val.originFileObj;
-      } else {
-        return val;
+    let temp = [];
+    e.fileList.map(val => {
+      if (allowedTypes.includes(val.type)) {
+        if (val.originFileObj) {
+          temp.push(val.originFileObj);
+        } else {
+          temp.push(val);
+        }
       }
     })
     setFileList([...temp]);
@@ -67,20 +97,34 @@ export default function Content() {
   }
 
   const handleFileUpload = (e) => {
-    const temp = Array.from(e.target.files)
+    let temp = [];
+    Array.from(e.target.files).map(val => {
+      if (allowedTypes.includes(val.type)) {
+        temp.push(val);
+      }
+    })
     if (fileList) {
       fileList.map(val => {
-        temp.push(val);
+        if (allowedTypes.includes(val.type)) {
+          temp.push(val);
+        }
       })
     }
     setFileList([...temp]);
   };
 
   const handleFolderUpload = (e) => {
-    const temp = Array.from(e.target.files)
+    let temp = [];
+    Array.from(e.target.files).map(val => {
+      if (allowedTypes.includes(val.type)) {
+        temp.push(val);
+      }
+    })
     if (fileList) {
       fileList.map(val => {
-        temp.push(val);
+        if (allowedTypes.includes(val.type)) {
+          temp.push(val);
+        }
       })
     }
     setFileList([...temp]);
@@ -114,20 +158,19 @@ export default function Content() {
     // setOpen(false);
   }
 
-  const handleUpload = (file) => {
-    console.log('uploading');
-    let newFileName = file.name.replace(/\..+$/, "");
-    const ReactS3Client = new S3(config);
-    ReactS3Client.uploadFile(file, newFileName).then((data) => {
-      if (data.status === 204) {
-        console.log("success");
-        console.log(data);
-      } else {
-        console.log("fail");
-      }
-    }).catch((err) => {
-      console.log("err", err)
-    });
+  const handleUpload = async (file) => {
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: file.name,
+      Body: file,
+    };
+    console.log(S3_BUCKET);
+    try {
+      const upload = await s3.putObject(params).promise();
+      console.log("File uploaded successfully ===>>> ", upload);
+    } catch (error) {
+      console.error("error ===>>> ", error);
+    }
   }
 
   return (

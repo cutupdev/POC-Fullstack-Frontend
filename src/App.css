@@ -286,10 +286,6 @@ main {
   border-bottom: 1px solid #000000; */
 }
 
-.leftbar-content {
-  /* padding: 30px;  */
-}
-
 .leftbar-item-box {
   display: flex;
   justify-content: flex-start;
@@ -737,10 +733,6 @@ main {
   width: 140px !important;
   display: flex;
   justify-content: space-between;
-}
-
-.pop-menu-box {
-  
 }
 
 .pop-upload {
