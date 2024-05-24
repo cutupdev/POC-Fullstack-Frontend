@@ -19,16 +19,11 @@ import { useLocation } from 'react-router-dom';
 
 export default function TemporaryDrawer() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  // const [mode, setMode] = React.useState('light');
-  // const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme('light'));
-  // const defaultTheme = createTheme({ palette: { mode } });
-
   React.useEffect(() => {
-    // if(!localStorage.getItem('user')) {
-    //   navigate('/');
-    // } 
+    if(!localStorage.getItem('token')) {
+      navigate('/');
+    } 
   }, [])
 
   const location = useLocation().pathname;

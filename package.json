@@ -27,6 +27,7 @@
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",
     "framer-motion": "^11.1.9",
+    "jwt-decode": "^4.0.0",
     "material-ui-popup-state": "^5.1.0",
     "os": "^0.1.2",
     "prop-types": "^15.8.1",

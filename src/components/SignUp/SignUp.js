@@ -125,8 +125,11 @@ export default function SignUp() {
   const recaptcha = React.useRef();
 
   React.useEffect(() => {
-    if(localStorage.getItem('user')) {
+    if(localStorage.getItem('token')) {
       navigate('/dashboard');
+      // const user = JSON.parse(localStorage.getItem('user'));
+      // if(user.remember) {
+      // }
     } 
     setEmail("");
     setPassword("");
@@ -204,7 +207,7 @@ export default function SignUp() {
       isValid = false;
     } else {
       setPasswordError(false);
-      setPasswordErrorMessage('Enough Possible');
+      setPasswordErrorMessage('');
     }
 
     return isValid;
@@ -241,21 +244,21 @@ export default function SignUp() {
         captcha: captchaValue
       };
       
-      axios.post('https://0f28-45-8-22-59.ngrok-free.app/api/users/signup', newUser)
+      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signup', newUser)
         .then(res => {
           if (res.data.success) {
             setRegisterState(true);
-            setMessage("Your account registered successfully! To use your account, you need to verify your account. Our verification link sent to your email. Please check your email box, if you can't find, check the spam folder.");
+            setMessage("Thank you for the Sign-up. To use your account, you need to verify the account using the link sent to your email. If you don't see an email in your inbox, please check your spam folder as well");
             setOpen(true);
           } else {
             setRegisterState(false);
-            setMessage("Unfortunately your account registration was failed. It might be your email or password. Please try again with new credentials. For more helps, contact with suport team.");
+            setMessage("Unfortunately your account registration was failed. Your email might be used already. Please try again with new credentials. For more helps, contact with suport team.");
             setOpen(true);
           }
         })
         .catch(err => {
           setRegisterState(false);
-          setMessage("Unfortunately your account registration was failed. It might be your email or password. Please try again with new credentials. For more helps, contact with suport team.");
+          setMessage("Unfortunately your account registration was failed. Your email might be used already. Please try again with new credentials. For more helps, contact with suport team.");
           setOpen(true);
           console.log(err.response.data);
         })
@@ -429,7 +432,7 @@ export default function SignUp() {
             </DialogContent>
             <DialogActions className='dis-center'>
               <Button className='font-size-20 roboto-font' autoFocus onClick={handleVerify}>
-                {registerState ? "Go to Sign in" : "Retry"}
+                {registerState ? "Click here to Sign In" : "Retry"}
               </Button>
             </DialogActions>
           </BootstrapDialog>

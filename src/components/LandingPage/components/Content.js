@@ -38,8 +38,7 @@ export default function Content() {
   const [fileList, setFileList] = React.useState([]);
   const descriptionElementRef = React.useRef(null);
 
-  const S3_BUCKET = process.env.REACT_APP_BUCKET_NAME; 
-  console.log(process.env.REACT_APP_BUCKET_NAME, process.env.REACT_APP_BUCKET_REGION)
+  const S3_BUCKET = process.env.REACT_APP_BUCKET_NAME;
   const REGION = process.env.REACT_APP_BUCKET_REGION;
 
   AWS.config.update({
@@ -75,7 +74,7 @@ export default function Content() {
   }, [open]);
 
   React.useEffect(() => {
-    console.log(fileList);
+    // console.log(fileList);
   }, [fileList])
 
   const onUploadChange = (e) => {

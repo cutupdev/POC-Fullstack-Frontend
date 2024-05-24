@@ -10,6 +10,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { isEmail } from '../../validation';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
   components: {
@@ -52,11 +53,15 @@ const theme = createTheme({
 });
 
 function ForgotPassword({ open, handleClose, setSnackState }) {
+  const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [email, setEmail] = React.useState('');
 
   React.useEffect(() => {
+    if(localStorage.getItem('token')) {
+      navigate('/dashboard');
+    } 
     setEmail('');
   }, [])
 
@@ -82,21 +87,21 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
         email: email,
       };
 
-      axios.post('https://0f28-45-8-22-59.ngrok-free.app/api/users/forgotPassword', user)
+      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/forgotPassword', user)
         .then(res => {
           if(res.data.success) {
             setSnackState({
               snackOpen: true,
               vertical: 'top',
               horizontal: 'center',
-              message: "We sent verification link to you. Please check your mail. If you can't find, check your spam folder."
+              message: "You will receive an email to reset your password, if your email is a valid account in our system. If you don't see an email in your inbox, please check your spam folder as well"
             });
           } else {
             setSnackState({
               snackOpen: true,
               vertical: 'top',
               horizontal: 'center',
-              message: "Unfortunatelly we can't send verification link to you. Try again or contact the support team."
+              message: "Incorrect Email. Try again with correct Credential"
             });
           }
         })
@@ -105,7 +110,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
             snackOpen: true,
             vertical: 'top',
             horizontal: 'center',
-            message: "Unfortunatelly we can't send verification link to you. Try again or contact the support team."
+            message: "Incorrect Email. Try again with correct Credential"
           });
           console.log(err);
         })

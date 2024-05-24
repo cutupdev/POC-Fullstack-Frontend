@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-import { useAuth } from '../../context/authContext'; 
+import { useAuth } from '../../context/authContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -21,6 +21,7 @@ import ForgotPassword from './ForgotPassword';
 import getSignInTheme from './getSignInTheme';
 import { SitemarkIcon } from './CustomIcons';
 import { useNavigate } from 'react-router-dom';
+import { inView } from 'framer-motion';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -97,7 +98,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function SignIn() {
   const navigate = useNavigate();
   const SignInTheme = createTheme(getSignInTheme('light'));
-  const { login, loginStatus, setLoginStatus } = useAuth();
+  const { login, loginStatus, setLoginStatus, user } = useAuth();
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -117,22 +118,15 @@ export default function SignIn() {
   const { vertical, horizontal, snackOpen, message } = snackState;
 
   React.useEffect(() => {
-    if(localStorage.getItem('user')) {
+    if (localStorage.getItem('token')) {
       navigate('/dashboard');
-    } 
-    setPassword("");
-    setLoginStatus(false);
-  }, [])
-
-  React.useEffect(() => {
-    if(loginStatus) {
-      setEmailError(true);
-      setEmailErrorMessage("Email or password incorrect, try again with correct credential");
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
+      // const user = JSON.parse(localStorage.getItem('user'));
+      // if(user.remember) {
+      //   alert("clieck")
+      // }
     }
-  }, [loginStatus])
+    setPassword("");
+  }, [])
 
   const onEmail = (e) => {
     setEmail(e.target.value);
@@ -162,18 +156,15 @@ export default function SignIn() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setLoginStatus(false);
     const loginUser = {
       email: email,
       password: password,
       checked: checkboxRef.current.checked
     }
-    
     login(loginUser);
   };
 
   const validateInputs = () => {
-
     let isValid = true;
 
     if (!email || !isEmail(email)) {
@@ -203,10 +194,8 @@ export default function SignIn() {
       isValid = false;
     } else {
       setPasswordError(false);
-      setPasswordErrorMessage('Enough Possible');
+      setEmailErrorMessage("");
     }
-
-    return isValid;
   };
 
   return (
@@ -288,16 +277,17 @@ export default function SignIn() {
                       justifyContent: 'flex-end',
                     }}
                   >
-                    <Link
+                    <p
                       component="button"
-                      className='roboto-font small-font-size'
+                      className='roboto-font small-font-size forgot-password'
                       onClick={handleClickOpen}
                       variant="body2"
                       sx={{ alignSelf: 'baseline' }}
                     >
                       Forgot Password
-                    </Link>
+                    </p>
                   </Box>
+
                   <div className='password-box'>
                     <ThemeProvider theme={theme}>
                       <TextField
@@ -332,17 +322,16 @@ export default function SignIn() {
                       {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
                     </span>
                   </div>
-
                 </FormControl>
                 <div className='remember-box'>
-                <input
-                  className='roboto-font small-font-size remember-checkbox'
-                  type="checkbox"
-                  id="checkbox"
-                  defaultChecked={true}
-                  ref={checkboxRef}
-                />
-                <p className='roboto-font small-font-size'>Remember me</p>
+                  <input
+                    className='roboto-font small-font-size remember-checkbox'
+                    type="checkbox"
+                    id="checkbox"
+                    defaultChecked={true}
+                    ref={checkboxRef}
+                  />
+                  <p className='roboto-font small-font-size'>Remember me</p>
                 </div>
                 <ForgotPassword open={open} handleClose={handleClose} setSnackState={setSnackState} />
                 <div className='flex-end'>
@@ -380,6 +369,21 @@ export default function SignIn() {
         }}
       >
         {message}
+      </Snackbar>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        autoHideDuration={10000}
+        open={loginStatus && (!(emailError || passwordError))}
+        variant='outlined'
+        color='primary'
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return;
+          }
+          setLoginStatus(false);
+        }}
+      >
+        Incorrect Email or Password. Try again with correct Credential
       </Snackbar>
     </div>
   );
