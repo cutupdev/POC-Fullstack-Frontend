@@ -750,6 +750,12 @@ main {
   align-items: center;
 }
 
+.profile-box {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
 @media (min-width: 1200px) {
   .main-container-width {
     max-width: none !important;

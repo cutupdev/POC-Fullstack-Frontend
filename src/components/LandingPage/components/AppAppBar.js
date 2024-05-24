@@ -15,7 +15,7 @@ function AppAppBar({ mode, toggleColorMode }) {
   const [open, setOpen] = React.useState(false);
   const location = useLocation().pathname;
   let path = ""
-  if(location == '/admin/' || location == '/admin') {
+  if (location == '/admin/' || location == '/admin') {
     path = "Dashboard";
   } else {
     path = "Admin";
@@ -92,15 +92,9 @@ function AppAppBar({ mode, toggleColorMode }) {
               </Button>
             </Box>
           </Box>
-          <Box
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              gap: 0.5,
-              alignItems: 'center',
-            }}
-          >
+          <div className='profile-box'>
             <AccountMenu />
-          </Box>
+          </div>
         </Toolbar>
       </Container>
     </AppBar>

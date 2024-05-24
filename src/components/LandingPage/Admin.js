@@ -93,7 +93,7 @@ export default function Admin() {
         </Drawer>
         <Box
           sx={{
-            display: { xs: 'none', md: 'flex' },
+            display: { md: 'flex' },
             gap: 0.5,
             alignItems: 'center',
           }}

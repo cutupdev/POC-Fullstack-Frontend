@@ -62,7 +62,7 @@ export default function AccountMenu() {
   }
   return (
     <React.Fragment>
-      <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+      <div className='profile-box'>
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}
@@ -75,7 +75,8 @@ export default function AccountMenu() {
             <Avatar className='font-size-16 roboto-font menu-avatar-48'>M</Avatar>
           </IconButton>
         </Tooltip>
-      </Box>
+
+      </div>
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -112,7 +113,7 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={modalOpen} className='menu-item global-font'>
-          <Avatar /> 
+          <Avatar />
           <div className='font-size-16 roboto-font'>Profile</div>
         </MenuItem>
         <MenuItem onClick={logOut} className='menu-item global-font'>
@@ -144,13 +145,13 @@ export default function AccountMenu() {
             type="text"
             fullWidth
             variant="standard"
-            inputProps={{ 
-              style: { 
-                fontSize: 20, 
-                borderRadius: 0, 
+            inputProps={{
+              style: {
+                fontSize: 20,
+                borderRadius: 0,
                 fontFamily: 'roboto !important',
-                height: '32px' 
-              } 
+                height: '32px'
+              }
             }} // font size of input text
             InputLabelProps={{ style: { fontSize: 18, fontFamily: 'roboto !important' } }} // font size of input label
           />
