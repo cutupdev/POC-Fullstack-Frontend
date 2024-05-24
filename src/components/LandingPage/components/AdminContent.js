@@ -41,7 +41,6 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Upload } from 'antd';
-import { DatasetLinked } from '@mui/icons-material';
 
 
 const theme = createTheme({
@@ -59,6 +58,34 @@ const theme = createTheme({
     }
   }
 });
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
 
 const DraggableUploadListItem = ({ originNode, file }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -136,68 +163,58 @@ function TablePaginationActions(props) {
   );
 }
 
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-function createData(id, name, date, sample, checked) {
-  return { id, name, date, sample, checked };
+function createData(id, name, date, sample, status, trainDate, checked) {
+  return { id, name, date, sample, checked, status, trainDate, };
 }
 
 const rowsTemp = [
-  createData(1, 'Microsoft1', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(2, 'Microsoft2', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(3, 'Microsoft3', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(4, 'Microsoft4', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(5, 'Microsoft5', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(6, 'Microsoft6', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(7, 'Microsoft7', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(8, 'Microsoft8', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(9, 'Microsoft9', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(10, 'Microsoft10', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(11, 'Microsoft11', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(12, 'Microsoft12', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(13, 'Microsoft13', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(14, 'Microsoft14', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(15, 'Microsoft15', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(16, 'Microsoft16', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(17, 'Microsoft17', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(18, 'Microsoft18', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(19, 'Microsoft19', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(20, 'Microsoft20', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(21, 'Microsoft21', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(22, 'Microsoft22', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(23, 'Microsoft23', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(24, 'Microsoft24', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(25, 'Microsoft25', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(26, 'Microsoft26', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(27, 'Microsoft27', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(28, 'Microsoft28', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(29, 'Microsoft29', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
-  createData(30, 'Microsoft30', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], false),
+  createData(1, 'Microsoft1', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(2, 'Microsoft2', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
+  createData(3, 'Microsoft3', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
+  createData(4, 'Microsoft4', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(5, 'Microsoft5', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
+  createData(6, 'Microsoft6', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(7, 'Microsoft7', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
+  createData(8, 'Microsoft8', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
+  createData(9, 'Microsoft9', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(10, 'Microsoft10', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
+  createData(11, 'Microsoft11', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
+  createData(12, 'Microsoft12', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(13, 'Microsoft13', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(14, 'Microsoft14', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
+  createData(15, 'Microsoft15', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(16, 'Microsoft16', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(17, 'Microsoft17', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
+  createData(18, 'Microsoft18', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
+  createData(19, 'Microsoft19', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(20, 'Microsoft20', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(21, 'Microsoft21', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(22, 'Microsoft22', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
+  createData(23, 'Microsoft23', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(24, 'Microsoft24', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(25, 'Microsoft25', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
+  createData(26, 'Microsoft26', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(27, 'Microsoft27', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(28, 'Microsoft28', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
+  createData(29, 'Microsoft29', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
+  createData(30, 'Microsoft30', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
 ];
 
 const headCells = [
   {
-    id: 'name',
-    numeric: false,
-    disablePadding: true,
-    label: 'Name',
+    id: 'name', numeric: false, disablePadding: true, label: 'Name',
   },
   {
-    id: 'date',
-    numeric: false,
-    disablePadding: false,
-    label: 'Creation Date',
+    id: 'date', numeric: false, disablePadding: false, label: 'Creation Date',
   },
   {
-    id: 'sample',
-    numeric: false,
-    disablePadding: false,
-    label: 'Sample Data',
+    id: 'sample', numeric: false, disablePadding: false, label: 'Sample Data',
+  },
+  {
+    id: 'status', numeric: false, disablePadding: false, label: 'Train Status',
+  },
+  {
+    id: 'trainDate', numeric: false, disablePadding: false, label: 'Train Date',
   },
 ];
 
@@ -206,6 +223,11 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
+
+  React.useEffect(() => {
+    console.log('order---', order);
+    console.log('orderBy---', orderBy);
+  }, [order, orderBy])
 
   return (
     <TableHead>
@@ -251,15 +273,6 @@ function EnhancedTableHead(props) {
   );
 }
 
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
 export default function AdminContent() {
 
   const convertStr = (data) => {
@@ -271,6 +284,8 @@ export default function AdminContent() {
         name: item.name,
         date: item.date,
         sample: sampleStr,
+        status: item.status,
+        trainDate: item.trainDate,
         checked: item.checked
       };
     });
@@ -306,13 +321,38 @@ export default function AdminContent() {
   }, [open]);
 
   React.useEffect(() => {
+    console.log('rows changed!')
+    console.log('order---', order);
+    console.log('orderBy---', orderBy);
     if (open) {
       const { current: descriptionElement } = descriptionElementRef;
       if (descriptionElement !== null) {
         descriptionElement.focus();
       }
     }
+    setVisibleRows(
+      stableSort(rows, getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage,
+      )
+    )
   }, [rows]);
+
+  React.useEffect(() => {
+    console.log('categories changed!')
+    console.log('order---', order);
+    console.log('orderBy---', orderBy);
+  }, [categories]);
+
+  React.useEffect(() => {
+    console.log("sort function called!")
+    setVisibleRows(
+      stableSort(rows, getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage,
+      )
+    )
+  }, [order, orderBy, page, rowsPerPage])
 
   const handleClickOpen = (e) => {
     
@@ -404,7 +444,7 @@ export default function AdminContent() {
         return value.name;
       })
       if(editID.id) {
-        const editData = {name: name, id: editID.id, date: '2024-05-20 09:30', sample: filenames, checked: editID.checked};
+        const editData = {name: name, id: editID.id, date: '2024-05-20 09:30', sample: filenames, checked: editID.checked, status: editID.status, trainDate: editID.trainDate};
         const editRows = categories.map(value => {
           if (value.id === editID.id) {
             return editData;
@@ -417,7 +457,7 @@ export default function AdminContent() {
         // setRows(editRows);
         // onVisibleRows(page, rowsPerPage, editRows);
       } else {
-        const newData = {name: name, id: categories.length+1, date: '2024-05-20 09:30', sample: filenames, checked: false};
+        const newData = {name: name, id: categories.length+1, date: '2024-05-20 09:30', sample: filenames, checked: false, status: "In-Progress", trainDate: '2024-05-23 08:30'};
         let newCategory = categories.slice(0, categories.length);
         newCategory.push(newData);
         setCategories([...categories, newData]);
@@ -588,7 +628,7 @@ export default function AdminContent() {
                 'aria-label': 'Enter your email address',
                 style: {
                   fontSize: 16,
-                  fontFamily: 'roboto',
+                  fontFamily: 'roboto !important',
                   height: '32px'
                 }
               }}
@@ -624,7 +664,7 @@ export default function AdminContent() {
                       hover
                       role="checkbox"
                       aria-checked={isItemSelected}
-                      tabIndex={-1}
+                      tabIndex={3}
                       key={row.id}
                       selected={isItemSelected}
                       sx={{ cursor: 'pointer' }}
@@ -654,12 +694,11 @@ export default function AdminContent() {
                         {row.name}
                       </TableCell>
                       <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>
-                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
-                        {row.sample}
-                      </TableCell>
+                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.sample}</TableCell>
+                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.status}</TableCell>
+                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.trainDate}</TableCell>
                       <TableCell align="right" style={{ minWidth: 95 }} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
                         <Tooltip className='tooltip' title={'Edit Category'}>
-                          {/* dd */}
                           <EditIcon onClick={() => handleClickOpen(row)} className='cursor-icon' />
                         </Tooltip>
                       </TableCell>

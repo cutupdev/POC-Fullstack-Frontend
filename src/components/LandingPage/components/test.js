@@ -22,41 +22,31 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
-function createData(id, name, creator, date, type, size, category, classification, confident) {
-  return { id, name, creator, date, type, size, category, classification, confident };
+function createData(id, name, calories, fat, carbs, protein) {
+  return {
+    id,
+    name,
+    calories,
+    fat,
+    carbs,
+    protein,
+  };
 }
 
 const rows = [
-  createData(1, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(2, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(3, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(4, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(5, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(6, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(7, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(8, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(9, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(10, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(11, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(12, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(13, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(14, 'Microsoft', "Microgift", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(15, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(16, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(17, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(18, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(19, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(20, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(21, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(22, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(23, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(24, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(25, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(26, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(27, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(28, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(29, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
-  createData(30, 'Microsoft', "Justin Stone", "2024-05-09 20:30", "Pdf", "10 kb", "Contract", "Finished", "75.25%"),
+  createData(1, 'Cupcake', 305, 3.7, 67, 4.3),
+  createData(2, 'Donut', 452, 25.0, 51, 4.9),
+  createData(3, 'Eclair', 262, 16.0, 24, 6.0),
+  createData(4, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData(5, 'Gingerbread', 356, 16.0, 49, 3.9),
+  createData(6, 'Honeycomb', 408, 3.2, 87, 6.5),
+  createData(7, 'Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData(8, 'Jelly Bean', 375, 0.0, 94, 0.0),
+  createData(9, 'KitKat', 518, 26.0, 65, 7.0),
+  createData(10, 'Lollipop', 392, 0.2, 98, 0.0),
+  createData(11, 'Marshmallow', 318, 0, 81, 2.0),
+  createData(12, 'Nougat', 360, 19.0, 9, 37.0),
+  createData(13, 'Oreo', 437, 18.0, 63, 4.0),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -96,49 +86,31 @@ const headCells = [
     id: 'name',
     numeric: false,
     disablePadding: true,
-    label: 'Name',
+    label: 'Dessert (100g serving)',
   },
   {
-    id: 'creator',
+    id: 'calories',
     numeric: true,
     disablePadding: false,
-    label: 'Creator',
+    label: 'Calories',
   },
   {
-    id: 'date',
+    id: 'fat',
     numeric: true,
     disablePadding: false,
-    label: 'Creation Date',
+    label: 'Fat (g)',
   },
   {
-    id: 'type',
+    id: 'carbs',
     numeric: true,
     disablePadding: false,
-    label: 'File Type',
+    label: 'Carbs (g)',
   },
   {
-    id: 'size',
+    id: 'protein',
     numeric: true,
     disablePadding: false,
-    label: 'File Size',
-  },
-  {
-    id: 'category',
-    numeric: true,
-    disablePadding: false,
-    label: 'Category',
-  },
-  {
-    id: 'classification',
-    numeric: true,
-    disablePadding: false,
-    label: 'Classification Status',
-  },
-  {
-    id: 'confident',
-    numeric: true,
-    disablePadding: false,
-    label: 'Confident Score',
+    label: 'Protein (g)',
   },
 ];
 
@@ -188,15 +160,6 @@ function EnhancedTableHead(props) {
     </TableHead>
   );
 }
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
 
 function EnhancedTableToolbar(props) {
   const { numSelected } = props;
@@ -249,9 +212,6 @@ function EnhancedTableToolbar(props) {
   );
 }
 
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
 
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState('asc');
@@ -374,24 +334,10 @@ export default function EnhancedTable() {
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell align="right">{row.creator}</TableCell>
-                    <TableCell align="right">{row.date}</TableCell>
-                    <TableCell align="right">{row.type}</TableCell>
-                    <TableCell align="right">{row.size}</TableCell>
-                    <TableCell align="right">{row.category}</TableCell>
-                    <TableCell align="right">{row.classification}</TableCell>
-                    <TableCell align="right">{row.confident}</TableCell>
-                    <TableCell align="right">
-                      <Tooltip className='tooltip' title={'Metadata details'}>
-                        <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
-                      </Tooltip>
-                      <Tooltip className='tooltip' title={'Peview document'} onClick={() => onPreview(row)} >
-                        <RemoveRedEyeIcon className='cursor-icon' />
-                      </Tooltip>
-                      <Tooltip className='tooltip' title={'Remove document'} onClick={() => onDelete(row)}>
-                        <DeleteIcon className='cursor-icon' />
-                      </Tooltip>
-                    </TableCell>
+                    <TableCell align="right">{row.calories}</TableCell>
+                    <TableCell align="right">{row.fat}</TableCell>
+                    <TableCell align="right">{row.carbs}</TableCell>
+                    <TableCell align="right">{row.protein}</TableCell>
                   </TableRow>
                 );
               })}
@@ -408,7 +354,7 @@ export default function EnhancedTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 50, 100]}
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
