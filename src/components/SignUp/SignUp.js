@@ -248,17 +248,17 @@ export default function SignUp() {
         .then(res => {
           if (res.data.success) {
             setRegisterState(true);
-            setMessage("Thank you for the Sign-up. To use your account, you need to verify the account using the link sent to your email. If you don't see an email in your inbox, please check your spam folder as well");
+            setMessage("Thank you for the Registration. To use your account, you need to verify the account using the link sent to your email. If you don't see an email in your inbox, please check your spam folder as well");
             setOpen(true);
           } else {
             setRegisterState(false);
-            setMessage("Unfortunately your account registration was failed. Your email might be used already. Please try again with new credentials. For more helps, contact with suport team.");
+            setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page.");
             setOpen(true);
           }
         })
         .catch(err => {
           setRegisterState(false);
-          setMessage("Unfortunately your account registration was failed. Your email might be used already. Please try again with new credentials. For more helps, contact with suport team.");
+          setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page");
           setOpen(true);
           console.log(err.response.data);
         })
@@ -422,9 +422,9 @@ export default function SignUp() {
             aria-labelledby="customized-dialog-title"
             open={open}
           >
-            <DialogTitle className='dis-center' sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+            {/* <DialogTitle className='dis-center' sx={{ m: 0, p: 2 }} id="customized-dialog-title">
               <p className='font-size-28 roboto-font'>{registerState ? "Verify Your Account" : "Retry Your Registration"}</p>
-            </DialogTitle>
+            </DialogTitle> */}
             <DialogContent dividers>
               <Typography className='font-size-16 roboto-font' gutterBottom>
                 {message}
@@ -432,7 +432,7 @@ export default function SignUp() {
             </DialogContent>
             <DialogActions className='dis-center'>
               <Button className='font-size-20 roboto-font' autoFocus onClick={handleVerify}>
-                {registerState ? "Click here to Sign In" : "Retry"}
+                {registerState ? "Sign In" : "Sign In"}
               </Button>
             </DialogActions>
           </BootstrapDialog>

@@ -51,7 +51,7 @@ const EmailVerificationSuccess = () => {
             snackOpen: true,
             vertical: 'top',
             horizontal: 'center',
-            message: "Unfortunately your email verification was failed. Please try agian or contact with support team."
+            message: "Your email verification was failed!"
           });
           setTimeout(() => {
             navigate('/sign-up');
@@ -62,7 +62,7 @@ const EmailVerificationSuccess = () => {
           snackOpen: true,
           vertical: 'top',
           horizontal: 'center',
-          message: "Unfortunately your email verification was failed. Please try agian or contact with support team."
+          message: "Your email verification was failed!"
         });
         setTimeout(() => {
           navigate('/sign-up');
@@ -77,7 +77,7 @@ const EmailVerificationSuccess = () => {
         snackOpen: true,
         vertical: 'top',
         horizontal: 'center',
-        message: "Email verification token not found! Try again."
+        message: "Email verification expired! Try again."
       });
       setTimeout(() => {
         navigate('/sign-up');
