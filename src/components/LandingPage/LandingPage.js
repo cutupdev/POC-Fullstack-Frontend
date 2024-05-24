@@ -21,7 +21,7 @@ export default function TemporaryDrawer() {
   const navigate = useNavigate();
   const LPtheme = createTheme(getLPTheme('light'));
   React.useEffect(() => {
-    if(!localStorage.getItem('token')) {
+    if(!localStorage.getItem('user')) {
       navigate('/');
     } 
   }, [])

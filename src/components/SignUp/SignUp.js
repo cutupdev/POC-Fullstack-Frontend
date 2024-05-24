@@ -125,7 +125,7 @@ export default function SignUp() {
   const recaptcha = React.useRef();
 
   React.useEffect(() => {
-    if(localStorage.getItem('token')) {
+    if(localStorage.getItem('user')) {
       navigate('/dashboard');
       // const user = JSON.parse(localStorage.getItem('user'));
       // if(user.remember) {
