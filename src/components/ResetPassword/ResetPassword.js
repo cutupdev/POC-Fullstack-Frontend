@@ -223,7 +223,7 @@ export default function SignUp() {
       token: token,
       password: confirmPassword
     };
-    axios.post('https://poc-fullstack-backend.vercel.app/api/users/resetPassword', data)
+    axios.post('https://0f28-45-8-22-59.ngrok-free.app/api/users/resetPassword', data)
       .then(res => {
         if (res.data.success) {
           setSnackState({

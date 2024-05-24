@@ -82,7 +82,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
         email: email,
       };
 
-      axios.post('https://poc-fullstack-backend.vercel.app/api/users/forgotPassword', user)
+      axios.post('https://0f28-45-8-22-59.ngrok-free.app/api/users/forgotPassword', user)
         .then(res => {
           if(res.data.success) {
             setSnackState({
