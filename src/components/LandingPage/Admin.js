@@ -22,7 +22,7 @@ export default function Admin() {
   const LPtheme = createTheme(getLPTheme('light'));
 
   React.useEffect(() => {
-    if(!localStorage.getItem('user')) {
+    if(!localStorage.getItem('token')) {
       navigate('/');
     } 
   }, [])

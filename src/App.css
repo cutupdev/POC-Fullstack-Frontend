@@ -660,6 +660,11 @@ main {
 
 .password-box {
   display: flex;
+  position: relative;
+}
+
+.forgot-password {
+  cursor: pointer;
 }
 
 .background-remove {

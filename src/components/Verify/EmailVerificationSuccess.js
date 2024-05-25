@@ -30,7 +30,7 @@ const EmailVerificationSuccess = () => {
     const token = location.pathname.split("verify/")[1];
     const verifyEmail = async () => {
       try {
-        const response = await axios.get(`https://0f28-45-8-22-59.ngrok-free.app/api/users/verify/${token}`, {
+        const response = await axios.get(`https://4a29-45-8-22-59.ngrok-free.app/api/users/verify/${token}`, {
           headers: {
             "ngrok-skip-browser-warning": "true",
           }
