@@ -118,7 +118,7 @@ export default function SignIn() {
   const { vertical, horizontal, snackOpen, message } = snackState;
 
   React.useEffect(() => {
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem('user')) {
       navigate('/dashboard');
       // const user = JSON.parse(localStorage.getItem('user'));
       // if(user.remember) {

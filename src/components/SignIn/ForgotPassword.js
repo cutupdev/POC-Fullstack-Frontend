@@ -59,7 +59,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
   const [email, setEmail] = React.useState('');
 
   React.useEffect(() => {
-    if(localStorage.getItem('token')) {
+    if(localStorage.getItem('user')) {
       navigate('/dashboard');
     } 
     setEmail('');
@@ -69,7 +69,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
     setEmail(e.target.value);
   }
 
-  const validateInputs = () => {
+  const validInputs = () => {
 
     let isValid = true;
 
@@ -190,7 +190,7 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
         <Button
           variant="contained"
           type="submit"
-          onClick={validateInputs}
+          onClick={validInputs}
           className='roboto-font reset-btn'
         >
           Continue
