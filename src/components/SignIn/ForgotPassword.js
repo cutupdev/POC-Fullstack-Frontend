@@ -57,32 +57,25 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [email, setEmail] = React.useState('');
+  const [disableBtn, setDisavleBtn] = React.useState(false);
 
   React.useEffect(() => {
     if (localStorage.getItem('user')) {
       navigate('/dashboard');
     }
     setEmail('');
+    setDisavleBtn(false);
   }, [])
 
   const onEmail = (e) => {
     setEmail(e.target.value);
   }
 
-  const validInputs = () => {
+  const onSubmit = (e) => {
 
-    let isValid = true;
-
-    if (!email || !isEmail(email)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (isValid) {
+    e.preventDefault();
+    if (validInputs()) {
+      setDisavleBtn(true);
       const user = {
         email: email,
       };
@@ -114,11 +107,26 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
           });
           console.log(err);
         })
-    }
 
-    setTimeout(() => {
-      handleClose();
-    }, 10000)
+      setTimeout(() => {
+        handleClose();
+        setDisavleBtn(false);
+      }, 3000)
+    }
+  }
+
+  const validInputs = () => {
+
+    let isValid = true;
+
+    if (!email || !isEmail(email)) {
+      setEmailError(true);
+      setEmailErrorMessage('Please enter a valid email address.');
+      isValid = false;
+    } else {
+      setEmailError(false);
+      setEmailErrorMessage('');
+    }
 
     return isValid;
   };
@@ -191,14 +199,25 @@ function ForgotPassword({ open, handleClose, setSnackState }) {
       </DialogContent>
       <DialogActions sx={{ pb: 3, px: 3 }} className='auth-box'>
         <Button onClick={handleClose} className='roboto-font reset-btn'>Cancel</Button>
+        {
+          disableBtn ?
         <Button
+          disabled
           variant="contained"
-          // type="submit"
-          onClick={validInputs}
+          onClick={onSubmit}
           className='roboto-font reset-btn'
         >
           Continue
         </Button>
+        :
+<Button
+          variant="contained"
+          onClick={onSubmit}
+          className='roboto-font reset-btn'
+        >
+          Continue
+        </Button>
+        }
       </DialogActions>
     </Dialog>
   );

@@ -27,14 +27,14 @@ const EmailVerificationSuccess = () => {
   }, [])
 
   useEffect(() => {
-    const token = location.pathname.split("verify/")[1];
+    const data = {
+      email: location.pathname.split('/verify/')[0].split('/')[1],
+      token: location.pathname.split('/verify/')[1]
+    };
+    const token = location.pathname.split("/verify/")[1];
     const verifyEmail = async () => {
       try {
-        const response = await axios.get(`https://4a29-45-8-22-59.ngrok-free.app/api/users/verify/${token}`, {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          }
-        });
+        const response = await axios.get(`https://4a29-45-8-22-59.ngrok-free.app/api/users/verify`, data);
         if (response.data.success) {
           setSnackState({
             snackOpen: true,
@@ -96,7 +96,7 @@ const EmailVerificationSuccess = () => {
       </Stack>
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
-        autoHideDuration={10000}
+        autoHideDuration={4000}
         open={snackOpen}
         variant='outlined'
         color='primary'

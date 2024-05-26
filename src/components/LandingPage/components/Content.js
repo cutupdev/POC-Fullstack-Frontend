@@ -95,7 +95,7 @@ export default function Content() {
     // setFileList([...e.dataTransfer.files]);
   }
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e, popupState) => {
     let temp = [];
     Array.from(e.target.files).map(val => {
       if (allowedTypes.includes(val.type)) {
@@ -110,9 +110,10 @@ export default function Content() {
       })
     }
     setFileList([...temp]);
+    popupState.close();
   };
 
-  const handleFolderUpload = (e) => {
+  const handleFolderUpload = (e, popupState) => {
     let temp = [];
     Array.from(e.target.files).map(val => {
       if (allowedTypes.includes(val.type)) {
@@ -127,6 +128,7 @@ export default function Content() {
       })
     }
     setFileList([...temp]);
+    popupState.close();
   };
 
   const onDelete = (e) => {
@@ -153,9 +155,13 @@ export default function Content() {
     console.log("length ===> ", fileList.length)
 
     if(fileList.length) {
-      alert(`${fileList.length} files uploaded successfully!`);
+      if(fileList.length === 1) {
+        alert(`1 file uploaded successfully!`);
+      } else {
+        alert(`${fileList.length} files uploaded successfully!`);
+      }
     } else {
-      alert(`No file uploaded!`);
+      // alert(`No file uploaded!`);
     }
 
     for (let i = 0; i < fileList.length; i++) {
@@ -281,12 +287,12 @@ export default function Content() {
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="file-upload" className='background-remove mouse-pointer'>Upload File</label>
-                          <input type="file" multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={handleFileUpload} />
+                          <input type="file" multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, popupState)} />
                         </MenuItem>
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="folder-upload" className='background-remove mouse-pointer'>Upload Folder</label>
-                          <input type="file" multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={handleFolderUpload} />
+                          <input type="file" multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={(e) => handleFolderUpload(e, popupState)} />
                         </MenuItem>
                       </Menu>
                     </React.Fragment>

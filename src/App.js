@@ -25,7 +25,7 @@ const App = () => {
             <Route exact path='/:email/reset-password/:id' element={<ResetPassword />} />
             <Route exact path='/dashboard' element={<LangdingPage />} />
             <Route exact path='/admin' element={<Admin />} />
-            <Route exact path='/verify/:id' element={<EmailVerificationSuccess />} />
+            <Route exact path=':email/verify/:token' element={<EmailVerificationSuccess />} />
           </Routes>
         </div>
       </AuthProvider>

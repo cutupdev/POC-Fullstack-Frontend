@@ -360,7 +360,7 @@ export default function SignIn() {
       </ThemeProvider>
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
-        autoHideDuration={10000}
+        autoHideDuration={4000}
         open={snackOpen}
         variant='outlined'
         color='primary'
@@ -380,7 +380,7 @@ export default function SignIn() {
       </Snackbar>
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
-        autoHideDuration={10000}
+        autoHideDuration={4000}
         open={loginStatus && (!(emailError || passwordError))}
         variant='outlined'
         color='primary'

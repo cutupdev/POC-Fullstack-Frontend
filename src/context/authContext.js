@@ -1,15 +1,18 @@
 import { createContext, useState, useContext } from "react";
+import { login } from "../hook/useAuth";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { isAuthenticated } from "../hook/useAuth";
 
 export const AuthContext = createContext({
     user: null,
     setUser: () => { },
-    loginStatus: false,
-    setLoginStatus: () => { }
+    // loginStatus: false,
+    // setLoginStatus: () => { }
 });
 
 export const AuthProvider = ({ children }) => {
+    console.log("use context called")
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loginStatus, setLoginStatus] = useState(false);
@@ -43,27 +46,27 @@ export const AuthProvider = ({ children }) => {
         return true;
     };
 
-    const login = async (credentials) => {
-        try {
-            const response = await axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signin', credentials);
-            if (response.data.authToken) {
-                localStorage.setItem('user', JSON.stringify(response.data));
-                addUser(response.data);
-                setLoginStatus(false);
-                navigate('/dashboard');
-            }
-        } catch (error) {
-            console.error('Login failed:', error);
-            setLoginStatus(true);
-        }
-    };
+    // const login = async (credentials) => {
+    //     try {
+    //         const response = await axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signin', credentials);
+    //         if (response.data.authToken) {
+    //             localStorage.setItem('user', JSON.stringify(response.data));
+    //             addUser(response.data);
+    //             setLoginStatus(false);
+    //             navigate('/dashboard');
+    //         }
+    //     } catch (error) {
+    //         console.error('Login failed:', error);
+    //         setLoginStatus(true);
+    //     }
+    // };
 
     const logout = () => {
         removeUser();
     }
 
     return (
-        <AuthContext.Provider value={{ user, setUser, loginStatus, setLoginStatus, login, logout }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

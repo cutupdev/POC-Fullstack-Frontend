@@ -227,42 +227,45 @@ export default function SignUp() {
 
     event.preventDefault();
 
-    const captchaValue = recaptcha.current.getValue()
+    if (validateInputs()) {
 
-    if (!captchaValue) {
-      setCaptchaError(true);
-      setCaptchaErrorMessage("Please verify the reCAPTCHA!");
-    } else {
-
-      setCaptchaError(false);
-      setCaptchaErrorMessage("");
-
-      const newUser = {
-        username: name,
-        email: email,
-        password: password,
-        captcha: captchaValue
-      };
-      
-      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signup',  newUser)
-        .then(res => {
-          if (res.data.success) {
-            setRegisterState(true);
-            setMessage("Thank you for the Registration. To use your account, you need to verify the account using the link sent to your email. If you don't see an email in your inbox, please check your spam folder as well");
-            setOpen(true);
-          } else {
+      const captchaValue = recaptcha.current.getValue()
+  
+      if (!captchaValue) {
+        setCaptchaError(true);
+        setCaptchaErrorMessage("Please verify the reCAPTCHA!");
+      } else {
+  
+        setCaptchaError(false);
+        setCaptchaErrorMessage("");
+  
+        const newUser = {
+          username: name,
+          email: email,
+          password: password,
+          captcha: captchaValue
+        };
+        
+        axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signup',  newUser)
+          .then(res => {
+            if (res.data.success) {
+              setRegisterState(true);
+              setMessage("Thank you for the Registration. To use your account, you need to verify the account using the link sent to your email. If you don't see an email in your inbox, please check your spam folder as well");
+              setOpen(true);
+            } else {
+              setRegisterState(false);
+              setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page.");
+              setOpen(true);
+            }
+          })
+          .catch(err => {
             setRegisterState(false);
-            setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page.");
+            setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page");
             setOpen(true);
-          }
-        })
-        .catch(err => {
-          setRegisterState(false);
-          setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page");
-          setOpen(true);
-          console.log(err.response.data);
-        })
-    }
+            console.log(err.response.data);
+          })
+      }
+    } 
   };
 
   return (
@@ -406,7 +409,7 @@ export default function SignUp() {
                   className='submit-btn roboto-font'
                   // fullWidth
                   variant="contained"
-                  onClick={validateInputs}
+                  // onClick={validateInputs}
                 >
                   Sign up
                 </Button>
