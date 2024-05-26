@@ -108,6 +108,7 @@ export default function SignUp() {
   const [confirmType, setConfirmType] = React.useState('password');
   const navigate = useNavigate();
   const location = useLocation();
+  const [ submitBtn, setSubmitBtn ] = React.useState(false);
   const [snackState, setSnackState] = React.useState({
     snackOpen: false,
     vertical: 'top',
@@ -189,7 +190,7 @@ export default function SignUp() {
       setConfirmPasswordErrorMessage('');
     } else {
       setConfirmPasswordError(true);
-      setConfirmPasswordErrorMessage('Password not match!');
+      setConfirmPasswordErrorMessage('Password does not match!');
       isValid = false;
     }
 
@@ -218,24 +219,38 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = {
-      email: email,
-      token: token,
-      password: confirmPassword
-    };
-    axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/resetPassword', data)
-      .then(res => {
-        if (res.data.success) {
-          setSnackState({
-            snackOpen: true,
-            vertical: 'top',
-            horizontal: 'center',
-            message: "Your password is reset. You can sign-in now"
-          });
-          setTimeout(() => {
-            navigate("/");
-          }, 10000)
-        } else {
+    setSubmitBtn(true);
+    if(validateInputs()) {
+      const data = {
+        email: email,
+        token: token,
+        password: confirmPassword
+      };
+      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/resetPassword', data)
+        .then(res => {
+          if (res.data.success) {
+            setSnackState({
+              snackOpen: true,
+              vertical: 'top',
+              horizontal: 'center',
+              message: "Your password is reset. You can sign-in now"
+            });
+            setTimeout(() => {
+              navigate("/");
+            }, 3000);
+          } else {
+            setSnackState({
+              snackOpen: true,
+              vertical: 'top',
+              horizontal: 'center',
+              message: "Your password couldn't reset! Try again now."
+            });
+            setTimeout(() => {
+              navigate("/");
+            }, 3000);
+          }
+        })
+        .catch(err => {
           setSnackState({
             snackOpen: true,
             vertical: 'top',
@@ -244,20 +259,12 @@ export default function SignUp() {
           });
           setTimeout(() => {
             navigate("/");
-          }, 10000)
-        }
-      })
-      .catch(err => {
-        setSnackState({
-          snackOpen: true,
-          vertical: 'top',
-          horizontal: 'center',
-          message: "Your password couldn't reset! Try again now."
-        });
-        setTimeout(() => {
-          navigate("/");
-        }, 10000)
-      })
+          }, 3000);
+        })
+    } else {
+
+    }
+    
   };
 
   return (
@@ -355,16 +362,30 @@ export default function SignUp() {
                   </span>
                 </FormControl>
                 <div className='flex-end'>
+                  {submitBtn ?
+                  <Button
+                    disabled
+                    type="submit"
+                    // {snackOpen? disabled: ""}
+                    className='submit-btn roboto-font'
+                    // fullWidth
+                    variant="contained"
+                    // onClick={validateInputs}
+                  >
+                    Reset
+                  </Button>
+                  :
                   <Button
                     type="submit"
                     // {snackOpen? disabled: ""}
                     className='submit-btn roboto-font'
                     // fullWidth
                     variant="contained"
-                    onClick={validateInputs}
+                    // onClick={validateInputs}
                   >
                     Reset
                   </Button>
+                  }
                 </div>
               </Box>
             </Card>
@@ -373,7 +394,7 @@ export default function SignUp() {
       </ThemeProvider>
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
-        autoHideDuration={10000}
+        autoHideDuration={4000}
         open={snackOpen && (!(newPasswordError || confirmPasswordError))}
         variant='outlined'
         color='primary'
@@ -387,6 +408,7 @@ export default function SignUp() {
             horizontal: 'center',
             message: ""
           });
+          setSubmitBtn(false);
         }}
       >
         {message}
