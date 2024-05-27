@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import { useAuth } from '../../context/authContext';
+import AuthContext from '../../context/authContext';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
@@ -19,12 +19,15 @@ import { useLocation } from 'react-router-dom';
 
 export default function TemporaryDrawer() {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = React.useContext(AuthContext);
   const LPtheme = createTheme(getLPTheme('light'));
+  const [open, setOpen] = React.useState(false);
+
   React.useEffect(() => {
-    // if(!localStorage.getItem('user')) {
-    //   navigate('/');
-    // } 
-  }, [])
+    if(!localStorage.getItem('user')) {
+      navigate('/');
+    }
+  }, [open])
 
   const location = useLocation().pathname;
   let path = ""
@@ -38,7 +41,7 @@ export default function TemporaryDrawer() {
     setOpen(false);
   }
 
-  const [open, setOpen] = React.useState(false);
+  
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);

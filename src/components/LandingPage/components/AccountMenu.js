@@ -8,6 +8,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import IconButton from '@mui/material/IconButton';
 // import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
+import AuthContext from '../../../context/authContext';
 // import PersonAdd from '@mui/icons-material/PersonAdd';
 // import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
@@ -16,8 +17,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
-import { useAuth } from '../../../context/authContext';
+// import { useAuth } from '../../../context/authContext';
+import { logout } from '../../../hook/useAuth';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 
@@ -31,7 +34,8 @@ import { styled } from '@mui/material/styles';
 // }));
 
 export default function AccountMenu() {
-  const { logout, loginStatus } = useAuth();
+  const [currentUser, setCurrentUser] = React.useContext(AuthContext);
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [profileModal, setProfileModal] = React.useState(false);
   const [fullname, setFullname] = React.useState("Microgift");
@@ -59,6 +63,8 @@ export default function AccountMenu() {
     setFullname('Microgift');
     setAnchorEl(null);
     logout();
+    setCurrentUser(undefined);
+    navigate('/');
   }
   return (
     <React.Fragment>

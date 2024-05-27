@@ -1,11 +1,9 @@
 import * as React from 'react';
-import axios from 'axios';
-import { useAuth } from '../../context/authContext';
+import { login } from '../../hook/useAuth';
+import AuthContext from '../../context/authContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
@@ -21,7 +19,7 @@ import ForgotPassword from './ForgotPassword';
 import getSignInTheme from './getSignInTheme';
 import { SitemarkIcon } from './CustomIcons';
 import { useNavigate } from 'react-router-dom';
-import { inView } from 'framer-motion';
+import { jwtDecode } from "jwt-decode";
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -96,9 +94,10 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn() {
+  const [currentUser, setCurrentUser] = React.useContext(AuthContext);
   const navigate = useNavigate();
+  const [loginError, setLoginError] = React.useState(false);
   const SignInTheme = createTheme(getSignInTheme('light'));
-  const { login, loginStatus, setLoginStatus, user } = useAuth();
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -120,10 +119,6 @@ export default function SignIn() {
   React.useEffect(() => {
     if (localStorage.getItem('user')) {
       navigate('/dashboard');
-      // const user = JSON.parse(localStorage.getItem('user'));
-      // if(user.remember) {
-      //   alert("clieck")
-      // }
     }
     setPassword("");
   }, [])
@@ -160,20 +155,32 @@ export default function SignIn() {
     }
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('clieck submit')
-    const loginUser = {
-      email: email,
-      password: password,
-      checked: checkboxRef.current.checked
+  const handleSubmit = async (e) => {
+		e.preventDefault();
+    if (validateInputs()) {
+      const loginUser = {
+        email: email,
+        password: password,
+        checked: checkboxRef.current.checked
+      }
+      try {
+        const userData = await login(loginUser);
+        setCurrentUser(jwtDecode(userData.authToken).user);
+        navigate('/dashboard');
+      } catch (error) {
+        setLoginError(true);
+        console.log('error ===> ', error.response.data);
+      }
     }
-    login(loginUser);
-  };
+	};
 
   const validateInputs = () => {
     console.log('clieck valid')
     let isValid = true;
+    setEmailError(false);
+    setEmailErrorMessage('');
+    setPasswordError(false);
+    setPasswordErrorMessage("");
 
     if (!email || !isEmail(email)) {
       setEmailError(true);
@@ -202,8 +209,9 @@ export default function SignIn() {
       isValid = false;
     } else {
       setPasswordError(false);
-      setEmailErrorMessage("");
+      setPasswordErrorMessage("");
     }
+    return isValid;
   };
 
   return (
@@ -347,7 +355,7 @@ export default function SignIn() {
                     type="submit"
                     className='submit-btn roboto-font'
                     variant="contained"
-                    onClick={validateInputs}
+                  // onClick={validateInputs}
                   >
                     Sign in
                   </Button>
@@ -381,14 +389,14 @@ export default function SignIn() {
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         autoHideDuration={4000}
-        open={loginStatus && (!(emailError || passwordError))}
+        open={loginError && (!(emailError || passwordError))}
         variant='outlined'
         color='primary'
         onClose={(event, reason) => {
           if (reason === 'clickaway') {
             return;
           }
-          setLoginStatus(false);
+          setLoginError(false);
         }}
       >
         Incorrect Email or Password. Try again with correct Credential

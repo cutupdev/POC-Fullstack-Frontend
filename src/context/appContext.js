@@ -1,38 +1,29 @@
-import { createContext, useState, useContext } from "react";
-import axios from 'axios';
+import { createContext, useEffect, useState } from "react";
+import { isAuthenticated } from "../hook/useAuth";
 
-export const AppContext = createContext({
-    newFile: {},
-    setNewFile: () => { }, 
-    fileLength: 0,
-    setFileLength: () => { },
-    categoryList: [],
-    setCategoryList: () => { },
-});
+const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-    const [newFile, setNewFile] = useState({});
-    const [fileLength, setFileLength] = useState(0);
-    const [categoryList, setCategoryList] = useState([]);
+    const [fileList, setFileList] = useState(undefined);
 
-    const setCategory = (value) => {
-        // localStorage.setItem(key, value);
-        // setLocalStorageValue(value);
-    };
-
-    const addFile = (data) => {
-
-    }
-
-    const removeFile = (data) => {
-        setNewFile({});
-    }
+    useEffect(() => {
+        const checkLoggedIn = async () => {
+            let cuser = isAuthenticated();
+            if (cuser) {
+                console.log("I am called");
+                setFileList([]);
+            } else {
+                setFileList(undefined);
+            }
+        };
+        checkLoggedIn();
+    }, [])
 
     return (
-        <AppContext.Provider value={{ categoryList, setCategoryList, fileLength, newFile, setCategory, addFile, removeFile,  }}>
+        <AppContext.Provider value={ [fileList, setFileList] }>
             {children}
         </AppContext.Provider>
     );
 };
 
-export const useApp = () => useContext(AppContext);
+export default AppContext;
