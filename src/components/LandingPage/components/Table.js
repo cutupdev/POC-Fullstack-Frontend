@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -32,6 +31,11 @@ import { RiFilePpt2Line } from "react-icons/ri";
 import { CiText } from "react-icons/ci";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import clsx from 'clsx';
+// import { Worker } from '@react-pdf-viewer/core';
+// import { Viewer } from '@react-pdf-viewer/core';
+// import '@react-pdf-viewer/core/lib/styles/index.css';
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+
 
 function createData(id, name, creator, date, type, size, category, classification, confident, checked) {
     return { id, name, creator, date, type, size, category, classification, confident, checked };
@@ -227,16 +231,6 @@ function EnhancedTableHead(props) {
     );
 }
 
-EnhancedTableHead.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-};
-
-
 export default function EnhancedTable() {
     const [rows, setRows] = React.useState(rowsTemp);
     const [visibleRows, setVisibleRows] = React.useState(rowsTemp.slice(0, 10));
@@ -250,6 +244,7 @@ export default function EnhancedTable() {
     const [deleteData, setDeleteData] = React.useState("");
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
+    const containerRef = React.useRef(null);
     // const docs = [
     //     // { uri: "https://url-to-my-pdf.pdf" },
     //     { uri: require("../../file/GenAI_details.pdf") }, // Local File
@@ -259,6 +254,35 @@ export default function EnhancedTable() {
         // console.log(rows);
         // console.log(visibleRows);
     }, [rows, visibleRows])
+
+    React.useEffect(() => {
+        const container = containerRef.current;
+        let instance, PSPDFKit;
+        (async function () {
+            PSPDFKit = await import('pspdfkit');
+            PSPDFKit.unload(container);
+
+            instance = await PSPDFKit.load({
+                // Container where PSPDFKit should be mounted.
+                container,
+                // The document to open.
+                document: 'test.docx',
+                // Use the public directory URL as a base URL. PSPDFKit will download its library assets from here.
+                baseUrl: 'http://localhost:3000/',
+            });
+        })();
+
+        return () => PSPDFKit && PSPDFKit.unload(container);
+    }, []);
+
+    //////////////////////////////////////////////////////
+    const [numPages, setNumPages] = React.useState();
+    const [pageNumber, setPageNumber] = React.useState(1);
+
+    const onDocumentLoadSuccess = (pages) => {
+        setNumPages(pages);
+    }
+    //////////////////////////////////////////////////////
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -373,6 +397,25 @@ export default function EnhancedTable() {
     const handleChangeDense = (event) => {
         setDense(event.target.checked);
     };
+
+    const docs = [
+        {
+          // uri: "url", // for remote file
+          uri: "https://arxiv.org/pdf/quant-ph/0410100", // for local file
+        },
+        {
+            uri: "/demo.docx", // for remote file
+            // uri: "/demo.pptx", // for local file
+        },
+        {
+            uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781036/demo.pptx", // for remote file
+            // uri: "/demo.docx", // for local file
+        },
+        {
+            uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781037/demo.xlsx", // for remote file
+            // uri: "/demo.xlsx", // for local file
+        },
+    ];
 
     const isSelected = (id) => selected.indexOf(id) !== -1;
 
@@ -595,9 +638,24 @@ export default function EnhancedTable() {
                             </div>
                             <ClearIcon className='metaview-close' onClick={onPreviewOff} />
                         </div>
-                        <div className='preview-body'>
-                            pdf contents
-                        </div>
+                        {/* <div className='preview-body'>
+                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                                <div
+                                    style={{
+                                        border: '1px solid rgba(0, 0, 0, 0.3)',
+                                        height: '750px',
+                                    }}
+                                >
+                                    <Viewer fileUrl="https://arxiv.org/pdf/quant-ph/0410100" />
+                                </div>
+                            </Worker>
+                        </div> */}
+                        <DocViewer
+                            prefetchMethod="GET" // for remote fetch
+                            documents={docs}
+                            pluginRenderers={DocViewerRenderers}
+                            style={{ height: "100vh" }} //custom style
+                        />
                     </div>
                     <div>
                     </div>
