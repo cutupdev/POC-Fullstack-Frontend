@@ -253,13 +253,13 @@ export default function SignUp() {
               setMessage("Thank you for the Registration. To use your account, you need to verify the account using the link sent to your email. If you don't see an email in your inbox, please check your spam folder as well");
               setOpen(true);
             } else {
-              setRegisterState(false);
+              setRegisterState(true);
               setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page.");
               setOpen(true);
             }
           })
           .catch(err => {
-            setRegisterState(false);
+            setRegisterState(true);
             setMessage("Email address already exists. Please click here to Sign In. If you don't remember your password, you can reset it on the Sign In page");
             setOpen(true);
             console.log(err.response.data);
@@ -435,7 +435,7 @@ export default function SignUp() {
             </DialogContent>
             <DialogActions className='dis-center'>
               <Button className='font-size-20 roboto-font' autoFocus onClick={handleVerify}>
-                {registerState ? "Sign In" : "Sign In"}
+                {registerState ? "Sign In" : "Sign Up"}
               </Button>
             </DialogActions>
           </BootstrapDialog>

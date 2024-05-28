@@ -34,7 +34,7 @@ const EmailVerificationSuccess = () => {
     const token = location.pathname.split("/verify/")[1];
     const verifyEmail = async () => {
       try {
-        const response = await axios.get(`https://4a29-45-8-22-59.ngrok-free.app/api/users/verify`, data);
+        const response = await axios.post(`https://4a29-45-8-22-59.ngrok-free.app/api/users/verify`, data);
         if (response.data.success) {
           setSnackState({
             snackOpen: true,
@@ -44,7 +44,7 @@ const EmailVerificationSuccess = () => {
           });
           setTimeout(() => {
             navigate('/');
-          }, 5000)
+          }, 3000)
         } else {
           console.error("reached, but can't verify");
           setSnackState({
@@ -55,7 +55,7 @@ const EmailVerificationSuccess = () => {
           });
           setTimeout(() => {
             navigate('/sign-up');
-          }, 50000)
+          }, 3000)
         }
       } catch (error) {
         setSnackState({
@@ -66,7 +66,7 @@ const EmailVerificationSuccess = () => {
         });
         setTimeout(() => {
           navigate('/sign-up');
-        }, 5000)
+        }, 3000)
       }
     };
 

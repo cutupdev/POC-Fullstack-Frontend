@@ -51,12 +51,16 @@ export default function Content() {
   });
 
   const allowedTypes = [
-    'text/plain',
     'application/pdf',
-    'application/msword',
+    'text/plain',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/msword',
     'application/vnd.ms-powerpoint',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/xml',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel',
+    'text/csv'
   ];
 
   React.useEffect(() => {
@@ -309,7 +313,7 @@ export default function Content() {
                   )}
                 </PopupState>
               </p>
-              <p className="ant-upload-text bg-remove roboto-font up-exp">Click or drag files to this area to upload</p>
+              <p className="ant-upload-text bg-remove roboto-font up-exp">Click or Drag file here to upload</p>
               {/* <p className="ant-upload-hint bg-remove roboto-font">
                 Support for a single or bulk upload. Strictly prohibited from uploading company data or other
                 banned files.
