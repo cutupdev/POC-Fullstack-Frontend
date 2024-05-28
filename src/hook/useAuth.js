@@ -1,26 +1,23 @@
-import { ConstructionOutlined } from '@mui/icons-material';
 import api from '../utils/api';
 
 export const login = async (data) => {
-    console.log(data);
-	const response = await api.post('users/signin', {
-		username: data.username,
-		password: data.password,
-        checked: data.checked,
-	});
-
-	const token = response.data.token;
+	const response = await api.post('users/signin', data);
+	const token = response.data.authToken;
 	if (token) {
-		localStorage.setItem('user', JSON.stringify(response.data));
+		localStorage.setItem('user', JSON.stringify(response.data.authToken));
 	}
-
 	return response.data;
 };
+
+export const logout = () => {
+	localStorage.removeItem('user');
+	localStorage.removeItem('files');
+}
 
 export const isAuthenticated = () => {
 	const user = localStorage.getItem('user');
 	if (!user) {
-		return {}
+		return null;
 	}
 	return JSON.parse(user);
 };

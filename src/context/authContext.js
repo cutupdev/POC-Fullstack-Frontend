@@ -1,75 +1,29 @@
-import { createContext, useState, useContext } from "react";
-import { login } from "../hook/useAuth";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState, useEffect } from "react";
 import { isAuthenticated } from "../hook/useAuth";
+import { jwtDecode } from "jwt-decode";
 
-export const AuthContext = createContext({
-    user: null,
-    setUser: () => { },
-    // loginStatus: false,
-    // setLoginStatus: () => { }
-});
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    console.log("use context called")
-    const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    const [loginStatus, setLoginStatus] = useState(false);
-    const [localStorageValue, setLocalStorageValue] = useState(null);
+    const [currentUser, setCurrentUser] = useState(undefined);
 
-    const setItem = (key, value) => {
-        localStorage.setItem(key, value);
-        setLocalStorageValue(value);
-    };
-
-    const getItem = (key) => {
-        const value = localStorage.getItem(key);
-        setLocalStorageValue(value);
-        return value;
-    };
-
-    const removeItem = (key) => {
-        localStorage.removeItem(key);
-        setLocalStorageValue(null);
-    };
-
-    const addUser = (userData) => {
-        setUser(userData);
-        setItem("user", JSON.stringify(userData));
-    };
-
-    const removeUser = () => {
-        setUser(null);
-        setItem("user", "");
-        navigate("/");
-        return true;
-    };
-
-    // const login = async (credentials) => {
-    //     try {
-    //         const response = await axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signin', credentials);
-    //         if (response.data.authToken) {
-    //             localStorage.setItem('user', JSON.stringify(response.data));
-    //             addUser(response.data);
-    //             setLoginStatus(false);
-    //             navigate('/dashboard');
-    //         }
-    //     } catch (error) {
-    //         console.error('Login failed:', error);
-    //         setLoginStatus(true);
-    //     }
-    // };
-
-    const logout = () => {
-        removeUser();
-    }
+    useEffect(() => {
+        const checkLoggedIn = async () => {
+            let cuser = isAuthenticated();
+            if (cuser) {
+                setCurrentUser(jwtDecode(cuser).user);
+            } else {
+                setCurrentUser(undefined);
+            }
+        };
+        checkLoggedIn();
+    }, []);
 
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout }}>
+        <AuthContext.Provider value={ [currentUser, setCurrentUser] }>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export default AuthContext;

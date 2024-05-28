@@ -31,9 +31,9 @@ import { RiFilePpt2Line } from "react-icons/ri";
 import { CiText } from "react-icons/ci";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import clsx from 'clsx';
-// import { Worker } from '@react-pdf-viewer/core';
-// import { Viewer } from '@react-pdf-viewer/core';
-// import '@react-pdf-viewer/core/lib/styles/index.css';
+import { Worker } from '@react-pdf-viewer/core';
+import { Viewer } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 
 
@@ -245,44 +245,11 @@ export default function EnhancedTable() {
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
     const containerRef = React.useRef(null);
-    // const docs = [
-    //     // { uri: "https://url-to-my-pdf.pdf" },
-    //     { uri: require("../../file/GenAI_details.pdf") }, // Local File
-    // ];
 
     React.useEffect(() => {
         // console.log(rows);
         // console.log(visibleRows);
     }, [rows, visibleRows])
-
-    React.useEffect(() => {
-        const container = containerRef.current;
-        let instance, PSPDFKit;
-        (async function () {
-            PSPDFKit = await import('pspdfkit');
-            PSPDFKit.unload(container);
-
-            instance = await PSPDFKit.load({
-                // Container where PSPDFKit should be mounted.
-                container,
-                // The document to open.
-                document: 'test.docx',
-                // Use the public directory URL as a base URL. PSPDFKit will download its library assets from here.
-                baseUrl: 'http://localhost:3000/',
-            });
-        })();
-
-        return () => PSPDFKit && PSPDFKit.unload(container);
-    }, []);
-
-    //////////////////////////////////////////////////////
-    const [numPages, setNumPages] = React.useState();
-    const [pageNumber, setPageNumber] = React.useState(1);
-
-    const onDocumentLoadSuccess = (pages) => {
-        setNumPages(pages);
-    }
-    //////////////////////////////////////////////////////
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -403,18 +370,18 @@ export default function EnhancedTable() {
           // uri: "url", // for remote file
           uri: "https://arxiv.org/pdf/quant-ph/0410100", // for local file
         },
-        {
-            uri: "/demo.docx", // for remote file
-            // uri: "/demo.pptx", // for local file
-        },
-        {
-            uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781036/demo.pptx", // for remote file
-            // uri: "/demo.docx", // for local file
-        },
-        {
-            uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781037/demo.xlsx", // for remote file
-            // uri: "/demo.xlsx", // for local file
-        },
+        // {
+        //     uri: "./demo.docx", // for remote file
+        //     // uri: "/demo.pptx", // for local file
+        // },
+        // {
+        //     uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781036/demo.pptx", // for remote file
+        //     // uri: "/demo.docx", // for local file
+        // },
+        // {
+        //     uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781037/demo.xlsx", // for remote file
+        //     // uri: "/demo.xlsx", // for local file
+        // },
     ];
 
     const isSelected = (id) => selected.indexOf(id) !== -1;
@@ -638,7 +605,7 @@ export default function EnhancedTable() {
                             </div>
                             <ClearIcon className='metaview-close' onClick={onPreviewOff} />
                         </div>
-                        {/* <div className='preview-body'>
+                        <div className='preview-body'>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                                 <div
                                     style={{
@@ -649,13 +616,13 @@ export default function EnhancedTable() {
                                     <Viewer fileUrl="https://arxiv.org/pdf/quant-ph/0410100" />
                                 </div>
                             </Worker>
-                        </div> */}
-                        <DocViewer
+                        </div>
+                        {/* <DocViewer
                             prefetchMethod="GET" // for remote fetch
                             documents={docs}
                             pluginRenderers={DocViewerRenderers}
                             style={{ height: "100vh" }} //custom style
-                        />
+                        /> */}
                     </div>
                     <div>
                     </div>

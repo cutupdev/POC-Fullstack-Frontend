@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
+import AuthContext from '../../../context/authContext';
 import MenuItem from '@mui/material/MenuItem';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import Snackbar from '@mui/joy/Snackbar';
@@ -16,8 +17,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import { useApp } from '../../../context/appContext';
-import { jwtDecode } from "jwt-decode";
 import AWS from 'aws-sdk';
 import S3 from 'aws-sdk/clients/s3';
 import axios from 'axios';
@@ -26,7 +25,7 @@ const { Dragger } = Upload;
 
 
 export default function Content() {
-  const { fileLength, newFile, addFile, removeFile } = useApp();
+  const [currentUser, setCurrentUser] = React.useContext(AuthContext);
   const [open, setOpen] = React.useState(false);
   const [fileList, setFileList] = React.useState([]);
   const descriptionElementRef = React.useRef(null);
@@ -154,8 +153,8 @@ export default function Content() {
   const uploadSubmit = (e) => {
     console.log("length ===> ", fileList.length)
 
-    if(fileList.length) {
-      if(fileList.length === 1) {
+    if (fileList.length) {
+      if (fileList.length === 1) {
         alert(`1 file uploaded successfully!`);
       } else {
         alert(`${fileList.length} files uploaded successfully!`);
@@ -177,6 +176,7 @@ export default function Content() {
   }
 
   const handleUpload = async (file) => {
+
     const params = {
       Bucket: S3_BUCKET,
       Key: file.name,
@@ -187,21 +187,31 @@ export default function Content() {
       const upload = await s3.putObject(params).promise();
       console.log("File uploaded successfully ===>>> ", upload);
       const fileInf = {
-        creatorName: jwtDecode(localStorage.getItem('user')).user.username,
+        creatorName: currentUser.username,
         filename: file.name,
         type: file.type,
         size: file.size
       }
       console.log("backend sending data ===> ", fileInf);
-      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/files/newUpload', fileInf)
+
+      const token = localStorage.getItem('user')
+      axios.post(
+        'https://4a29-45-8-22-59.ngrok-free.app/api/files/newUpload',
+        fileInf,
+        {
+          headers: {
+            'x-auth-token': `Bearer ${token.replace(/"/g, '')}`,
+          }
+        }
+      )
         .then(res => {
           console.log("File Inf saving success ===> ", res.data);
         })
         .catch(err => {
-          console.log(err);
+          console.log("File Inf saving error ===>>> ", err);
         })
     } catch (error) {
-      console.error("File Inf saving error ===>>> ", error);
+      console.error("File uploading error ===>>> ", error);
     }
   }
 
