@@ -219,8 +219,9 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setSubmitBtn(true);
+    
     if(validateInputs()) {
+      setSubmitBtn(true);
       const data = {
         email: email,
         token: token,

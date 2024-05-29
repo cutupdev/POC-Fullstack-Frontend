@@ -276,9 +276,15 @@ function EnhancedTableHead(props) {
 export default function AdminContent() {
 
   const convertStr = (data) => {
-    const datas = data.map(item => {
+    let datas = data.map(item => {
       // Convert the sample array to a single string with comma separated values
-      const sampleStr = item.sample.join(', ');
+      let sampleStr = '';
+      if(item.length > 1) {
+        sampleStr = item.sample.join(', ');
+      } else {
+        sampleStr = item.sample;
+      }
+
       return {
         id: item.id,
         name: item.name,
@@ -331,9 +337,11 @@ export default function AdminContent() {
       }
     }
     setVisibleRows(
-      stableSort(rows, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
+      convertStr(
+        stableSort(rows, getComparator(order, orderBy)).slice(
+          page * rowsPerPage,
+          page * rowsPerPage + rowsPerPage,
+        )
       )
     )
   }, [rows]);
@@ -347,15 +355,16 @@ export default function AdminContent() {
   React.useEffect(() => {
     console.log("sort function called!")
     setVisibleRows(
+      convertStr(
       stableSort(rows, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       )
-    )
+    ))
   }, [order, orderBy, page, rowsPerPage])
 
   const handleClickOpen = (e) => {
-    
+
     setOpen(true);
 
     if (e == "") {
@@ -364,9 +373,9 @@ export default function AdminContent() {
       setFileList([]);
     } else {
       const files = rows.find(value => {
-        if(value.id === e.id) return value.sample;
+        if (value.id === e.id) return value.sample;
       })
-      
+
       setCategoryName(e.name);
       setEditID(e);
 
@@ -398,16 +407,20 @@ export default function AdminContent() {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    console.log(parseInt(event.target.value, 10))
     setPage(0);
-    onVisibleRows(0, parseInt(event.target.value, 10), rows);
+    if(parseInt(event.target.value, 10) > rows.length) {
+      setVisibleRows(rows.slice(0, rows.length))
+    } else {
+      setVisibleRows(rows.slice(0, parseInt(event.target.value, 10)))
+    }
+    // onVisibleRows(0, parseInt(event.target.value, 10), rows);
   };
 
   const onVisibleRows = (page, perRows, data) => {
 
     const datas = convertStr(data);
 
-    if(data.length === 0) {
+    if (data.length === 0) {
       setPage(0);
       setRowsPerPage(10);
       setVisibleRows([]);
@@ -417,10 +430,10 @@ export default function AdminContent() {
       // } else if(data.length > 0) {
       //   setPage(Math.floor(datas.length / page));
       // }
-      setPage(Math.floor((datas.length-1) / rowsPerPage));
-      setVisibleRows(datas.slice(Math.floor((datas.length-1) / rowsPerPage) * perRows, datas.length));
+      setPage(Math.floor((datas.length - 1) / rowsPerPage));
+      setVisibleRows(convertStr(datas.slice(Math.floor((datas.length - 1) / rowsPerPage) * perRows, datas.length)));
     } else {
-      setVisibleRows(datas.slice(page * perRows, perRows * (page + 1)));
+      setVisibleRows(convertStr(datas.slice(page * perRows, perRows * (page + 1))));
     }
   }
 
@@ -444,8 +457,8 @@ export default function AdminContent() {
       const filenames = fileList.map(value => {
         return value.name;
       })
-      if(editID.id) {
-        const editData = {name: name, id: editID.id, date: '2024-05-20 09:30', sample: filenames, checked: editID.checked, status: editID.status, trainDate: editID.trainDate};
+      if (editID.id) {
+        const editData = { name: name, id: editID.id, date: '2024-05-20 09:30', sample: filenames, checked: editID.checked, status: editID.status, trainDate: editID.trainDate };
         const editRows = categories.map(value => {
           if (value.id === editID.id) {
             return editData;
@@ -458,7 +471,7 @@ export default function AdminContent() {
         // setRows(editRows);
         // onVisibleRows(page, rowsPerPage, editRows);
       } else {
-        const newData = {name: name, id: categories.length+1, date: '2024-05-20 09:30', sample: filenames, checked: false, status: "In-Progress", trainDate: '2024-05-23 08:30'};
+        const newData = { name: name, id: categories.length + 1, date: '2024-05-20 09:30', sample: filenames, checked: false, status: "In-Progress", trainDate: '2024-05-23 08:30' };
         let newCategory = categories.slice(0, categories.length);
         newCategory.push(newData);
         setCategories([...categories, newData]);
@@ -505,7 +518,7 @@ export default function AdminContent() {
     // setRows(temp);
     setCategories(temp);
     searchHandle(searchValue, temp);
-    
+
     let newSelected = [];
 
     if (selectedIndex === -1) {
@@ -563,13 +576,13 @@ export default function AdminContent() {
 
   const searchHandle = (value, data) => {
     const searchedData = [];
-    for(let i = 0; i < data.length; i++) {
-      if(data[i].name.toLowerCase().search(value) !== -1 || data[i].date.search(value) !== -1 || data[i].sample.indexOf(value) !== -1) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].name.toLowerCase().search(value) !== -1 || data[i].date.search(value) !== -1 || data[i].sample.indexOf(value) !== -1) {
         searchedData.push(data[i]);
       }
     }
-    
-    if(searchedData.length === 0) {
+
+    if (searchedData.length === 0) {
       setPage(0);
       setRowsPerPage(10);
     }
