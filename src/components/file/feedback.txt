@@ -1,0 +1,30 @@
+Signup & Login
+1. No Times Roman font, change it to modern font like Roboto	--done
+2. Bigger font-size					--done
+3. Change password text with min 12 chars		--done
+3. Put the label inside the text box		--done
+4. No password hint in the login page		--done
+5. Change to Forgot Password				--done
+6. Bigger Input Box					--done
+7. Sign In button smaller like in avail.co	--done
+
+Reset Password
+1. Label Inside Text box				--done
+2. Bigger Input box.					--done
+3. Smaller Reset button					--done
+
+Dashboard
+1. No Dashboard link				--done
+2. No Category link on the top			--done
+3. Add Admin link to the right			--done
+4. Drag and Drop control is not needed.		--done
+5. When user click upload button, modal window that shows drag and drop control or select files. When they finish upload/save, you bring them back to dashboard or close modal window.						--done
+6. Change the font like Roboto or poppins.		--done
+7. File Size should display 10 kb			--done
+8. Add "i" icon for metadata info			--done
+9. "eye" icon for preview				--done
+10. find "trash can" icon for delete		--done
+11. Rows per page will be 10, 50, 100		--done
+12. Confident score can be with decimals like 75.25%		--done
+13. Change the color theme. Teal			--done
+14. Add checkbox before filename			--done
