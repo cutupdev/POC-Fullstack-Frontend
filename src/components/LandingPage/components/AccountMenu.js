@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -22,7 +21,6 @@ import TextField from '@mui/material/TextField';
 // import { useAuth } from '../../../context/authContext';
 import { logout } from '../../../hook/useAuth';
 import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
 
 // const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 //   '& .MuiDialogContent-root': {
