@@ -245,7 +245,7 @@ export default function EnhancedTable() {
     const [deleteData, setDeleteData] = React.useState("");
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
-    const [textFile, setTextFile] = React.useState < String | null > (null);
+    const [textFile, setTextFile] = React.useState(null);
     const containerRef = React.useRef(null);
 
     React.useEffect(() => {
