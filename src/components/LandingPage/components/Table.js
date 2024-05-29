@@ -35,6 +35,7 @@ import { Worker } from '@react-pdf-viewer/core';
 import { Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import raw from '../../file/feedback.txt';
 
 
 function createData(id, name, creator, date, type, size, category, classification, confident, checked) {
@@ -244,6 +245,7 @@ export default function EnhancedTable() {
     const [deleteData, setDeleteData] = React.useState("");
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
+    const [textFile, setTextFile] = React.useState < String | null > (null);
     const containerRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -266,7 +268,28 @@ export default function EnhancedTable() {
         setMetaviewStatus(false);
     }
 
-    const onPreview = (event) => {
+    const onPreview = async (event) => {
+        // console.log("dfasfasdfsf")
+        // fetch(raw)
+        //     .then(r => {
+        //         setTextFile(r.text());
+        //         console.log(r.text());
+        //     })
+        //     .then(text => {
+        //         console.log('text decoded:', text);
+        //     });
+        // try {
+        //     const response = await fetch(raw);
+        //     console.log(response);
+        //     const text = await response.text();
+        //     console.log(text);
+        //     setTextFile(text ?? '');
+        //     console.log('text decoded:', text);
+        //     setMetaviewStatus(false);
+        //     setPreviewStatus(true);
+        // } catch (error) {
+        //     console.error('Error fetching the file:', error);
+        // }
         setMetaviewStatus(false);
         setPreviewStatus(true);
     }
@@ -366,14 +389,14 @@ export default function EnhancedTable() {
     };
 
     const docs = [
-        {
-          // uri: "url", // for remote file
-          uri: "https://arxiv.org/pdf/quant-ph/0410100", // for local file
-        },
         // {
-        //     uri: "./demo.docx", // for remote file
-        //     // uri: "/demo.pptx", // for local file
+        //   // uri: "url", // for remote file
+        //   uri: "https://arxiv.org/pdf/quant-ph/0410100", // for local file
         // },
+        {
+            uri: "./demo.docx", // for remote file
+            // uri: "/demo.pptx", // for local file
+        },
         // {
         //     uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781036/demo.pptx", // for remote file
         //     // uri: "/demo.docx", // for local file
@@ -605,7 +628,7 @@ export default function EnhancedTable() {
                             </div>
                             <ClearIcon className='metaview-close' onClick={onPreviewOff} />
                         </div>
-                        <div className='preview-body'>
+                        {/* <div className='preview-body'>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                                 <div
                                     style={{
@@ -613,16 +636,19 @@ export default function EnhancedTable() {
                                         height: '750px',
                                     }}
                                 >
-                                    <Viewer fileUrl="https://arxiv.org/pdf/quant-ph/0410100" />
+                                    <Viewer fileUrl="./demo.docx" />
                                 </div>
                             </Worker>
-                        </div>
+                        </div> */}
                         {/* <DocViewer
                             prefetchMethod="GET" // for remote fetch
                             documents={docs}
                             pluginRenderers={DocViewerRenderers}
                             style={{ height: "100vh" }} //custom style
                         /> */}
+                        {/* <div>
+                            {previewStatus && textFile && <pre>{textFile}</pre>}
+                        </div> */}
                     </div>
                     <div>
                     </div>
