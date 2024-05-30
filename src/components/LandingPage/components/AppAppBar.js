@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 
 import Sitemark from './SitemarkIcon';
 
-function AppAppBar({ mode, toggleColorMode }) {
+function AppAppBar({ mode }) {
   const [open, setOpen] = React.useState(false);
   const location = useLocation().pathname;
   let path = ""
@@ -100,10 +100,5 @@ function AppAppBar({ mode, toggleColorMode }) {
     </AppBar>
   );
 }
-
-AppAppBar.propTypes = {
-  mode: PropTypes.oneOf(['dark', 'light']).isRequired,
-  toggleColorMode: PropTypes.func.isRequired,
-};
 
 export default AppAppBar;
