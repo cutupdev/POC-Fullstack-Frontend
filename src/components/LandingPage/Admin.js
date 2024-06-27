@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import AdminContent from './components/AdminContent';
+import { jwtDecode } from 'jwt-decode';
 import Footer from './components/Footer';
 import getLPTheme from './getLPTheme';
 import { useLocation } from 'react-router-dom';
@@ -24,15 +25,19 @@ export default function Admin() {
   React.useEffect(() => {
     if(!localStorage.getItem('user')) {
       navigate('/');
-    } 
+    } else {
+      if(!jwtDecode(localStorage.getItem('user')).user.role) {
+        navigate('/dashboard');
+      }
+    }
   }, [])
 
   const location = useLocation().pathname;
   let path = ""
   if (location === '/admin/' || location === '/admin') {
-    path = "Dashboard";
+    path = "Documents";
   } else {
-    path = "Admin";
+    path = "Administration";
   }
 
   const sidebarClose = () => {

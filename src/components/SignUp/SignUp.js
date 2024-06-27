@@ -14,12 +14,14 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import ReCAPTCHA from 'react-google-recaptcha'
-import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
+import { isEmail } from '../../validation';
 import getSignUpTheme from './getSignUpTheme';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { SitemarkIcon } from './CustomIcons';
+import api from '../../utils/api';
+import passValid from '../../utils/passwordValid';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -110,8 +112,8 @@ export default function SignUp() {
   const [open, setOpen] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
   const [password, setPassword] = React.useState("");
-  const [captchaError, setCaptchaError] = React.useState(false);
-  const [captchaErrorMessage, setCaptchaErrorMessage] = React.useState("");
+  // const [captchaError, setCaptchaError] = React.useState(false);
+  // const [captchaErrorMessage, setCaptchaErrorMessage] = React.useState("");
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -121,7 +123,7 @@ export default function SignUp() {
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [visible, setVisible] = React.useState(false);
   const [type, setType] = React.useState('password');
-  const recaptcha = React.useRef();
+  // const recaptcha = React.useRef();
 
   React.useEffect(() => {
     if(localStorage.getItem('user')) {
@@ -187,22 +189,10 @@ export default function SignUp() {
       setEmailErrorMessage('');
     }
 
-    if (!password || password.length < 12 || !hasUpperCase(password) || !hasLowerCase(password) || !hasNumeric(password) || !hasSpecialCharacter(password)) {
+    const passReturn = passValid(password);
+    if(passReturn) {
       setPasswordError(true);
-      if (!password || password.length < 12) {
-        setPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(password)) {
-        setPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(password)) {
-        setPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(password)) {
-        setPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(password)) {
-        setPasswordErrorMessage('Password must include one special character at least.');
-      } else {
-        setPasswordErrorMessage('Password format is not correct. Try again.');
-      }
-
+      setPasswordErrorMessage(passReturn);
       isValid = false;
     } else {
       setPasswordError(false);
@@ -228,24 +218,24 @@ export default function SignUp() {
 
     if (validateInputs()) {
 
-      const captchaValue = recaptcha.current.getValue()
+      // const captchaValue = recaptcha.current.getValue()
   
-      if (!captchaValue) {
-        setCaptchaError(true);
-        setCaptchaErrorMessage("Please verify the reCAPTCHA!");
-      } else {
+      // if (!captchaValue) {
+      //   setCaptchaError(true);
+      //   setCaptchaErrorMessage("Please verify the reCAPTCHA!");
+      // } else {
   
-        setCaptchaError(false);
-        setCaptchaErrorMessage("");
+        // setCaptchaError(false);
+        // setCaptchaErrorMessage("");
   
         const newUser = {
           username: name,
           email: email,
           password: password,
-          captcha: captchaValue
+          // captcha: captchaValue
         };
         
-        axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/signup',  newUser)
+        api.post('users/signup',  newUser)
           .then(res => {
             if (res.data.success) {
               setRegisterState(true);
@@ -263,7 +253,7 @@ export default function SignUp() {
             setOpen(true);
             console.log(err.response.data);
           })
-      }
+      // }
     } 
   };
 
@@ -398,7 +388,7 @@ export default function SignUp() {
                   />
                 </ThemeProvider>
                 <span className='visibility-box'>
-                  {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
+                  {visible ? <VisibilityIcon className='visibility' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility' onClick={handleVisibility} />}
                 </span>
                 {/* </div> */}
               </FormControl>
@@ -413,10 +403,10 @@ export default function SignUp() {
                   Sign up
                 </Button>
               </div>
-              <div className='dis-center'>
+              {/* <div className='dis-center'>
                 <ReCAPTCHA ref={recaptcha} sitekey={process.env.REACT_APP_SITE_KEY} />
-              </div>
-              {captchaError ? <p className='dis-center color-red'>{captchaErrorMessage}</p> : <p></p>}
+              </div> */}
+              {/* {captchaError ? <p className='dis-center color-red'>{captchaErrorMessage}</p> : <p></p>} */}
             </Box>
           </Card>
           <BootstrapDialog

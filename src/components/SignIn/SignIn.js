@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { login } from '../../hook/useAuth';
+import { getData, getCategory } from '../../hook/useApp';
 import AuthContext from '../../context/authContext';
+import AppContext from '../../context/appContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,6 +17,7 @@ import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { hasUpperCase, hasLowerCase, hasNumeric, hasSpecialCharacter, isEmail } from '../../validation';
+import passValid from '../../utils/passwordValid';
 import ForgotPassword from './ForgotPassword';
 import getSignInTheme from './getSignInTheme';
 import { SitemarkIcon } from './CustomIcons';
@@ -95,6 +98,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 export default function SignIn() {
   const [currentUser, setCurrentUser] = React.useContext(AuthContext);
+  const { fileList, setFileList, categoryList, setCategoryList } = React.useContext(AppContext);
   const navigate = useNavigate();
   const [loginError, setLoginError] = React.useState(false);
   const SignInTheme = createTheme(getSignInTheme('light'));
@@ -156,7 +160,7 @@ export default function SignIn() {
   }
 
   const handleSubmit = async (e) => {
-		e.preventDefault();
+    e.preventDefault();
     if (validateInputs()) {
       const loginUser = {
         email: email,
@@ -166,13 +170,28 @@ export default function SignIn() {
       try {
         const userData = await login(loginUser);
         setCurrentUser(jwtDecode(userData.authToken).user);
+
+        const files = await getData();
+        if (files && files.length) {
+          const tempFiles = [...files];
+          console.log(tempFiles)
+          setFileList(tempFiles);
+        }
+
+        const categories = await getCategory();
+        if (categories && categories.length) {
+          const tempCategories = [...categories];
+          console.log(tempCategories)
+          setCategoryList(tempCategories);
+        }
+
         navigate('/dashboard');
       } catch (error) {
         setLoginError(true);
-        console.log('error ===> ', error.response.data);
+        console.log('error ===> ', error);
       }
     }
-	};
+  };
 
   const validateInputs = () => {
     console.log('clieck valid')
@@ -191,26 +210,16 @@ export default function SignIn() {
       setEmailErrorMessage('');
     }
 
-    if (!password || password.length < 12 || !hasUpperCase(password) || !hasLowerCase(password) || !hasNumeric(password) || !hasSpecialCharacter(password)) {
+    const passReturn = passValid(password);
+    if (passReturn) {
       setPasswordError(true);
-      if (!password || password.length < 12) {
-        setPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(password)) {
-        setPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(password)) {
-        setPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(password)) {
-        setPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(password)) {
-        setPasswordErrorMessage('Password must include one special character at least.');
-      } else {
-        setPasswordErrorMessage('Password format is not correct. Try again.');
-      }
+      setPasswordErrorMessage(passReturn);
       isValid = false;
     } else {
       setPasswordError(false);
-      setPasswordErrorMessage("");
+      setPasswordErrorMessage('');
     }
+
     return isValid;
   };
 
@@ -335,7 +344,7 @@ export default function SignIn() {
                       />
                     </ThemeProvider>
                     <span className='visibility-box'>
-                      {visible ? <VisibilityIcon className='visibility1' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility2' onClick={handleVisibility} />}
+                      {visible ? <VisibilityIcon className='visibility' onClick={handleVisibility} /> : <VisibilityOffIcon className='visibility' onClick={handleVisibility} />}
                     </span>
                   </div>
                 </FormControl>

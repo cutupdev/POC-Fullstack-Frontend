@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
+import dateFormat from '../../../utils/dateFormatter';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,6 +14,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -20,6 +23,13 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
+import AWS from 'aws-sdk';
+import S3 from 'aws-sdk/clients/s3';
+import api from '../../../utils/api';
+import CloseIcon from '@mui/icons-material/Close';
+import { Buffer } from 'buffer';
+import AuthContext from '../../../context/authContext';
+import AppContext from '../../../context/appContext';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 import { UploadOutlined } from '@ant-design/icons';
@@ -32,6 +42,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Upload } from 'antd';
+import { RiCoinsLine } from 'react-icons/ri';
 
 
 const theme = createTheme({
@@ -100,124 +111,32 @@ const DraggableUploadListItem = ({ originNode, file }) => {
   );
 };
 
-// function TablePaginationActions(props) {
-//   const theme = useTheme();
-//   const { count, page, rowsPerPage, onPageChange } = props;
-
-//   const handleFirstPageButtonClick = (event) => {
-//     onPageChange(event, 0);
-//   };
-
-//   const handleBackButtonClick = (event) => {
-//     onPageChange(event, page - 1);
-//   };
-
-//   const handleNextButtonClick = (event) => {
-//     onPageChange(event, page + 1);
-//   };
-
-//   const handleLastPageButtonClick = (event) => {
-//     onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-//   };
-
-//   return (
-//     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-//       <IconButton
-//         onClick={handleFirstPageButtonClick}
-//         disabled={page === 0}
-//         aria-label="first page"
-//       >
-//         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-//       </IconButton>
-//       <IconButton
-//         onClick={handleBackButtonClick}
-//         disabled={page === 0}
-//         aria-label="previous page"
-//       >
-//         {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-//       </IconButton>
-//       <IconButton
-//         onClick={handleNextButtonClick}
-//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-//         aria-label="next page"
-//       >
-//         {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-//       </IconButton>
-//       <IconButton
-//         onClick={handleLastPageButtonClick}
-//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-//         aria-label="last page"
-//       >
-//         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-//       </IconButton>
-//     </Box>
-//   );
-// }
-
-function createData(id, name, date, sample, status, trainDate, checked) {
-  return { id, name, date, sample, checked, status, trainDate, };
-}
-
-const rowsTemp = [
-  createData(1, 'Microsoft1', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(2, 'Microsoft2', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
-  createData(3, 'Microsoft3', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
-  createData(4, 'Microsoft4', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(5, 'Microsoft5', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
-  createData(6, 'Microsoft6', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(7, 'Microsoft7', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
-  createData(8, 'Microsoft8', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
-  createData(9, 'Microsoft9', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(10, 'Microsoft10', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
-  createData(11, 'Microsoft11', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
-  createData(12, 'Microsoft12', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(13, 'Microsoft13', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(14, 'Microsoft14', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
-  createData(15, 'Microsoft15', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(16, 'Microsoft16', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(17, 'Microsoft17', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "In-Progress", "2024-05-09 20:30", false),
-  createData(18, 'Microsoft18', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
-  createData(19, 'Microsoft19', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(20, 'Microsoft20', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(21, 'Microsoft21', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(22, 'Microsoft22', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
-  createData(23, 'Microsoft23', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(24, 'Microsoft24', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(25, 'Microsoft25', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
-  createData(26, 'Microsoft26', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(27, 'Microsoft27', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(28, 'Microsoft28', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Failed", "2024-05-09 20:30", false),
-  createData(29, 'Microsoft29', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-  createData(30, 'Microsoft30', "2024-05-09 20:30", ["mocrosoft.pdf", "poc.doc"], "Trained", "2024-05-09 20:30", false),
-];
-
-const headCells = [
-  {
-    id: 'name', numeric: false, disablePadding: true, label: 'Name',
-  },
-  {
-    id: 'date', numeric: false, disablePadding: false, label: 'Creation Date',
-  },
-  {
-    id: 'sample', numeric: false, disablePadding: false, label: 'Sample Data',
-  },
-  {
-    id: 'status', numeric: false, disablePadding: false, label: 'Train Status',
-  },
-  {
-    id: 'trainDate', numeric: false, disablePadding: false, label: 'Train Date',
-  },
-];
-
 function EnhancedTableHead(props) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
+  const [headCells, setHeadCells] = React.useState(
+    [
+      {
+        id: 'name', numeric: false, disablePadding: true, label: 'Name',
+      },
+      {
+        id: 'createDate', numeric: false, disablePadding: false, label: 'Creation Date',
+      },
+      {
+        id: 'sample', numeric: false, disablePadding: false, label: 'Sample Data',
+      },
+      {
+        id: 'trainStatus', numeric: false, disablePadding: false, label: 'Training Status',
+      },
+      {
+        id: 'trainDate', numeric: false, disablePadding: false, label: 'Training Date',
+      },
+    ]
+);
 
   React.useEffect(() => {
-    console.log('order---', order);
-    console.log('orderBy---', orderBy);
   }, [order, orderBy])
 
   return (
@@ -266,47 +185,66 @@ function EnhancedTableHead(props) {
 
 export default function AdminContent() {
 
-  const convertStr = (data) => {
-    let datas = data.map(item => {
-      // Convert the sample array to a single string with comma separated values
-      let sampleStr = '';
-      if(item.length > 1) {
-        sampleStr = item.sample.join(', ');
-      } else {
-        sampleStr = item.sample;
-      }
-
-      return {
-        id: item.id,
-        name: item.name,
-        date: item.date,
-        sample: sampleStr,
-        status: item.status,
-        trainDate: item.trainDate,
-        checked: item.checked
-      };
-    });
-    return datas;
-  }
-
-  const [categories, setCategories] = React.useState(rowsTemp);
-  const [rows, setRows] = React.useState(rowsTemp);
-  const [visibleRows, setVisibleRows] = React.useState(convertStr(rowsTemp.slice(0, 10)));
+  const [currentUser, setCurrentUser] = React.useContext(AuthContext);
+  const { fileList, setFileList, categoryList, setCategoryList } = React.useContext(AppContext);
+  const navigate = useNavigate();
+  const [rows, setRows] = React.useState([]);
+  const [visibleRows, setVisibleRows] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [dense, setDense] = React.useState(false);
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [order, setOrder] = React.useState('desc');
+  const [orderBy, setOrderBy] = React.useState('trainDate');
   const [selected, setSelected] = React.useState([]);
   const [categoryName, setCategoryName] = React.useState('');
-  const [editID, setEditID] = React.useState("");
+  const [editID, setEditID] = React.useState({});
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [fileError, setFileError] = React.useState(false);
   const [fileErrorMessage, setFileErrorMessage] = React.useState('');
-  const [fileList, setFileList] = React.useState([]);
-  const [searchValue, setSearchValue] = React.useState(['']);
+  const [newFile, setNewFile] = React.useState([]);
+  const [searchVal, setSearchVal] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+
+  const S3_BUCKET = process.env.REACT_APP_BUCKET_NAME;
+  const REGION = process.env.REACT_APP_BUCKET_REGION;
+
+  AWS.config.update({
+    accessKeyId: process.env.REACT_APP_BUCKET_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_BUCKET_SECRET_ACCESS_KEY,
+  });
+
+  const s3 = new S3({
+    params: { Bucket: S3_BUCKET },
+    region: REGION,
+  });
+
+  React.useEffect(() => {
+    if (!localStorage.getItem('user')) {
+      navigate('/');
+    }
+  }, [])
+
+  React.useEffect(() => {
+    let temp = [];
+    if (searchVal.length) {
+      setVisible(true);
+      console.log(searchVal)
+      if (categoryList) {
+        let searchParams = searchVal.toLowerCase().replace(/\\/g, "\\\\");
+        for (let i = 0; i < categoryList.length; i++) {
+          if (categoryList[i].name.toLowerCase().search(searchParams) !== -1) {
+            temp.push(categoryList[i]);
+          }
+        }
+        setRows([...dataEdit(temp)]);
+      }
+    } else {
+      setVisible(false);
+      setRows([...dataEdit(categoryList)]);
+    }
+  }, [searchVal])
 
   React.useEffect(() => {
     if (open) {
@@ -318,6 +256,12 @@ export default function AdminContent() {
   }, [open]);
 
   React.useEffect(() => {
+    // setRows(categoryList);
+    // console.log(categoryList)
+    setRows([...dataEdit(categoryList)]);
+  }, [categoryList])
+
+  React.useEffect(() => {
     console.log('rows changed!')
     console.log('order---', order);
     console.log('orderBy---', orderBy);
@@ -327,31 +271,60 @@ export default function AdminContent() {
         descriptionElement.focus();
       }
     }
-    setVisibleRows(
-      convertStr(
-        stableSort(rows, getComparator(order, orderBy)).slice(
-          page * rowsPerPage,
-          page * rowsPerPage + rowsPerPage,
-        )
-      )
-    )
+    setVisibleRows([...stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)])
   }, [rows]);
 
-  React.useEffect(() => {
-    console.log('categories changed!')
-    console.log('order---', order);
-    console.log('orderBy---', orderBy);
-  }, [categories]);
+  const dataEdit = (input) => {
+    let temp = [];
+    if (input && input.length) {
+      temp = input.map((val, ind) => {
+
+        return {
+          id: val._id,
+          name: val.name,
+          sampleFiles: val.sample,
+          sampleString: sampleFullString(val.sample),
+          sample: sampleToString(val.sample),
+          createDate: dateFormat(val.createDate),
+          trainDate: dateFormat(val.trainDate),
+          trainStatus: val.trainStatus,
+          checked: false
+        }
+      })
+    }
+    return temp;
+  }
+
+  const sampleToString = (input) => {
+    let temp = "";
+    for (let i = 0; i < input.length; i++) {
+      temp = temp.concat(input[i]);
+      if (i < input.length - 1) {
+        temp = temp.concat(', ');
+      }
+    }
+
+    if(temp.length === 0) {
+      return 'No file';
+    }
+
+    return `${temp.substring(0, 8)}...${temp.substring(temp.length - 10, temp.length)}`;
+  }
+
+  const sampleFullString = (input) => {
+    let temp = "";
+    for (let i = 0; i < input.length; i++) {
+      temp = temp.concat(input[i]);
+      if (i < input.length - 1) {
+        temp = temp.concat(', ');
+      }
+    }
+    return temp;
+  }
 
   React.useEffect(() => {
     console.log("sort function called!")
-    setVisibleRows(
-      convertStr(
-      stableSort(rows, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
-      )
-    ))
+    setVisibleRows([...stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)])
   }, [order, orderBy, page, rowsPerPage])
 
   const handleClickOpen = (e) => {
@@ -361,19 +334,20 @@ export default function AdminContent() {
     if (e == "") {
       setCategoryName("");
       setEditID({});
-      setFileList([]);
+      setNewFile([]);
     } else {
       const files = rows.find(value => {
-        if (value.id === e.id) return value.sample;
+        if (value.id === e.id) return value;
       })
 
       setCategoryName(e.name);
       setEditID(e);
 
-      setFileList(files.sample.map(item => {
+      setNewFile(files.sampleFiles.map((item, ind) => {
         return {
-          uid: '-1',
+          uid: ind,
           name: item,
+          id: item,
           status: 'done',
           url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         };
@@ -382,13 +356,13 @@ export default function AdminContent() {
   };
 
   const handleClose = () => {
-    setOpen(false);
     setEditID({});
     setCategoryName("");
     setNameError(false);
     setNameErrorMessage('');
     setFileError(false);
     setFileErrorMessage("");
+    setOpen(false);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -399,7 +373,7 @@ export default function AdminContent() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    if(parseInt(event.target.value, 10) > rows.length) {
+    if (parseInt(event.target.value, 10) > rows.length) {
       setVisibleRows(rows.slice(0, rows.length))
     } else {
       setVisibleRows(rows.slice(0, parseInt(event.target.value, 10)))
@@ -409,88 +383,194 @@ export default function AdminContent() {
 
   const onVisibleRows = (page, perRows, data) => {
 
-    const datas = convertStr(data);
-
-    if (data.length === 0) {
-      setPage(0);
-      setRowsPerPage(10);
-      setVisibleRows([]);
-    } else if (perRows * (page + 1) > datas.length) {
-      // if(data.length === 0) {
-      //   setPage(0);
-      // } else if(data.length > 0) {
-      //   setPage(Math.floor(datas.length / page));
-      // }
-      setPage(Math.floor((datas.length - 1) / rowsPerPage));
-      setVisibleRows(convertStr(datas.slice(Math.floor((datas.length - 1) / rowsPerPage) * perRows, datas.length)));
+    if (perRows * (page + 1) > data.length) {
+      setVisibleRows([...data.slice(page * perRows, data.length)]);
     } else {
-      setVisibleRows(convertStr(datas.slice(page * perRows, perRows * (page + 1))));
+      setVisibleRows(data.slice(page * perRows, perRows * (page + 1)));
     }
+
+    // const datas = data;
+
+    // if (data.length === 0) {
+    //   setPage(0);
+    //   setRowsPerPage(10);
+    //   setVisibleRows([]);
+    // } else if (perRows * (page + 1) > datas.length) {
+    //   setPage(Math.floor((datas.length - 1) / rowsPerPage));
+    //   setVisibleRows(datas.slice(Math.floor((datas.length - 1) / rowsPerPage) * perRows, datas.length));
+    // } else {
+    //   setVisibleRows(datas.slice(page * perRows, perRows * (page + 1)));
+    // }
   }
 
   const onCategoryName = (e) => {
     setCategoryName(e.target.value)
   }
 
-  const onSubmit = (e) => {
-    const name = document.getElementById('name').value;
+  const onSubmit = async (e) => {
 
-    if (fileList.length === 0 || !name) {
-      if (!name) {
+    setNewFile([]);
+
+    if(!editID.id) {
+      const name = document.getElementById('name').value;
+      if(!name) {
         setNameError(true);
         setNameErrorMessage('Category name is required !');
-      }
-      if (fileList.length === 0) {
-        setFileError(true);
-        setFileErrorMessage('Attach one more file for this category !');
+      } else {
+        await categorySave();
       }
     } else {
-      const filenames = fileList.map(value => {
-        return value.name;
-      })
-      if (editID.id) {
-        const editData = { name: name, id: editID.id, date: '2024-05-20 09:30', sample: filenames, checked: editID.checked, status: editID.status, trainDate: editID.trainDate };
-        const editRows = categories.map(value => {
-          if (value.id === editID.id) {
-            return editData;
-          } else {
-            return value;
-          }
-        });
-        setCategories(editRows);
-        searchHandle(searchValue, editRows);
-        // setRows(editRows);
-        // onVisibleRows(page, rowsPerPage, editRows);
+      await categorySave();
+    }
+  }
+
+  const categorySave = async () => {
+    const token = localStorage.getItem('user');
+    let fileNameList = [];
+
+    let uploadCount = 0;
+
+    const uploadPromises = newFile.map(async (file) => {
+      if (file.originFileObj) {
+        const flag = await handleUpload(file.originFileObj);
+        if (flag) {
+          uploadCount++;
+          fileNameList.unshift(file.originFileObj.name);
+        }
+        return flag;
       } else {
-        const newData = { name: name, id: categories.length + 1, date: '2024-05-20 09:30', sample: filenames, checked: false, status: "In-Progress", trainDate: '2024-05-23 08:30' };
-        let newCategory = categories.slice(0, categories.length);
-        newCategory.push(newData);
-        setCategories([...categories, newData]);
-        searchHandle(searchValue, newCategory);
-        // setRows([...rows, newData]);
-        // onVisibleRows(page, rowsPerPage, rows);
+        fileNameList.unshift(file.name);
       }
-      setOpen(false);
-      setEditID({});
-      setNameError(false);
-      setNameErrorMessage('');
-      setFileError(false);
-      setFileErrorMessage("");
+    });
+
+    // Wait for all files to finish uploading
+    await Promise.all(uploadPromises);
+
+    if (editID.id) {
+      console.log('editing called!')
+      const categoryEdit = {
+        id: editID.id,
+        name: categoryName,
+        files: fileNameList,
+        updated: Date.now(),
+      }
+      console.log('edit data ===> ', categoryEdit);
+      try {
+
+        const res = await api.post(
+          `category/editCategory`,
+          categoryEdit,
+          {
+            headers: {
+              'Authorization': `Bearer ${token.replace(/"/g, '')}`,
+            },
+          }
+        );
+        setCategoryList(res.data.editCategory);
+        setOpen(false);
+      } catch (err) {
+        console.log("error ===> ", err);
+      }
+    } else {
+      if (uploadCount === 1) {
+        alert(`1 file uploaded successfully!`);
+      } else if (uploadCount === 0) {
+        alert(`No file uploaded!`);
+      } else {
+        alert(`${uploadCount} files uploaded successfully!`);
+      }
+      
+      const categoryInf = {
+        name: categoryName,
+        files: fileNameList,
+        created: Date.now(),
+      }
+      try {
+  
+        const res = await api.post(
+          `category/newCategory`,
+          categoryInf,
+          {
+            headers: {
+              'Authorization': `Bearer ${token.replace(/"/g, '')}`,
+            },
+          }
+        );
+        let tempData = categoryList.slice(0, categoryList.length)
+        tempData.unshift(res.data.newCategory);
+        setCategoryList([...tempData])
+        setOpen(false);
+      } catch (err) {
+        console.log("error ===> ", err);
+      }
+    }
+  }
+
+  const handleUpload = async (file) => {
+
+    const readFileAsBuffer = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(Buffer.from(event.target.result));
+        reader.onerror = (err) => reject(err);
+        reader.readAsArrayBuffer(file);
+      });
+    };
+
+    const fileBuffer = await readFileAsBuffer(file);
+
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: `category/${categoryName}/${file.name}`,
+      // Body: file,
+      Body: fileBuffer
+    };
+
+    console.log(S3_BUCKET);
+    try {
+      const upload = await s3.putObject(params).promise();
+      console.log("File uploaded successfully ===>>> ", upload);
+      return true;
+      // const fileInf = {
+      //   creatorName: currentUser.username,
+      //   filename: file.name,
+      //   type: file.type,
+      //   size: file.size,
+      //   date: Date.now(),
+      // }
+      // console.log("backend sending data ===> ", fileInf);
+
+      // const token = localStorage.getItem('user')
+      // try {
+      //   const res = await api.post(
+      //     `files/newUpload`,
+      //     fileInf,
+      //     {
+      //       headers: {
+      //         'Authorization': `Bearer ${token.replace(/"/g, '')}`,
+      //       },
+      //     }
+      //   );
+      //   console.log("File Inf saving success ===> ", res.data.newData);
+
+      //   return { status: true, data: res.data.newData };
+      // } catch (err) {
+      //   console.log("File Inf saving error ===>>> ", err);
+      //   return false;
+      // }
+    } catch (error) {
+      console.error("File uploading error ===>>> ", error);
+      return false;
     }
   }
 
   const handleSelectAllClick = (event) => {
 
-    // const temp = rows.map((row) => {
-    //   return { ...row, checked: event.target.checked };
-    // });
-    const temp = categories.map((row) => {
+    const temp = rows.map((row) => {
       return { ...row, checked: event.target.checked };
     });
 
-    // setRows(temp);
-    setCategories(temp);
-    searchHandle(searchValue, temp);
+    setRows(temp);
 
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.id);
@@ -503,13 +583,13 @@ export default function AdminContent() {
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
-    // const temp = rows;
-    const temp = categories.slice(0, categories.length);
-    temp[id - 1].checked = !temp[id - 1].checked;
-    // setRows(temp);
-    setCategories(temp);
-    searchHandle(searchValue, temp);
-
+    const temp = rows.map((val, ind) => {
+      if (val.id === id) {
+        val.checked = !val.checked;
+      }
+      return val;
+    });
+    console.log(temp)
     let newSelected = [];
 
     if (selectedIndex === -1) {
@@ -528,10 +608,15 @@ export default function AdminContent() {
   };
 
   const handleRequestSort = (event, property) => {
+    console.log(property);
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+
+  const handleRetrain = (row) => {
+    console.log(row);
+  }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -545,7 +630,7 @@ export default function AdminContent() {
 
   const onDragEnd = ({ active, over }) => {
     if (active.id !== over?.id) {
-      setFileList((prev) => {
+      setNewFile((prev) => {
         const activeIndex = prev.findIndex((i) => i.uid === active.id);
         const overIndex = prev.findIndex((i) => i.uid === over?.id);
         return arrayMove(prev, activeIndex, overIndex);
@@ -554,31 +639,17 @@ export default function AdminContent() {
   };
 
   const onChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
+    setNewFile(newFileList);
+    console.log(newFileList);
   };
 
   const onSearch = (e) => {
-    setSearchValue(e.target.value);
-    searchHandle(e.target.value, categories);
-    // const searchResult = categories.find(value => {
-    //   if(value.id === e.id) return value.sample;
-    // })
+    setSearchVal(e.target.value);
   }
 
-  const searchHandle = (value, data) => {
-    const searchedData = [];
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].name.toLowerCase().search(value) !== -1 || data[i].date.search(value) !== -1 || data[i].sample.indexOf(value) !== -1) {
-        searchedData.push(data[i]);
-      }
-    }
-
-    if (searchedData.length === 0) {
-      setPage(0);
-      setRowsPerPage(10);
-    }
-    setRows(searchedData);
-    onVisibleRows(page, rowsPerPage, searchedData);
+  const searchClose = (e) => {
+    setVisible(false);
+    setSearchVal("");
   }
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
@@ -618,26 +689,32 @@ export default function AdminContent() {
             useFlexGap
             sx={{ pt: 2, width: { xs: '100%', sm: 'auto' } }}
           >
-            <TextField
-              id="email-hero"
-              hiddenLabel
-              InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }}
-              onChange={onSearch}
-              className='global-font search-box-admin'
-              size="small"
-              variant="outlined"
-              aria-label="Enter your email address"
-              placeholder="Search"
-              inputProps={{
-                autoComplete: 'off',
-                'aria-label': 'Enter your email address',
-                style: {
-                  fontSize: 16,
-                  fontFamily: 'roboto !important',
-                  height: '32px'
-                }
-              }}
-            />
+            <div className='password-box'>
+              <TextField
+                id="email-hero"
+                hiddenLabel
+                InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }}
+                value={searchVal}
+                onChange={onSearch}
+                className='global-font search-box-admin'
+                size="small"
+                variant="outlined"
+                aria-label="Enter your email address"
+                placeholder="Search"
+                inputProps={{
+                  autoComplete: 'off',
+                  'aria-label': 'Enter your email address',
+                  style: {
+                    fontSize: 16,
+                    fontFamily: 'roboto !important',
+                    height: '32px'
+                  }
+                }}
+              />
+              <span className='visibility-box-search'>
+                {visible && <CloseIcon onClick={searchClose} className='visibility' />}
+              </span>
+            </div>
             <Button variant="contained" color="primary" onClick={() => handleClickOpen("")} className='doc-upload-btn'>
               Add Category
             </Button>
@@ -698,11 +775,16 @@ export default function AdminContent() {
                       >
                         {row.name}
                       </TableCell>
-                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>
-                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.sample}</TableCell>
-                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.status}</TableCell>
+                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.createDate}</TableCell>
+                      <Tooltip className='tooltip' title={row.sampleString} >
+                        <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.sample}</TableCell>
+                      </Tooltip>
+                      <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.trainStatus}</TableCell>
                       <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.trainDate}</TableCell>
                       <TableCell align="right" style={{ minWidth: 95 }} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                        <Tooltip className='tooltip' title={'Retrain'}>
+                          <AutorenewIcon onClick={() => handleRetrain(row)} className='cursor-icon' />
+                        </Tooltip>
                         <Tooltip className='tooltip' title={'Edit Category'}>
                           <EditIcon onClick={() => handleClickOpen(row)} className='cursor-icon' />
                         </Tooltip>
@@ -738,54 +820,60 @@ export default function AdminContent() {
           onClose={handleClose}
           scroll='paper'
         >
-          <DialogTitle className='modal-title'><h2 className='dis-center wid-400'>{editID.id ? "Edit Category" : "New Category"}</h2></DialogTitle>
+          <DialogTitle className='modal-title'><h2 className='dis-center wid-400'>{editID.id ? categoryName : "New Category"}</h2></DialogTitle>
           <DialogContent dividers={true} >
             <ThemeProvider theme={theme}>
-              <TextField
-                autoFocus
-                required
-                error={nameError}
-                helperText={nameErrorMessage}
-                value={categoryName}
-                onChange={onCategoryName}
-                id="name"
-                name='name'
-                label="Category name"
-                variant="filled"
-                fullWidth
-                type="text"
-                inputProps={{
-                  style: {
-                    fontSize: 24,
-                    borderRadius: 0,
-                    fontFamily: 'roboto !important',
-                    height: '32px',
+              {
+                editID.id ?
+                  ''
+                  :
+                  <TextField
+                    autoFocus
+                    required
+                    error={nameError}
+                    helperText={nameErrorMessage}
+                    value={categoryName}
+                    onChange={onCategoryName}
+                    id="name"
+                    name='name'
+                    label="Category name"
+                    variant="filled"
+                    fullWidth
+                    type="text"
+                    inputProps={{
+                      style: {
+                        fontSize: 24,
+                        borderRadius: 0,
+                        fontFamily: 'roboto !important',
+                        height: '32px',
 
-                  }
-                }} // font size of input text
-                InputLabelProps={{
-                  style: {
-                    fontSize: 18,
-                    fontFamily: 'roboto !important',
-                    color: '#000',
+                      }
+                    }} // font size of input text
+                    InputLabelProps={{
+                      style: {
+                        fontSize: 18,
+                        fontFamily: 'roboto !important',
+                        color: '#000',
 
-                  }
-                }} // font size of input label
-              />
+                      }
+                    }} // font size of input label
+                  />
+              }
             </ThemeProvider>
-            <div>
+            <div className='category-modal'>
               <DndContext sensors={[sensor]} onDragEnd={onDragEnd} >
-                <SortableContext items={fileList.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
+                <SortableContext items={newFile.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
                   <Upload
                     action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                    fileList={fileList}
+                    fileList={newFile}
+                    multiple={true}
                     onChange={onChange}
                     itemRender={(originNode, file) => (
                       <DraggableUploadListItem originNode={originNode} file={file} />
                     )}
                   >
                     <div className='upload-category-btnbox'>
-                      <Button className='upload-category-btn' icon={<UploadOutlined />}>Click to Upload</Button>
+                      <Button className='upload-category-btn' icon={<UploadOutlined />}>Add more training files</Button>
                     </div>
                     <div className='dis-center color-red roboto-font'>
                       {fileError ? fileErrorMessage : ""}
@@ -797,7 +885,7 @@ export default function AdminContent() {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} className='modal-btn'>Cancel</Button>
-            <Button onClick={onSubmit} className='modal-btn'>{editID.id ? "Edit" : "Add"}</Button>
+            <Button onClick={onSubmit} className='modal-btn'>{editID.id ? "Save" : "Add"}</Button>
           </DialogActions>
         </Dialog>
       </Container>

@@ -15,33 +15,34 @@ import Toolbar from '@mui/material/Toolbar';
 import CloseIcon from '@mui/icons-material/Close';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 
 export default function TemporaryDrawer() {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = React.useContext(AuthContext);
   const LPtheme = createTheme(getLPTheme('light'));
   const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
-    if(!localStorage.getItem('user')) {
+    if (!localStorage.getItem('user')) {
       navigate('/');
     }
+    console.log(jwtDecode(localStorage.getItem('user')).user)
   }, [open])
 
   const location = useLocation().pathname;
   let path = ""
   if (location === '/admin/' || location === '/admin') {
-    path = "Dashboard";
+    path = "Documents";
   } else {
-    path = "Admin";
+    path = "Administration";
   }
 
   const sidebarClose = () => {
     setOpen(false);
   }
 
-  
+
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -57,17 +58,22 @@ export default function TemporaryDrawer() {
           </div>
         </div>
         <div className='leftbar-content'>
-          <div className='leftbar-item-box mouse-pointer' onClick={() => navigate("/admin")}>
-            <AdminPanelSettingsIcon className='mouse-pointer ml-10' />
-            <p className='font-size-16 roboto-font leftbar-item-btn mouse-pointer leftbar-btn-background'>{path}</p>
-          </div>
+          {
+            jwtDecode(localStorage.getItem('user')).user.role ?
+              <div className='leftbar-item-box mouse-pointer' onClick={() => navigate("/admin")}>
+                <AdminPanelSettingsIcon className='mouse-pointer ml-10' />
+                <p className='font-size-16 roboto-font leftbar-item-btn mouse-pointer leftbar-btn-background'>{path}</p>
+              </div>
+              :
+              ""
+          }
         </div>
       </div>
     </Box>
   );
 
   return (
-    <ThemeProvider theme={ LPtheme }>
+    <ThemeProvider theme={LPtheme}>
       <Toolbar
         variant="regular"
         className='custom-navbar'
@@ -78,7 +84,7 @@ export default function TemporaryDrawer() {
           justifyContent: 'space-between',
           flexShrink: 0,
           maxHeight: 40,
-          })
+        })
         }
       >
         <IconButton

@@ -2,6 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import AuthContext from '../../../context/authContext';
+import AppContext from '../../../context/appContext';
 import MenuItem from '@mui/material/MenuItem';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import Snackbar from '@mui/joy/Snackbar';
@@ -15,20 +16,26 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import CloseIcon from '@mui/icons-material/Close';
 import { message, Upload } from 'antd';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import AWS from 'aws-sdk';
 import S3 from 'aws-sdk/clients/s3';
-import axios from 'axios';
-window.Buffer = window.Buffer || require("buffer").Buffer;
+import api from '../../../utils/api';
+import { Buffer } from 'buffer';
+// window.Buffer = window.Buffer || require("buffer").Buffer;
 const { Dragger } = Upload;
 
 
 export default function Content() {
   const [currentUser, setCurrentUser] = React.useContext(AuthContext);
+  const { fileList, setFileList } = React.useContext(AppContext);
   const [open, setOpen] = React.useState(false);
-  const [fileList, setFileList] = React.useState([]);
+  const [newFiles, setNewFiles] = React.useState([]);
   const descriptionElementRef = React.useRef(null);
+  const [searchValue, setSearchValue] = React.useState('');
+  const [currentCategory, setCurrentCategory] = React.useState([]);
+  const [visible, setVisible] = React.useState(false);
   const [snackState, setSnackState] = React.useState({
     snackOpen: false,
     vertical: 'top',
@@ -37,7 +44,7 @@ export default function Content() {
   });
   const { vertical, horizontal, snackOpen, message } = snackState;
 
-  const S3_BUCKET = 'docubucket';
+  const S3_BUCKET = process.env.REACT_APP_BUCKET_NAME;
   const REGION = process.env.REACT_APP_BUCKET_REGION;
 
   AWS.config.update({
@@ -50,22 +57,17 @@ export default function Content() {
     region: REGION,
   });
 
-  const allowedTypes = [
-    'application/pdf',
-    'text/plain',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/msword',
-    'application/vnd.ms-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'application/xml',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-excel',
-    'text/csv'
-  ];
+  React.useEffect(() => {
+    setNewFiles([]);
+  }, [])
 
   React.useEffect(() => {
-    setFileList([]);
-  }, [])
+    if (searchValue) {
+      setVisible(true);
+    } else {
+      setVisible(false);
+    }
+  }, [searchValue])
 
   React.useEffect(() => {
     if (open) {
@@ -77,11 +79,35 @@ export default function Content() {
   }, [open]);
 
   React.useEffect(() => {
-    // console.log(fileList);
-  }, [fileList])
+    // console.log(newFiles);
+  }, [newFiles])
+
+  const searchChange = (e) => {
+    console.log(e.target.value)
+    setSearchValue(e.target.value);
+  }
+
+  const searchClose = (e) => {
+    setVisible(false);
+    setSearchValue("");
+  }
+
+  const allowedTypes = [
+    'application/pdf',
+    // 'text/plain',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/msword',
+    // 'application/vnd.ms-powerpoint',
+    // 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    // 'application/xml',
+    // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // 'application/vnd.ms-excel',
+    // 'text/csv'
+  ];
 
   const onUploadChange = (e) => {
     let temp = [];
+    let flag = false;
     e.fileList.map(val => {
       if (allowedTypes.includes(val.type)) {
         if (val.originFileObj) {
@@ -89,13 +115,18 @@ export default function Content() {
         } else {
           temp.push(val);
         }
+      } else {
+        flag = true;
       }
     })
-    setFileList([...temp]);
+    if (flag) {
+      alert('Only pdf or doc/docx are supported…');
+    }
+    setNewFiles([...temp]);
   }
 
   const onUploadDrop = (e) => {
-    // setFileList([...e.dataTransfer.files]);
+    // setNewFiles([...e.dataTransfer.files]);
   }
 
   const handleFileUpload = (e, popupState) => {
@@ -105,14 +136,14 @@ export default function Content() {
         temp.push(val);
       }
     })
-    if (fileList) {
-      fileList.map(val => {
+    if (newFiles) {
+      newFiles.map(val => {
         if (allowedTypes.includes(val.type)) {
           temp.push(val);
         }
       })
     }
-    setFileList([...temp]);
+    setNewFiles([...temp]);
     popupState.close();
   };
 
@@ -123,14 +154,14 @@ export default function Content() {
         temp.push(val);
       }
     })
-    if (fileList) {
-      fileList.map(val => {
+    if (newFiles) {
+      newFiles.map(val => {
         if (allowedTypes.includes(val.type)) {
           temp.push(val);
         }
       })
     }
-    setFileList([...temp]);
+    setNewFiles([...temp]);
     popupState.close();
   };
 
@@ -145,47 +176,68 @@ export default function Content() {
   };
 
   const handleClickOpen = () => {
-    setFileList([]);
+    console.log(currentUser)
+    setNewFiles([]);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setFileList([]);
+    setNewFiles([]);
   };
 
-  const uploadSubmit = (e) => {
-    console.log("length ===> ", fileList.length)
+  const uploadSubmit = async (e) => {
+    console.log("length ===> ", newFiles.length)
+    let tempList = fileList.slice(0, fileList.length)
+    
+    let uploadCount = 0;
 
-    if (fileList.length) {
-      if (fileList.length === 1) {
+    const uploadPromises = newFiles.map(async (file) => {
+      const flag = await handleUpload(file);
+      if (flag.status) {
+        uploadCount++;
+        tempList.unshift(flag.data)
+      }
+      return flag.status;
+    });
+
+    // Wait for all files to finish uploading
+    await Promise.all(uploadPromises);
+
+    if (uploadCount) {
+      if (uploadCount === 1) {
         alert(`1 file uploaded successfully!`);
       } else {
-        alert(`${fileList.length} files uploaded successfully!`);
+        alert(`${uploadCount} files uploaded successfully!`);
       }
+      setFileList([...tempList]);
     } else {
-      // alert(`No file uploaded!`);
+      alert(`No file uploaded!`);
     }
-
-    for (let i = 0; i < fileList.length; i++) {
-      handleUpload(fileList[i]);
-    }
-    // if(fileList.length) {
-    //   alert(`${fileList.length} files uploaded successfully!`);
-    // } else {
-    //   alert(`No file uploaded!`);
-    // }
-    setFileList([]);
+    setNewFiles([]);
     setOpen(false);
   }
 
   const handleUpload = async (file) => {
 
+    const readFileAsBuffer = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(Buffer.from(event.target.result));
+        reader.onerror = (err) => reject(err);
+        reader.readAsArrayBuffer(file);
+      });
+    };
+
+    const fileBuffer = await readFileAsBuffer(file);
+
     const params = {
       Bucket: S3_BUCKET,
       Key: file.name,
-      Body: file,
+      // Body: file,
+      Body: fileBuffer
     };
+
     console.log(S3_BUCKET);
     try {
       const upload = await s3.putObject(params).promise();
@@ -194,28 +246,32 @@ export default function Content() {
         creatorName: currentUser.username,
         filename: file.name,
         type: file.type,
-        size: file.size
+        size: file.size,
+        date: Date.now(),
       }
       console.log("backend sending data ===> ", fileInf);
 
       const token = localStorage.getItem('user')
-      axios.post(
-        'https://4a29-45-8-22-59.ngrok-free.app/api/files/newUpload',
-        fileInf,
-        {
-          headers: {
-            'x-auth-token': `Bearer ${token.replace(/"/g, '')}`,
+      try {
+        const res = await api.post(
+          `files/newUpload`,
+          fileInf,
+          {
+            headers: {
+              'Authorization': `Bearer ${token.replace(/"/g, '')}`,
+            },
           }
-        }
-      )
-        .then(res => {
-          console.log("File Inf saving success ===> ", res.data);
-        })
-        .catch(err => {
-          console.log("File Inf saving error ===>>> ", err);
-        })
+        );
+        console.log("File Inf saving success ===> ", res.data.newData);
+        
+        return { status: true, data: res.data.newData };
+      } catch (err) {
+        console.log("File Inf saving error ===>>> ", err);
+        return false;
+      }
     } catch (error) {
       console.error("File uploading error ===>>> ", error);
+      return false;
     }
   }
 
@@ -254,27 +310,36 @@ export default function Content() {
             useFlexGap
             sx={{ pt: 2, width: { xs: '100%', sm: 'auto' } }}
           >
-            <TextField
-              id="email-hero"
-              hiddenLabel
-              InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }}
-              className='global-font search-box'
-              size="small"
-              variant="outlined"
-              aria-label="Enter your email address"
-              placeholder="Search"
-              inputProps={{
-                autoComplete: 'off',
-                'aria-label': 'Enter your email address',
-                style: {
-                  fontSize: 16,
-                  fontFamily: 'roboto',
-                  height: '32px'
-                }
-              }}
-            />
+            <div className='password-box'>
+              <TextField
+                id="search-box"
+                hiddenLabel
+                value={searchValue}
+                onChange={searchChange}
+                InputLabelProps={{ style: { fontSize: 24, fontFamily: 'roboto' } }}
+                className='global-font search-box'
+                size="small"
+                variant="outlined"
+                aria-label="Enter your email address"
+                placeholder="Search"
+                inputProps={{
+                  autoComplete: 'off',
+                  'aria-label': 'Enter your email address',
+                  style: {
+                    fontSize: 16,
+                    fontFamily: 'roboto',
+                    height: '32px'
+                  }
+                }}
+              />
+              <span className='visibility-box-search'>
+                {visible && <CloseIcon onClick={searchClose} className='visibility' />}
+              </span>
+            </div>
             <CategoryButton
               className='global-font category-box'
+              currentCategory={currentCategory}
+              setCurrentCategory={setCurrentCategory}
             />
             <Button variant="contained" color="primary" className='doc-upload-btn' onClick={handleClickOpen} >
               Upload
@@ -289,7 +354,7 @@ export default function Content() {
         >
           <DialogTitle id="scroll-dialog-title"><div className='roboto-font font-size-28 dis-center'>Document Upload</div></DialogTitle>
           <DialogContent>
-            <Dragger name='drag' listType='text' onChange={onUploadChange} onDrop={onUploadDrop} onRemove={onDelete} fileList={fileList} multiple={true} className='mb-100 bg-remove'>
+            <Dragger accept='.docx, .pdf' name='drag' listType='text' onChange={onUploadChange} onDrop={onUploadDrop} onRemove={onDelete} fileList={newFiles} multiple={true} className='mb-100 bg-remove'>
               <p className="ant-upload-drag-icon bg-remove" onClick={handleButtonClick}>
                 <PopupState variant="popover" popupId="demo-popup-menu">
                   {(popupState) => (
@@ -301,12 +366,12 @@ export default function Content() {
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="file-upload" className='background-remove mouse-pointer'>Upload File</label>
-                          <input type="file" multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, popupState)} />
+                          <input accept='.docx, .pdf' type="file" multiple={true} id="file-upload" className='background-remove' style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, popupState)} />
                         </MenuItem>
                         <MenuItem className='pop-menu-box roboto-font font-size-16 mouse-pointer' >
                           <FileUploadIcon className='mr-15 background-remove' />
                           <label htmlFor="folder-upload" className='background-remove mouse-pointer'>Upload Folder</label>
-                          <input type="file" multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={(e) => handleFolderUpload(e, popupState)} />
+                          <input accept='.docx, .pdf' type="file" multiple={true} id="folder-upload" className='background-remove' style={{ display: 'none' }} directory="" webkitdirectory="" onChange={(e) => handleFolderUpload(e, popupState)} />
                         </MenuItem>
                       </Menu>
                     </React.Fragment>
@@ -321,11 +386,12 @@ export default function Content() {
             </Dragger>
           </DialogContent>
           <DialogActions className='space-between'>
+            <p className='file-upload-support'>*only PDFs and Docx are supported</p>
             <Button onClick={handleClose} className='roboto-font font-size-16' >Cancel</Button>
             <Button disabled={snackOpen} onClick={uploadSubmit} className='roboto-font font-size-16 mr-10' >Upload</Button>
           </DialogActions>
         </Dialog>
-        <CustomizedTables />
+        <CustomizedTables currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} searchValue={searchValue} setSearchValue={setSearchValue} />
       </Container>
       {/* <Snackbar
         anchorOrigin={{ vertical, horizontal }}

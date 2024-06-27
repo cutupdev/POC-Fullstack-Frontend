@@ -16,6 +16,8 @@ import getSignUpTheme from './getSignUpTheme';
 import { SitemarkIcon } from './CustomIcons';
 import Snackbar from '@mui/joy/Snackbar';
 import axios from 'axios';
+import api from '../../utils/api';
+import passValid from '../../utils/passwordValid';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -143,46 +145,24 @@ export default function SignUp() {
 
     let isValid = true;
 
-    if (!newPassword || newPassword.length < 12 || !hasUpperCase(newPassword) || !hasLowerCase(newPassword) || !hasNumeric(newPassword) || !hasSpecialCharacter(newPassword)) {
+    const newPassReturn = passValid(newPassword);
+    if(newPassReturn) {
       setNewPasswordError(true);
-      if (!newPassword || newPassword.length < 12) {
-        setNewPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(newPassword)) {
-        setNewPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(newPassword)) {
-        setNewPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(newPassword)) {
-        setNewPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(newPassword)) {
-        setNewPasswordErrorMessage('Password must include one special character at least.');
-      } else {
-        setNewPasswordErrorMessage('Password format is not correct. Try again.');
-      }
+      setNewPasswordErrorMessage(newPassReturn);
       isValid = false;
     } else {
       setNewPasswordError(false);
       setNewPasswordErrorMessage('');
     }
 
-    if (!confirmPassword || confirmPassword.length < 12 || !hasUpperCase(confirmPassword) || !hasLowerCase(confirmPassword) || !hasNumeric(confirmPassword) || !hasSpecialCharacter(confirmPassword)) {
+    const confirmPassReturn = passValid(confirmPassword);
+    if(confirmPassReturn) {
       setConfirmPasswordError(true);
-      if (!confirmPassword || confirmPassword.length < 12) {
-        setConfirmPasswordErrorMessage('Password must be at least 12 characters long.');
-      } else if (!hasUpperCase(confirmPassword)) {
-        setConfirmPasswordErrorMessage('Password must include one uppercase at least.');
-      } else if (!hasLowerCase(confirmPassword)) {
-        setConfirmPasswordErrorMessage('Password must include one lowercase at least.');
-      } else if (!hasNumeric(confirmPassword)) {
-        setConfirmPasswordErrorMessage('Password must include one numeric at least.');
-      } else if (!hasSpecialCharacter(confirmPassword)) {
-        setConfirmPasswordErrorMessage('Password must include one special character at least.');
-      } else {
-        setConfirmPasswordErrorMessage('Password format is not correct. Try again.');
-      }
+      setConfirmPasswordErrorMessage(confirmPassReturn);
       isValid = false;
     } else {
       setConfirmPasswordError(false);
-      setConfirmPasswordErrorMessage('Enough Possible');
+      setConfirmPasswordErrorMessage('');
     }
 
     if (newPassword === confirmPassword) {
@@ -227,7 +207,7 @@ export default function SignUp() {
         token: token,
         password: confirmPassword
       };
-      axios.post('https://4a29-45-8-22-59.ngrok-free.app/api/users/resetPassword', data)
+      api.post('users/resetPassword', data)
         .then(res => {
           if (res.data.success) {
             setSnackState({

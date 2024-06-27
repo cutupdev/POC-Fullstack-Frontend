@@ -3,11 +3,12 @@ import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import { profile } from '../../../hook/useAuth';
+import { jwtDecode } from "jwt-decode";
 // import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 // import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
-import AuthContext from '../../../context/authContext';
 // import PersonAdd from '@mui/icons-material/PersonAdd';
 // import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
@@ -18,9 +19,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
-// import { useAuth } from '../../../context/authContext';
 import { logout } from '../../../hook/useAuth';
 import Button from '@mui/material/Button';
+import AuthContext from '../../../context/authContext';
 
 // const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 //   '& .MuiDialogContent-root': {
@@ -33,32 +34,59 @@ import Button from '@mui/material/Button';
 
 export default function AccountMenu() {
   const [currentUser, setCurrentUser] = React.useContext(AuthContext);
+  const [profileName, setProfileName] = React.useState('');
+  const [currentEmail, setCurrentEmail] = React.useState('');
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [profileModal, setProfileModal] = React.useState(false);
-  const [fullname, setFullname] = React.useState("Microgift");
+  const [fullname, setFullname] = React.useState('');
   const open = Boolean(anchorEl);
+
+  React.useEffect(() => {
+    if (currentUser) {
+      setProfileName(currentUser.username.charAt(0).toUpperCase());
+      setCurrentEmail(currentUser.email);
+    }
+  }, [currentUser])
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setFullname('Microgift');
     setAnchorEl(null);
   };
   const modalOpen = () => {
+    setFullname(currentUser.username);
     setProfileModal(true);
   }
   const modalClose = () => {
     setProfileModal(false);
   }
-  const profileSubmit = () => {
+  const profileSubmit = async (e) => {
+    e.preventDefault();
+
+    if (fullname) {
+      const loginUser = {
+        name: fullname,
+        email: currentUser.email,
+        checked: currentUser.remember
+      }
+      try {
+        const userData = await profile(loginUser);
+        setCurrentUser(jwtDecode(userData.authToken).user);
+      } catch (error) {
+        console.log('error ===> ', error);
+      }
+    }
+
     setProfileModal(false);
+
+    setFullname('');
   }
   const handleChange = (event) => {
     setFullname(event.target.value);
   }
   const logOut = (e) => {
-    setFullname('Microgift');
     setAnchorEl(null);
     logout();
     setCurrentUser(undefined);
@@ -76,7 +104,7 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar className='font-size-16 roboto-font menu-avatar-48'>M</Avatar>
+            <Avatar className='font-size-16 roboto-font menu-avatar-48'>{profileName}</Avatar>
           </IconButton>
         </Tooltip>
 
@@ -120,21 +148,24 @@ export default function AccountMenu() {
           <Avatar />
           <div className='font-size-16 roboto-font'>Profile</div>
         </MenuItem>
+        <MenuItem className='menu-item global-font'>
+          {currentEmail}
+        </MenuItem>
         <MenuItem onClick={logOut} className='menu-item global-font'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          <div className='font-size-16 roboto-font'>Logout</div>
+          <div className='font-size-16 roboto-font'>Sign Out</div>
         </MenuItem>
       </Menu>
       <Dialog
         open={profileModal}
         onClose={modalClose}
       >
-        <DialogTitle className='modal-title'>Modify Profile</DialogTitle>
+        <DialogTitle className='modal-title'>User Profile</DialogTitle>
         <DialogContent>
           <DialogContentText className='modal-text'>
-            To edit your full name, just modify your full name here.
+            modify your full name here
           </DialogContentText>
           <TextField
             autoFocus
@@ -159,6 +190,7 @@ export default function AccountMenu() {
             }} // font size of input text
             InputLabelProps={{ style: { fontSize: 18, fontFamily: 'roboto !important' } }} // font size of input label
           />
+          <div className='profile-email'>{currentEmail}</div>
         </DialogContent>
         <DialogActions>
           <Button onClick={modalClose} className='modal-btn'>Cancel</Button>
