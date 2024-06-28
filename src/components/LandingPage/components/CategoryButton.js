@@ -4,6 +4,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import AppContext from '../../../context/appContext';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -16,13 +17,6 @@ const MenuProps = {
     },
 };
 
-const names = [
-    'Agreement',
-    'Contract',
-    'Statement of Work (SOW)',
-    'Invoice',
-];
-
 function getStyles(name, personName, theme) {
     return {
         fontWeight:
@@ -32,33 +26,67 @@ function getStyles(name, personName, theme) {
     };
 }
 
-export default function CategoryButton() {
+export default function CategoryButton({ currentCategory, setCurrentCategory }) {
     const theme = useTheme();
-    const [personName, setPersonName] = React.useState([]);
+    const [button, setButton] = React.useState('All');
+    const { categoryList, setCategoryList } = React.useContext(AppContext);
+    const [names, setNames] = React.useState([]);
+
+    React.useEffect(() => {
+        setCurrentCategory([]);
+    }, [])
+
+    React.useEffect(() => {
+        setNames(categoryList)
+    }, [categoryList])
+
+    React.useEffect(() => {
+        if(currentCategory.length > 0) {
+            setButton('Deselect All');
+        } else {
+            setButton('All');
+        }
+    }, [currentCategory])
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
+
+
+        // If "All" is selected
+        if (value.includes("All")) {
+            if (currentCategory.length > 0) {
+                setCurrentCategory([]);
+                setButton('All');
+            } else {
+                // // Select all items
+                // let temp = names.map((val, ind) => {
+                //     return val.name;
+                // })
+                setCurrentCategory([]);
+                setButton('All');
+            }
+        } else {
+            setCurrentCategory(
+                typeof value === 'string' ? value.split(',') : value,
+            );
+        }
     };
 
     return (
-        <div style={{display: 'flex', justifyContent: 'center'}}>
-            <FormControl style={{display: 'flex', justifyContent: 'center'}} sx={{ width: 300}}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <FormControl style={{ display: 'flex', justifyContent: 'center' }} sx={{ width: 300 }}>
                 <Select
                     multiple
                     displayEmpty
                     className='global-font category-box'
-                    value={personName}
+                    value={currentCategory}
                     onChange={handleChange}
                     input={<OutlinedInput />}
                     renderValue={(selected) => {
                         if (selected.length === 0) {
-                            return <div className='global-font'>All</div>;
+                            return <div className='global-font'>{button}</div>;
                         }
 
                         return selected.join(', ');
@@ -66,17 +94,17 @@ export default function CategoryButton() {
                     MenuProps={MenuProps}
                     inputProps={{ 'aria-label': 'Without label' }}
                 >
-                    <MenuItem disabled value="">
-                        <div className='global-font'>All</div>
+                    <MenuItem value='All'>
+                        <div className='global-font'>{button}</div>
                     </MenuItem>
                     {names.map((name) => (
                         <MenuItem
-                            key={name}
+                            key={name.name}
                             className='global-font'
-                            value={name}
-                            style={getStyles(name, personName, theme)}
+                            value={name.name}
+                            style={getStyles(name.name, currentCategory, theme)}
                         >
-                            {name}
+                            {name.name}
                         </MenuItem>
                     ))}
                 </Select>

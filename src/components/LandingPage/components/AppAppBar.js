@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import AuthContext from '../../../context/authContext';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import AccountMenu from './AccountMenu'
@@ -12,13 +13,14 @@ import { useLocation } from 'react-router-dom';
 import Sitemark from './SitemarkIcon';
 
 function AppAppBar({ mode }) {
+  const [currentUser, setCurrentUser] = React.useContext(AuthContext);
   const [open, setOpen] = React.useState(false);
   const location = useLocation().pathname;
   let path = ""
   if (location == '/admin/' || location == '/admin') {
-    path = "Dashboard";
+    path = "Documents";
   } else {
-    path = "Admin";
+    path = "Administration";
   }
 
   const scrollToSection = (sectionId) => {
@@ -81,14 +83,14 @@ function AppAppBar({ mode }) {
             <Sitemark />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button
-                href={path === "Admin" ? '/admin' : '/dashboard'}
+                href={path === "Administration" ? '/admin' : '/dashboard'}
                 variant="text"
                 className='global-font'
                 color="info"
                 size="small"
                 onClick={() => scrollToSection('testimonials')}
               >
-                {path}
+                {currentUser.role ? path : ''}
               </Button>
             </Box>
           </Box>

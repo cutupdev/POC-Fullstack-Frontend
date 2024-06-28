@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/joy/CircularProgress';
 import Snackbar from '@mui/joy/Snackbar';
+import api from '../../utils/api';
 
 import axios from 'axios';
 
@@ -34,7 +35,7 @@ const EmailVerificationSuccess = () => {
     const token = location.pathname.split("/verify/")[1];
     const verifyEmail = async () => {
       try {
-        const response = await axios.post(`https://4a29-45-8-22-59.ngrok-free.app/api/users/verify`, data);
+        const response = await api.post(`users/verify`, data);
         if (response.data.success) {
           setSnackState({
             snackOpen: true,

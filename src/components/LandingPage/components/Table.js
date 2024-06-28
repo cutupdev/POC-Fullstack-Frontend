@@ -1,4 +1,5 @@
 import * as React from 'react';
+import dateFormat from '../../../utils/dateFormatter';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -16,6 +17,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Button from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/Info';
 import Dialog from '@mui/material/Dialog';
@@ -23,19 +25,19 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
+import api from '../../../utils/api';
 import { visuallyHidden } from '@mui/utils';
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { FaRegFilePdf } from "react-icons/fa";
-import { RiFileWord2Line } from "react-icons/ri";
+import { RiContactsBookLine, RiFileWord2Line } from "react-icons/ri";
 import { RiFilePpt2Line } from "react-icons/ri";
 import { CiText } from "react-icons/ci";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import AppContext from '../../../context/appContext';
+// import AuthContext from '../../../context/authContext';
 import clsx from 'clsx';
-import { Worker } from '@react-pdf-viewer/core';
-import { Viewer } from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import raw from '../../file/feedback.txt';
+import AWS from 'aws-sdk';
+import axios from 'axios';
 
 
 function createData(id, name, creator, date, type, size, category, classification, confident, checked) {
@@ -79,11 +81,11 @@ function FileType(props) {
     const { typeStr } = props;
     if (typeStr === 'pdf' || typeStr === 'Pdf' || typeStr === 'PDF') {
         return (
-            <FaRegFilePdf className='font-size-16' />
+            <FaRegFilePdf className='font-size-16 pdf-icon file-icon icon-size' />
         );
     } else if (typeStr === 'doc' || typeStr === 'docx' || typeStr === 'Doc' || typeStr === 'Docx' || typeStr === 'DOC' || typeStr === 'DOCX') {
         return (
-            <RiFileWord2Line className='font-size-16' />
+            <RiFileWord2Line className='font-size-16 word-icon file-icon icon-size' />
         );
     } else if (typeStr === 'ppt' || typeStr === 'pptx' || typeStr === 'Ppt' || typeStr === 'Pptx' || typeStr === 'PPT' || typeStr === 'PPTX') {
         return (
@@ -100,8 +102,36 @@ function FileType(props) {
     }
 }
 
+function descendingComparator(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+        return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+        return 1;
+    }
+    return 0;
+}
+
+function getComparator(order, orderBy) {
+    return order === 'desc'
+        ? (a, b) => descendingComparator(a, b, orderBy)
+        : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function stableSort(array, comparator) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+        const order = comparator(a[0], b[0]);
+        if (order !== 0) {
+            return order;
+        }
+        return a[1] - b[1];
+    });
+    return stabilizedThis.map((el) => el[0]);
+}
+
 function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, previewStatus } = props;
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, previewStatus, metaviewStatus } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -111,16 +141,16 @@ function EnhancedTableHead(props) {
                 id: 'name', numeric: false, disablePadding: true, label: 'Name',
             },
             {
-                id: 'creator', numeric: false, disablePadding: false, label: 'Creator',
+                id: 'creator_sort', numeric: false, disablePadding: false, label: 'Creator',
             },
             {
-                id: 'date', numeric: false, disablePadding: false, label: 'Creation Date',
+                id: 'date_sort', numeric: false, disablePadding: false, label: 'Creation Date',
             },
             {
                 id: 'type', numeric: false, disablePadding: false, label: 'File Type',
             },
             {
-                id: 'size', numeric: false, disablePadding: false, abel: 'File Size',
+                id: 'size_sort', numeric: false, disablePadding: false, abel: 'File Size',
             },
             {
                 id: 'category', numeric: false, disablePadding: false, label: 'Category',
@@ -142,16 +172,30 @@ function EnhancedTableHead(props) {
                         id: 'name', numeric: false, disablePadding: true, label: 'Name',
                     },
                     {
-                        id: 'creator', numeric: false, disablePadding: false, label: 'Creator',
+                        id: 'creator_sort', numeric: false, disablePadding: false, label: 'Creator',
+                    },
+                    {
+                        id: 'category', numeric: false, disablePadding: false, label: 'Category',
+                    },
+                ]
+            );
+        } else if (metaviewStatus) {
+            setHeadCells(
+                [
+                    {
+                        id: 'name', numeric: false, disablePadding: true, label: 'Name',
+                    },
+                    {
+                        id: 'creator_sort', numeric: false, disablePadding: false, label: 'Creator',
+                    },
+                    {
+                        id: 'date', numeric: false, disablePadding: false, label: 'Creation Date',
                     },
                     {
                         id: 'category', numeric: false, disablePadding: false, label: 'Category',
                     },
                     {
                         id: 'classification', numeric: false, disablePadding: false, label: 'Classification Status',
-                    },
-                    {
-                        id: 'confident', numeric: false, disablePadding: false, label: 'Confident Score',
                     },
                 ]
             );
@@ -162,7 +206,7 @@ function EnhancedTableHead(props) {
                         id: 'name', numeric: false, disablePadding: true, label: 'Name',
                     },
                     {
-                        id: 'creator', numeric: false, disablePadding: false, label: 'Creator',
+                        id: 'creator_sort', numeric: false, disablePadding: false, label: 'Creator',
                     },
                     {
                         id: 'date', numeric: false, disablePadding: false, label: 'Creation Date',
@@ -171,7 +215,7 @@ function EnhancedTableHead(props) {
                         id: 'type', numeric: false, disablePadding: false, label: 'File Type',
                     },
                     {
-                        id: 'size', numeric: false, disablePadding: false, label: 'File Size',
+                        id: 'size_sort', numeric: false, disablePadding: false, label: 'File Size',
                     },
                     {
                         id: 'category', numeric: false, disablePadding: false, label: 'Category',
@@ -185,7 +229,7 @@ function EnhancedTableHead(props) {
                 ]
             );
         }
-    }, [previewStatus])
+    }, [previewStatus, metaviewStatus])
 
     return (
         <TableHead>
@@ -226,109 +270,279 @@ function EnhancedTableHead(props) {
                         </TableSortLabel>
                     </TableCell>
                 ))}
-                <TableCell padding="checkbox" className='table-cell-general' />
+                {previewStatus || metaviewStatus ? '' : <TableCell padding="checkbox" className='table-cell-general' />}
             </TableRow>
         </TableHead>
     );
 }
 
-export default function EnhancedTable() {
-    const [rows, setRows] = React.useState(rowsTemp);
-    const [visibleRows, setVisibleRows] = React.useState(rowsTemp.slice(0, 10));
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
+export default function EnhancedTable({ currentCategory, setCurrentCategory, searchValue, setSearchValue }) {
+    const { fileList, setFileList } = React.useContext(AppContext);
+    // const [currentUser, setCurrentUser] = React.useContext(AuthContext);
+    const [rows, setRows] = React.useState([]);
+    const [visibleRows, setVisibleRows] = React.useState([]);
+    const [order, setOrder] = React.useState('desc');
+    const [orderBy, setOrderBy] = React.useState('date');
     const [selected, setSelected] = React.useState([]);
+    const [selectedString, setSelectedString] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [deleteModal, setDeleteModal] = React.useState(false);
-    const [deleteData, setDeleteData] = React.useState("");
     const [metaviewStatus, setMetaviewStatus] = React.useState(false);
     const [previewStatus, setPreviewStatus] = React.useState(false);
-    const [textFile, setTextFile] = React.useState(null);
-    const containerRef = React.useRef(null);
+    const [viewFile, setViewFile] = React.useState(false);
+    const [viewInf, setViewInf] = React.useState({
+        id: '',
+        name: '',
+        type: '',
+        creator: '',
+        size: '',
+        created: ''
+    });
+
+    AWS.config.update({
+        region: process.env.REACT_APP_BUCKET_REGION,
+        accessKeyId: process.env.REACT_APP_BUCKET_ACCESS_KEY_ID,
+        secretAccessKey: process.env.REACT_APP_BUCKET_SECRET_ACCESS_KEY,
+    });
 
     React.useEffect(() => {
-        // console.log(rows);
-        // console.log(visibleRows);
-    }, [rows, visibleRows])
+        setRows([...dataEdit(fileList)]);
+    }, [fileList])
+
+    React.useEffect(() => {
+        setVisibleRows([...stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)]);
+    }, [rows])
+
+    React.useEffect(() => {
+        setVisibleRows([...stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)]);
+    }, [order, orderBy, page, rowsPerPage])
+
+    React.useEffect(() => {
+        let filtered = [];
+        let temp = [];
+        if (fileList.length) {
+            if (currentCategory.length) {
+                fileList.map((val, ind) => {
+                    if (currentCategory.includes(val.category)) {
+                        console.log("current category ===> ", currentCategory, ', value category ===> ', val.category);
+                        filtered.push(val);
+                    }
+                })
+            } else {
+                filtered = fileList.slice(0, fileList.length)
+            }
+        }
+
+        if (filtered.length) {
+            if (searchValue) {
+                let searchParams = searchValue.toLowerCase().replace(/\\/g, "\\\\");
+                for (let i = 0; i < filtered.length; i++) {
+                    if (filtered[i].filename.toLowerCase().search(searchParams) !== -1) {
+                        temp.push(filtered[i]);
+                    }
+                }
+                setRows([...dataEdit(temp)]);
+            } else {
+                setRows([...dataEdit(filtered)]);
+            }
+        } else {
+            setRows([...dataEdit(filtered)]);
+        }
+    }, [currentCategory, searchValue])
+
+    const dataEdit = (input) => {
+        let temp = [];
+        if (input && input.length) {
+            temp = input.map((val, ind) => {
+
+                let type = '';
+                if (val.type === 'application/pdf') {
+                    type = 'PDF';
+                } else if (val.type === 'application/msword') {
+                    type = 'DOC';
+                } else if (val.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                    type = 'DOC';
+                } else {
+                    type = 'Document';
+                }
+
+                let size = Number(val.size);
+                if (size < 1048576) {
+                    size = (size / 1024).toFixed(2).replace(/\.?0+$/, '') + 'KB';
+                } else if (size < 1073741824) {
+                    size = (size / 1048576).toFixed(2).replace(/\.?0+$/, '') + 'MB';
+                } else {
+                    size = (size / 1073741824).toFixed(2).replace(/\.?0+$/, '') + 'GB';
+                }
+                size = size.toString();
+
+                return {
+                    id: val._id,
+                    name: val.filename,
+                    creator: val.creatorName,
+                    creator_sort: val.creatorName.toLowerCase(),
+                    date: dateFormat(val.date),
+                    date_sort: val.date,
+                    type: type,
+                    size: size,
+                    size_sort: Number(val.size),
+                    category: val.category,
+                    classification: val.classification,
+                    confident: val.confidence,
+                    checked: false
+                }
+            })
+        }
+        return temp;
+    }
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
+        console.log(property)
         setOrderBy(property);
+        setPage(0);
     };
 
-    const onMataViewOn = (event) => {
+    const onMetaViewOn = (data) => {
+        console.log(data)
+        setViewInf({
+            id: data.id,
+            name: data.name,
+            type: data.type,
+            creator: data.creator,
+            size: data.size,
+            created: data.date
+        });
         setPreviewStatus(false);
         setMetaviewStatus(true);
     }
 
     const onMataviewOff = (event) => {
         setMetaviewStatus(false);
+        setViewInf({
+            id: '',
+            name: '',
+            type: '',
+            creator: '',
+            size: '',
+            created: ''
+        });
     }
 
-    const onPreview = async (event) => {
-        // console.log("dfasfasdfsf")
-        // fetch(raw)
-        //     .then(r => {
-        //         setTextFile(r.text());
-        //         console.log(r.text());
-        //     })
-        //     .then(text => {
-        //         console.log('text decoded:', text);
-        //     });
-        // try {
-        //     const response = await fetch(raw);
-        //     console.log(response);
-        //     const text = await response.text();
-        //     console.log(text);
-        //     setTextFile(text ?? '');
-        //     console.log('text decoded:', text);
-        //     setMetaviewStatus(false);
-        //     setPreviewStatus(true);
-        // } catch (error) {
-        //     console.error('Error fetching the file:', error);
-        // }
+    const onPreview = async (data) => {
+        console.log(data)
+        const s3 = new AWS.S3();
+        setViewInf({
+            id: data.id,
+            name: data.name,
+            type: data.type,
+            creator: data.creator,
+            size: data.size,
+            created: data.date
+        });
+        if (data.type === 'PDF') {
+            const params = {
+                Bucket: process.env.REACT_APP_BUCKET_NAME,
+                Key: `${data.name}`,
+            };
+            s3.getObject(params, (err, data) => {
+                if (err) {
+                    console.log(err, err.stack);
+                } else {
+                    let csvBlob = new Blob([data.Body], {
+                        type: 'application/pdf',
+                    });
+                    console.log("file data ====> ", csvBlob, "file type ===> ", csvBlob.type);
+
+                    const url = URL.createObjectURL(csvBlob);
+                    setViewFile(url);
+                }
+            });
+        } else {
+            const params = {
+                Bucket: process.env.REACT_APP_BUCKET_NAME,
+                Key: `${data.name}`,
+                Expires: 60
+            };
+            const url = s3.getSignedUrl('getObject', params);
+            setViewFile(`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`);
+        }
+
         setMetaviewStatus(false);
         setPreviewStatus(true);
     }
 
     const onPreviewOff = (event) => {
         setPreviewStatus(false);
+        setViewInf({
+            id: '',
+            name: '',
+            type: '',
+            creator: '',
+            size: '',
+            created: ''
+        });
     }
 
     const onDelete = (data) => {
-        setDeleteData(data);
         setDeleteModal(true);
+        let temp = [];
+        for (let i = 0; i < rows.length; i++) {
+            if (selected.includes(rows[i].id)) {
+                temp.push(rows[i].name);
+            }
+        }
+        setSelectedString([...temp]);
     }
 
     const deleteClose = (event) => {
         setDeleteModal(false);
-        setDeleteData({});
+        setSelectedString([]);
     }
 
-    const deleteSubmit = (id) => {
-        setDeleteModal(false);
-        const filteredData = rows.filter(data => data.id !== id);
-        setRows(filteredData);
-
-        if (filteredData.length === page * rowsPerPage) {
-            if (page > 0) {
-                setPage(page - 1);
-                onVisibleRows(page - 1, rowsPerPage, filteredData);
-            } else {
-                onVisibleRows(0, rowsPerPage, filteredData);
+    const deleteSubmit = async () => {
+        const token = localStorage.getItem('user');
+        console.log(token)
+        try {
+            const res = await api.post(
+                `files/delete`,
+                { items: selected },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token.replace(/"/g, '')}`,
+                    },
+                }
+            );
+            alert(`${res.data.deletedCount} file${res.data.deletedCount > 1 ? 's' : ''} deleted successfully!`);
+            setDeleteModal(false);
+            const files = res.data.files;
+            if (files && files.length) {
+                setFileList([...files]);
             }
-        } else {
-            onVisibleRows(page, rowsPerPage, filteredData);
+            setSelected([]);
+            setSelectedString([]);
+            if (res.data.files.length < page * rowsPerPage + 1) {
+                if (page > 0) {
+                    setPage(page - 1);
+                    onVisibleRows(page - 1, rowsPerPage, dataEdit(res.data.files));
+                } else {
+                    onVisibleRows(0, rowsPerPage, dataEdit(res.data.files));
+                }
+            } else {
+                onVisibleRows(page, rowsPerPage, dataEdit(res.data.files));
+            }
+        } catch (err) {
+            console.log(err);
         }
-        setDeleteData({});
+
     }
 
     const onVisibleRows = (page, perRows, data) => {
         if (perRows * (page + 1) > data.length) {
-            setVisibleRows(data.slice(page * perRows, data.length));
+            setVisibleRows([...data.slice(page * perRows, data.length)]);
         } else {
             setVisibleRows(data.slice(page * perRows, perRows * (page + 1)));
         }
@@ -353,9 +567,12 @@ export default function EnhancedTable() {
 
     const handleClick = (event, id) => {
         const selectedIndex = selected.indexOf(id);
-        const temp = rows;
-        temp[id - 1].checked = !temp[id - 1].checked;
-        setRows(temp);
+        const temp = rows.map((val, ind) => {
+            if (val.id === id) {
+                val.checked = !val.checked;
+            }
+            return val;
+        });
         let newSelected = [];
 
         if (selectedIndex === -1) {
@@ -375,6 +592,8 @@ export default function EnhancedTable() {
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
+        setPreviewStatus(false);
+        setMetaviewStatus(false);
         onVisibleRows(newPage, rowsPerPage, rows);
     };
 
@@ -388,24 +607,20 @@ export default function EnhancedTable() {
         setDense(event.target.checked);
     };
 
-    const docs = [
-        // {
-        //   // uri: "url", // for remote file
-        //   uri: "https://arxiv.org/pdf/quant-ph/0410100", // for local file
-        // },
-        {
-            uri: "./demo.docx", // for remote file
-            // uri: "/demo.pptx", // for local file
-        },
-        // {
-        //     uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781036/demo.pptx", // for remote file
-        //     // uri: "/demo.docx", // for local file
-        // },
-        // {
-        //     uri: "https://github.com/kartikxisk/docx-xlsx-pptx-pdf-viewer-nextjs-and-reactjs/files/11781037/demo.xlsx", // for remote file
-        //     // uri: "/demo.xlsx", // for local file
-        // },
-    ];
+    const getHighlightedCss = (id) => {
+        return (previewStatus || metaviewStatus) && (viewInf.id === id) ? 'bolder' : 'normal';
+    }
+
+    const truncateFilename = (filename, maxLength) => {
+
+        if (filename.length <= maxLength) {
+            return filename;
+        }
+
+        const truncatedName = `${filename.substring(0, maxLength / 2)}...${filename.substring(filename.length - (maxLength / 2), filename.length)}`;
+        // console.log(truncatedName)
+        return truncatedName;
+    };
 
     const isSelected = (id) => selected.indexOf(id) !== -1;
 
@@ -417,6 +632,7 @@ export default function EnhancedTable() {
         <Box sx={{ width: '100%' }}>
             <div className={clsx('metaview-content', previewStatus && 'metaview-grid')}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
+                    <div className='table-title'>Documents</div>
                     <TableContainer>
                         <Table
                             sx={previewStatus ? { minWidth: 500 } : { minWidth: 750 }}
@@ -425,6 +641,7 @@ export default function EnhancedTable() {
                         >
                             <EnhancedTableHead
                                 previewStatus={previewStatus}
+                                metaviewStatus={metaviewStatus}
                                 numSelected={selected.length}
                                 order={order}
                                 orderBy={orderBy}
@@ -459,35 +676,56 @@ export default function EnhancedTable() {
                                             <TableCell align="right" padding="checkbox" onClick={(event) => handleClick(event, row.id)} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
                                                 <FileType typeStr={row.type} />
                                             </TableCell>
-                                            <TableCell
-                                                onClick={(event) => handleClick(event, row.id)}
-                                                className={row.checked ? 'table-cell-selected' : 'table-cell-general'}
-                                                align="right"
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                padding="none"
-                                            >
-                                                {row.name}
-                                            </TableCell>
-                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.creator}</TableCell>
-                                            {previewStatus ? '' : <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>}
-                                            {previewStatus ? '' : <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.type}</TableCell>}
-                                            {previewStatus ? '' : <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.size}</TableCell>}
-                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.category}</TableCell>
-                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.classification}</TableCell>
-                                            <TableCell onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.confident}</TableCell>
-                                            <TableCell align="right" style={{ minWidth: 95 }} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
-                                                <Tooltip className='tooltip' title={'Metadata details'}>
-                                                    <InfoIcon onClick={onMataViewOn} className='cursor-icon' />
-                                                </Tooltip>
-                                                <Tooltip className='tooltip' title={'Peview document'} onClick={() => onPreview(row)} >
-                                                    <RemoveRedEyeIcon className='cursor-icon' />
-                                                </Tooltip>
-                                                <Tooltip className='tooltip' title={'Remove document'} onClick={() => onDelete(row)}>
-                                                    <DeleteIcon className='cursor-icon' />
-                                                </Tooltip>
-                                            </TableCell>
+                                            <Tooltip className='tooltip' title={row.name} >
+                                                <TableCell
+                                                    onClick={(event) => handleClick(event, row.id)}
+                                                    style={{ maxWidth: 200, fontWeight: `${getHighlightedCss(row.id)}` }}
+                                                    className={row.checked ? 'table-cell-selected' : 'table-cell-general'}
+                                                    align="right"
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    padding="none"
+                                                >
+                                                    {truncateFilename(row.name, 12)}
+                                                </TableCell>
+                                            </Tooltip>
+                                            <TableCell style={{ fontWeight: `${getHighlightedCss(row.id)}` }} onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.creator}</TableCell>
+                                            {previewStatus ? '' : <TableCell style={{ fontWeight: `${getHighlightedCss(row.id)}` }} onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.date}</TableCell>}
+                                            {previewStatus || metaviewStatus ? '' : <TableCell style={{ fontWeight: `${getHighlightedCss(row.id)}` }} onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.type}</TableCell>}
+                                            {previewStatus || metaviewStatus ? '' : <TableCell style={{ fontWeight: `${getHighlightedCss(row.id)}` }} onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.size}</TableCell>}
+                                            {<TableCell style={{ fontWeight: `${getHighlightedCss(row.id)}` }} onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.category}</TableCell>}
+                                            {previewStatus ? '' : <TableCell style={{ fontWeight: `${getHighlightedCss(row.id)}` }} onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.classification}</TableCell>}
+                                            {previewStatus || metaviewStatus ? '' : <TableCell style={{ fontWeight: `${getHighlightedCss(row.id)}` }} onClick={(event) => handleClick(event, row.id)} align="right" className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>{row.confident}</TableCell>}
+                                            {previewStatus || metaviewStatus ? ''
+                                                :
+                                                <TableCell align="right" style={{ minWidth: 120 }} className={row.checked ? 'table-cell-selected' : 'table-cell-general'}>
+                                                    {
+                                                        selected.length ?
+                                                            <InfoIcon className='disabled-icon icon-size' />
+                                                            :
+                                                            <Tooltip className='tooltip' title={'Metadata details'} onClick={() => onMetaViewOn(row)} >
+                                                                <InfoIcon className='cursor-icon icon-size' />
+                                                            </Tooltip>
+                                                    }
+                                                    {
+                                                        selected.length ?
+                                                            <RemoveRedEyeIcon className='disabled-icon icon-size' />
+                                                            :
+                                                            <Tooltip className='tooltip' title={'Peview document'} onClick={() => onPreview(row)} >
+                                                                <RemoveRedEyeIcon className='cursor-icon icon-size' />
+                                                            </Tooltip>
+                                                    }
+                                                    {
+                                                        selected.length ?
+                                                            <Tooltip aria-disabled className='tooltip ' title={'Remove document'} onClick={() => onDelete(row)}>
+                                                                <DeleteIcon className='cursor-icon icon-size' />
+                                                            </Tooltip>
+                                                            :
+                                                            <DeleteIcon className='icon-size disabled-icon' />
+                                                    }
+                                                </TableCell>
+                                            }
                                         </TableRow>
                                     );
                                 })}
@@ -521,19 +759,20 @@ export default function EnhancedTable() {
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle className='roboto-font' id="alert-dialog-title">
-                        {`Do you want to remove '${deleteData.name}' ?`}
+                        {`Do you want to Delete the following file${selected.length > 1 ? "s" : ""}?`}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText className='roboto-font' id="alert-dialog-description">
-                            If you want to remove this data, just click 'Agree Button'.
-                            In this case, you can't recover this document.
+                            {selectedString.map((val, ind) => {
+                                return (
+                                    <div>{val}</div>
+                                );
+                            })}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={deleteClose} className='roboto-font'>Disagree</Button>
-                        <Button onClick={() => { deleteSubmit(deleteData.id) }} autoFocus className='roboto-font'>
-                            Agree
-                        </Button>
+                        <Button onClick={deleteClose} className='roboto-font'>No</Button>
+                        <Button onClick={deleteSubmit} autoFocus className='roboto-font'>Yes</Button>
                     </DialogActions>
                 </Dialog>
                 {metaviewStatus && <div className='metaview-box'>
@@ -541,8 +780,8 @@ export default function EnhancedTable() {
                     <div className='metaview-container'>
                         <div className='metaview-head'>
                             <div className='dis-cencer'>
-                                <TextSnippetIcon />
-                                <div className='roboto-font font-size-16 black-font'> Microsoft.pdf </div>
+                                <FileType typeStr={viewInf.type} />
+                                <div style={{ maxWidth: 300 }} className='roboto-font font-size-16 black-font width-overflow'> {viewInf.name} </div>
                             </div>
                             <ClearIcon className='metaview-close' onClick={onMataviewOff} />
                         </div>
@@ -552,7 +791,7 @@ export default function EnhancedTable() {
                                     Type
                                 </div>
                                 <div className='roboto-font font-size-16'>
-                                    Word
+                                    {viewInf.type}
                                 </div>
                             </div>
                             <div className='metaview-cell'>
@@ -560,7 +799,7 @@ export default function EnhancedTable() {
                                     Size
                                 </div>
                                 <div className='roboto-font font-size-16'>
-                                    16 KB
+                                    {viewInf.size}
                                 </div>
                             </div>
                             <div className='metaview-cell'>
@@ -568,7 +807,7 @@ export default function EnhancedTable() {
                                     Storage Used
                                 </div>
                                 <div className='roboto-font font-size-16'>
-                                    16 KB
+                                    {viewInf.size}
                                 </div>
                             </div>
                             <div className='metaview-cell'>
@@ -576,7 +815,7 @@ export default function EnhancedTable() {
                                     Owner
                                 </div>
                                 <div className='roboto-font font-size-16'>
-                                    Rajan
+                                    {viewInf.creator}
                                 </div>
                             </div>
                             <div className='metaview-cell'>
@@ -584,7 +823,7 @@ export default function EnhancedTable() {
                                     Modified
                                 </div>
                                 <div className='roboto-font font-size-16'>
-                                    2023-11-19
+                                    {viewInf.created}
                                 </div>
                             </div>
                             <div className='metaview-cell'>
@@ -592,7 +831,7 @@ export default function EnhancedTable() {
                                     Opened
                                 </div>
                                 <div className='roboto-font font-size-16'>
-                                    2024-04-11
+                                    {viewInf.created}
                                 </div>
                             </div>
                             <div className='metaview-cell'>
@@ -600,7 +839,7 @@ export default function EnhancedTable() {
                                     Created
                                 </div>
                                 <div className='roboto-font font-size-16'>
-                                    2033-11-01
+                                    {viewInf.created}
                                 </div>
                             </div>
                             <div className='metaview-cell'>
@@ -623,32 +862,12 @@ export default function EnhancedTable() {
                     <div className='preview-container'>
                         <div className='preview-head'>
                             <div className='dis-cencer'>
-                                <TextSnippetIcon />
-                                <div className='roboto-font font-size-16 black-font'> Microsoft.pdf </div>
+                                <FileType typeStr={viewInf.type} />
+                                <div className='roboto-font font-size-16 black-font'> {viewInf.name} </div>
                             </div>
                             <ClearIcon className='metaview-close' onClick={onPreviewOff} />
                         </div>
-                        {/* <div className='preview-body'>
-                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                <div
-                                    style={{
-                                        border: '1px solid rgba(0, 0, 0, 0.3)',
-                                        height: '750px',
-                                    }}
-                                >
-                                    <Viewer fileUrl="./demo.docx" />
-                                </div>
-                            </Worker>
-                        </div> */}
-                        {/* <DocViewer
-                            prefetchMethod="GET" // for remote fetch
-                            documents={docs}
-                            pluginRenderers={DocViewerRenderers}
-                            style={{ height: "100vh" }} //custom style
-                        /> */}
-                        {/* <div>
-                            {previewStatus && textFile && <pre>{textFile}</pre>}
-                        </div> */}
+                        <iframe title="Viewer" className='full-size' src={viewFile}></iframe>
                     </div>
                     <div>
                     </div>
